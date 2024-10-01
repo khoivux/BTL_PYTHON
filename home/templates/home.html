@@ -1,0 +1,688 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homestay.com</title>
+    <link rel="stylesheet" href="{% static 'myapp/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css" integrity="sha512-UTNP5BXLIptsaj5WdKFrkFov94lDx+eBvbKyoe1YAfjeRPC+gT5kyZ10kOHCfNZqEui1sxmqvodNUx3KbuYI/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    
+</head>
+<body>
+<header>   
+    <div class="content flex_space">
+
+        <div class="logo">
+            <img src={% static 'myapp/img/logo.jpeg' %} alt="">
+        </div>
+        
+        <div>
+            <form action="{% url 'search' %}" method="GET"> <!--url nhận thông tin tìm kiếm, gọi đến link infs trong urls-->
+                <div class="search_container">
+                    <input class="search" placeholder="Tìm kiếm homestay" name="search">
+                    <button class="srch" type="submit"><i class="fa fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+        <div class="navlinks">
+            <ul id="menulist">
+                <li><a href={% url 'home'%}>Trang chủ</a></li> <!--url đến home-->
+                <li><a href="#dichvu">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                <li><a href="#homestay">Homestay</a></li> <!--url xuống danh sách homestay-->
+                <li><a href='https://www.facebook.com/cout.plong'>Liên hệ</a></li> <!--url xuống liên hệ-->
+                <li><a href="#Feedback">Phản hồi</a></li>   <!--url đến trang phản hồi-->
+                <li> <a href = "{% url 'login' %}">
+                    <button class="primary-btn">Đăng nhập</button></li>
+                </a> <!--url đến trang đăng nhập-->
+            </ul>
+            <span class="fa fa-bars" onclick="menutoggle()"></span>
+        </div>
+    </div>
+</header>
+
+
+<script>
+    var menulidt = document.getElementById("menulist");
+    menulist.style.maxHeight = "0px";
+    function menutoggle(){
+        if(menulist.style.maxHeight == "0px"){
+            menulist.style.maxHeight = "100vh";
+        }else{
+            menulist.style.maxHeight = "0px";
+        }
+    }
+</script>
+<section class="home">
+    <div class="content">
+        <div class="owl-carousel owl-theme">
+            <div class="item">
+                <img src={% static 'myapp/img/background3.jpg'%} alt="">
+                <div class="text">
+                    <h1>Tây Bắc Homestay</h1>
+                    <p>Tận hưởng kỳ nghỉ của bạn tại homestay của chúng tôi</p>
+                    <div class="flex">
+                        <button class="primary-btn">Đặt ngay</button>
+                        <button class="secondary-btn">Liên hệ</button>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <img src={% static 'myapp/img/background2.jpg'%} alt="">
+                <div class="text">
+                    <h1>Tây Bắc Homestay</h1>
+                    <p>Tận hưởng kỳ nghỉ của bạn tại homestay của chúng tôi</p>
+                    <div class="flex">
+                        <button class="primary-btn">Đặt ngay</button>
+                        <button class="secondary-btn">Liên hệ</button>
+                    </div>
+                </div>
+            </div>
+            <div class="item">
+                <img src={% static 'myapp/img/background1.jpg'%} alt="">
+                <div class="text">
+                    <h1>Tây Bắc Homestay</h1>
+                    <p>Tận hưởng kỳ nghỉ của bạn tại homestay của chúng tôi</p>
+                    <div class="flex">
+                        <button class="primary-btn">Đặt ngay</button>
+                        <button class="secondary-btn">Liên hệ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.js" integrity="sha512-gY25nC63ddE0LcLPhxUJGFxa2GoIyA5FLym4UJqHDEMHjp8RET6Zn/SHo1sltt3WuVtqfyxECP38/daUc/WVEA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $('.owl-carousel').owlCarousel({
+        loop:true,
+        margin:0,
+        nav:true,
+        dots: false,
+        navText: ["<i class='fa fa-chevron-left'></i>","<i class='fa fa-chevron-right'></i>"],
+        responsive:{
+            0:{
+                items:1
+            },
+            768:{
+                items:1
+            },
+            1000:{
+                items:1
+            }
+        }
+    })
+</script>
+
+<section class="book">
+    <div class="container flex_space">
+        <div class="text">
+            <h1><span>Tìm</span> Kiếm</h1>
+        </div>
+        <div class="form">
+            <form class="grid">
+                <input type="date" placeholder="Araival Date">
+                <input type="date" placeholder="Departure Date">
+                <input type="number" placeholder="Người lớn">
+                <input type="number" placeholder="Trẻ em">
+                <input type="submit" value="KIỂM TRA">
+            </form>
+        </div>
+    </div>
+
+
+</section>
+<section class="about top">
+    <div class="container flex">
+        <div class="left">
+            <div class="heading">
+                <h1>WELCOME</h1>
+                <h2>Tây Bắc HomeStay</h2>
+            </div>
+            <p>Bạn đang tìm kiếm một nơi để rời xa cuộc sống ồn ào, náo nhiệt và đắm mình vào khung cảnh thiên nhiên hùng vĩ, yên bình? Hãy đến với dịch vụ homestay tại Tây Bắc - nơi bạn không chỉ đơn thuần nghỉ ngơi mà còn có cơ hội khám phá và trải nghiệm những nét đẹp văn hóa đặc sắc của các dân tộc thiểu số vùng cao.</p>
+        </div>
+        <div class="right">
+            <img src={% static 'myapp/img/background2.jpg'%} alt="">
+        </div>
+    </div>
+
+</section>
+<section class="counter top">
+    <div class="container grid">
+        <div class="box">
+            <h1>2500</h1>
+            <hr>
+            <span>Khách hàng</span>
+        </div>
+        <div class="box">
+            <h1>2250</h1>
+            <hr>
+            <span>Khách hàng hài lòng</span>
+        </div>
+        <div class="box">
+            <h1>150</h1>
+            <hr>
+            <span>Kỹ thuật viên chuyên gia</span>
+        </div>
+        <div class="box">
+            <h1>2350</h1>
+            <hr>
+            <span>Khách hàng phản hồi</span>
+        </div>
+    </div>
+</section>
+<section class="rooms">
+    <div class="container top",>
+        <div class="heading" id='homestay'>
+            <h2>HOMESTAY CỦA CHÚNG TÔI</h2>
+        </div>
+        <div class="content mtop">
+            <div class="owl-carousel owl-carousel1 owl-theme">
+                <!-- Homestay Row 1 -->
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay1.jpg'%} alt="Homestay 1">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 1</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>1800 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>800k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay2.jpg'%} alt="Homestay 2">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 2</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>1200 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>700k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Homestay Row 2 -->
+                <div class="items">
+                    <div class="image">
+                        <img src={%static '/myapp/img/homestay3.jpg'%} alt="Homestay 3">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 3</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>950 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>900k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay4.jpg'%} alt="Homestay 4">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 4</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>2000 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>1000k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Homestay Row 3 -->
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay5.jpg'%} alt="Homestay 5">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 5</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>1300 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>850k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="rooms">
+    <div class="container top">
+        <div class="content mtop">
+            <div class="owl-carousel owl-carousel1 owl-theme">
+                <!-- Homestay Row 1 -->
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay6.jpg'%} alt="Homestay 1">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 6</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>1800 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>800k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay7.jpg'%} alt="Homestay 2">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 7</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>1200 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>700k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Homestay Row 2 -->
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay8.jpg'%} alt="Homestay 3">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 8</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>950 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>900k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay9.jpg'%} alt="Homestay 4">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 9</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>2000 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>1000k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Homestay Row 3 -->
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay10.jpg'%} alt="Homestay 5">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 10</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>1300 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>850k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="rooms">
+    <div class="container top">
+        <div class="content mtop">
+            <div class="owl-carousel owl-carousel1 owl-theme">
+                <!-- Homestay Row 1 -->
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay11.jpg'%} alt="Homestay 1">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 11</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>1800 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>800k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay12.jpg'%} alt="Homestay 2">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 12</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>1200 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>700k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Homestay Row 2 -->
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay13.jpg'%} alt="Homestay 3">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 13</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>950 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>900k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay14.jpg'%} alt="Homestay 4">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 14</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>2000 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>1000k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Homestay Row 3 -->
+                <div class="items">
+                    <div class="image">
+                        <img src={% static 'myapp/img/homestay15.jpg'%} alt="Homestay 5">
+                    </div>
+                    <div class="text">
+                        <h2>Suporior Homestay 15</h2>
+                        <div class="star-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <p>1300 bài đánh giá</p>
+                        <div class="button flex">
+                            <button class="primary-btn">ĐẶT NGAY</button>
+                            <h3>850k/1 đêm</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $('.owl-carousel').owlCarousel({
+        loop:true,
+        margin:40,
+        nav:true,
+        dots: false,
+        navText: ["<i class='fa fa-chevron-left'></i>","<i class='fa fa-chevron-right'></i>"],
+        responsive:{
+            0:{
+                items:1
+            },
+            768:{
+                items:2,
+                margin:10.
+            },
+            1000:{
+                items:3
+            }
+        }
+    })
+</script>
+
+
+<section class="services top">
+    <div class="container">
+        <div class="heading" id ='dichvu'>
+            <h1>SERVICES</h1>
+            <h2>DỊCH VỤ</h2>
+            <p>Homestay không chỉ là nơi lưu trú mà còn là một trải nghiệm tuyệt vời giúp du khách hòa mình vào cuộc sống và văn hóa bản địa. Với phương châm mang đến sự ấm áp như ở nhà, chúng tôi cung cấp các dịch vụ đa dạng nhằm đáp ứng mọi nhu cầu của bạn trong suốt kỳ nghỉ.</p>
+        </div>
+
+        <div class="content flex_space">
+            <div class="left grid2">
+                <div class="box">
+                    <div class="text">
+                        <i class="fa-solid fa-champagne-glasses"></i>
+                        <h3>Cầu hôn</h3>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="text">
+                        <i class="fa-solid fa-person-biking"></i>
+                        <h3>Thể thao</h3>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="text">
+                        <i class="fa-solid fa-utensils"></i>
+                        <h3>Nhà hàng</h3>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="text">
+                        <i class="fa-solid fa-spa"></i>
+                        <h3>Spa</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="right">
+                <img src={% static 'myapp/img/service.jpg'%} alt="">
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="Customer top">
+    <div class="container">
+        <div class="owl-carousel owl-carousel2 owl-theme">
+            <div class="item">
+                <i class="fa-solid fa-quote-right"></i>
+                <p>Mình đã có một kỳ nghỉ tuyệt vời tại homestay này! Phòng ốc rất sạch sẽ, trang trí đẹp và ấm cúng. Vị trí homestay nằm ngay trung tâm, rất tiện lợi cho việc di chuyển và tham quan. Chủ nhà rất thân thiện và chu đáo, luôn sẵn sàng hỗ trợ khi cần thiết. Giá cả hợp lý và dịch vụ rất đáng đồng tiền. Mình đặc biệt thích khoảng sân vườn nhỏ xinh, rất yên bình và thoải mái. Chắc chắn sẽ quay lại khi có dịp!</p>
+                <h3>Long</h3>
+                <label>Pham Ngoc Long</label>
+            </div>
+            <div class="item">
+                <i class="fa-solid fa-quote-right"></i>
+                <p> Homestay có vị trí khá đẹp, gần biển và các địa điểm du lịch. Phòng trang trí xinh xắn và giá cả hợp lý. Tuy nhiên, phòng hơi nhỏ hơn so với mong đợi và có một chút mùi ẩm. Dịch vụ tạm ổn nhưng mình cảm thấy chủ nhà cần chú ý hơn trong việc dọn phòng hàng ngày. Tổng thể là một trải nghiệm tốt, nhưng nếu chủ nhà cải thiện một số điểm nhỏ thì sẽ hoàn hảo hơn.</p>
+                <h3>Khoi</h3>
+                <label>Vu Trong Khoi</label>
+            </div>
+            <div class="item">
+                <i class="fa-solid fa-quote-right"></i>
+                <p>Mình rất thích không gian và cách bài trí của homestay, vừa gần gũi vừa mang đậm phong cách văn hóa địa phương. Chủ nhà rất mến khách và còn hướng dẫn mình tham gia các hoạt động như nấu ăn, đi chợ cùng người dân. Phòng rất sạch sẽ và đầy đủ tiện nghi, có cả những chi tiết nhỏ như trà, cà phê tự pha. Khu vực sân vườn xanh mát là nơi lý tưởng để thư giãn. Đây là một trải nghiệm không thể nào quên!</p>
+                <h3>Nam</h3>
+                <label>Do Hai Nam</label>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $('.owl-carousel2').owlCarousel({
+        loop:true,
+        margin:0,
+        nav:false,
+        dots: true,
+        responsive:{
+            0:{
+                items:1
+            },
+            768:{
+                items:1,
+            },
+            1000:{
+                items:1
+            }
+        }
+    })
+</script>
+
+
+<footer>
+    <div class="container grid">
+        <div class="box">
+            <img src={% static 'myapp/img/background2.jpg'%} alt="">
+            <div class="icon">
+                <i class="fa fa-facebook-f"></i>
+                <i class="fa fa-instagram"></i>
+                <i class="fa fa-twitter"></i>
+                <i class="fa fa-youtube"></i>
+            </div>
+        </div>
+        <div class="box">
+            <h2>GIỚI THIỆU</h2>
+            <a href="#">Trang chủ</a><br>
+            <a href="#dichvu">Dịch vụ</a><br>
+            <a href="#">Tin tức</a><br>
+            <a href="https://www.facebook.com/cout.plong">Liên hệ</a><br>
+        </div>
+        <div class="box">
+            <h2>LIÊN KẾT</h2>
+            <a href="#">Điều khoản sử dụng</a><br>
+            <a href="#">Chính sách bảo mật</a><br>
+            <a href="#">Chính sách hoàn tiền</a><br>
+            <a href="#">FAQs</a>
+        </div>
+        <div class="box">
+            <h2>LIÊN HỆ</h2>
+            <i class="fa fa-location-dot"></i>
+            <label>30 Tran Phu, Ha Dong, Ha Noi, Viet Nam</label><br>
+            <i class="fa fa-phone"></i>
+            <label>0987352163</label><br>
+            <i class="fa fa-envelope"></i>
+            <label>nhan54v@gmail.com</label><br>
+        </div>
+    </div>
+</footer>
+
+<script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
+</body> 
+</html>

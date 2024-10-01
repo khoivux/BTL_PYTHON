@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+    <html lang="en" dir="ltr">
+    <head>
+        <title>login</title>
+        <link rel="stylesheet" href={% static 'login/css/login.css'%}>
+    </head>
+    <body>
+        <div class="form">
+            <form action="{% url 'home' %}" method="GET" autocomplete="off">
+                <button class="back">&#8592</button>
+            </form> <!-- url back về home -->
+            <br>
+            <h2>Đăng ký</h2>
+            <form class="register-form" action="{% url 'inf' %}" method="POST" autocomplete="off">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="Tên đăng nhập" autocomplete="off" 
+                       style="border-color: {% if errors.username %} red {% endif %};"/>
+                <span style="color: red;">{{ errors.username }}</span>
+            
+                <input type="password" name="password" placeholder="Mật khẩu" autocomplete="new-password" 
+                       style="border-color: {% if errors.password %} red {% endif %};"/>
+                <span style="color: red;">{{ errors.password }}</span>
+            
+                <input type="email" name="email" placeholder="Địa chỉ email" autocomplete="off" 
+                       style="border-color: {% if errors.email %} red {% endif %};"/>
+                <span style="color: red;">{{ errors.email }}</span>
+            
+                <button class="submit" type="submit">Tạo tài khoản</button>
+                <p class="message">Đã có tài khoản? <a href={% url 'login' %}>Đăng nhập</a></p>
+            </form>
+        </div>
+    </body>
+    </html>
