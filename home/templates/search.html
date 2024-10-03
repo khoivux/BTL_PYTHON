@@ -47,34 +47,50 @@
     </script>
 <div class="container">
     <!-- Bộ lọc -->
-    <div class="filters">
-        <h2>Bộ lọc theo:</h2>
-        <!-- Đánh giá -->
-        <div class="filter-group">
-            <h3>Đánh giá</h3>
-            <label><input type="checkbox" value="5stars"> 5 sao</label><br>
-            <label><input type="checkbox" value="4stars"> 4 sao </label><br>
-            <label><input type="checkbox" value="3stars"> 3 sao </label><br>
-            <label><input type="checkbox" value="2stars"> 2 sao </label><br>
-            <label><input type="checkbox" value="1stars"> 1 sao </label>
+    <form action="/search" method="GET" id="filterForm">
+        <div class="filters">
+            <h2>Bộ lọc theo:</h2>
+            
+            <!-- Đánh giá -->
+            <div class="filter-group">
+                <h3>Đánh giá</h3>
+                <label><input type="checkbox" name="ratings" value="5"> 5 sao</label><br>
+                <label><input type="checkbox" name="ratings" value="4"> 4 sao</label><br>
+                <label><input type="checkbox" name="ratings" value="3"> 3 sao</label><br>
+                <label><input type="checkbox" name="ratings" value="2"> 2 sao</label><br>
+                <label><input type="checkbox" name="ratings" value="1"> 1 sao</label>
+            </div>
+            
+            <!-- Giá tiền -->
+            <div class="filter-group">
+                <h3>Giá tiền</h3>
+                <label><input type="checkbox" name="prices" value="200"> 200k/1 đêm</label><br>
+                <label><input type="checkbox" name="prices" value="300"> 300k/1 đêm</label><br>
+                <label><input type="checkbox" name="prices" value="400"> 400k/1 đêm</label><br>
+                <label><input type="checkbox" name="prices" value="500"> 500k/1 đêm</label><br>
+                <label><input type="checkbox" name="prices" value="600"> 600k/1 đêm</label>
+            </div>
+            
+            <!-- Hoạt động giải trí -->
+            <div class="filter-group">
+                <h3>Địa điểm</h3>
+                <label><input type="checkbox" name="locations" value="1"> Lào Cai</label><br>
+                <label><input type="checkbox" name="locations" value="2"> Sơn La</label><br>
+                <label><input type="checkbox" name="locations" value="3"> Lai Châu</label><br>
+                <label><input type="checkbox" name="locations" value="4"> Điện Biên Phủ</label><br>
+                <label><input type="checkbox" name="locations" value="5"> Hòa Bình</label>
+            </div>
+    
+            <!-- Nút áp dụng bộ lọc -->
+            <button type="submit" class="filter-button">Áp dụng bộ lọc</button>
         </div>
-        <div class="filter-group">
-            <h3>Giá tiền</h3>
-            <label><input type="checkbox" value="900k/1 đêm">900k/1 đêm</label><br>
-            <label><input type="checkbox" value="850k/1 đêm">850k/1 đêm</label><br>
-            <label><input type="checkbox" value="800k/1 đêm">800k/1 đêm</label><br>
-            <label><input type="checkbox" value="750k/1 đêm">750k/1 đêm</label><br>
-            <label><input type="checkbox" value="700k/1 đêm">700k/1 đêm</label>
-        </div>
-        <div class="filter-group">
-            <h3>Hoạt động giải trí</h3>
-            <label><input type="checkbox" value="spa">Spa</label><br>
-            <label><input type="checkbox" value="karaoke">Karaoke</label><br>
-            <label><input type="checkbox" value="bar">Bar</label><br>
-            <label><input type="checkbox" value="cafe">Bi a</label><br>
-            <label><input type="checkbox" value="pool">Hồ bơi</label>
-        </div>
-    </div>
+    </form>  
+
+
+    
+    
+
+
 
     <!-- Kết quả tìm kiếm -->
     <div class="search-results">
@@ -86,18 +102,17 @@
         </form>
 
         <div id="results">
-            <!-- Kết quả tìm kiếm sẽ hiển thị ở đây -->
-
+        <!-- Kết quả tìm kiếm sẽ hiển thị ở đây -->
         {% if homestays %}  <!-- homestays: một list kết quả tìm kiếm đựơc backend trả về -->
             <div class="row">
                 {% for homestay in homestays %} <!--Duyệt list-->
                     <div class="item">
                         <div class="img">
-                            <img src="static/img/homestay1.jpg" alt="Homestay 1">
+                            <img src="{% static 'myapp/img/homestay1.jpg' %}" alt="Homestay 1">
                         </div>
                         <div class="info">
                             <h2 class="card-title">{{ homestay.name }}</h2>
-                            <div class="star-rating">
+                            <div class="star-rating"> 
                                 {% comment %} {% for i in homestay.rate %}
                                     <span class="star">★</span>
                                 {% endfor %} {% endcomment %}
@@ -114,257 +129,7 @@
         {% endif %}
 
 
-
-
-            {% comment %} <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay1.jpg" alt="Homestay 1">
-                </div>
-                <div class="info">
-                    <h2>Homestay 1</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 700k</h3>
-                    <p>Nằm cách Trạm cáp treo Fansipan 4.5 km, Homestay 1 cung cấp chỗ nghỉ có khu vườn, sân hiên và dịch vụ phòng. Homestay có WiFi và chỗ đậu xe riêng miễn phí.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay2.jpg" alt="Homestay 2">
-                </div>
-                <div class="info">
-                    <h2>Homestay 2</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 750k</h3>
-                    <p>Nhìn ra núi, Homestay 2 nằm ở Sa Pa và có nhà hàng, bếp chung, quầy bar, khu vườn cũng như sân hiên. WiFi và chỗ đậu xe riêng đều có sẵn tại homestay miễn phí.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay3.jpg" alt="Homestay 3">
-                </div>
-                <div class="info">
-                    <h2>Homestay 3</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 800k</h3>
-                    <p>Với Trạm cáp treo Fansipan nằm cách đó 6.2 km,Homestay 3 cung cấp chỗ nghỉ, nhà hàng, khu vườn, sân hiên và quầy bar. WiFi miễn phí có sẵn.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay4.jpg" alt="Homestay 4">
-                </div>
-                <div class="info">
-                    <h2>Homestay 4</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 850k</h3>
-                    <p>Nằm ở Sa Pa, cách Trạm cáp treo Fansipan 5.5 km và Hồ Sa Pa 14 phút đi bộ, Homestay 4 cung cấp chỗ nghỉ có phòng chờ chung và Wi-Fi miễn phí ở toàn bộ chỗ nghỉ cũng như chỗ đậu xe riêng miễn phí...</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay5.jpg" alt="Homestay 5">
-                </div>
-                <div class="info">
-                    <h2>Homestay 5</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 900k</h3>
-                    <p>Nằm ở Sa Pa, cách Trạm cáp treo Fansipan 5.5 km và Hồ Sa Pa 14 phút đi bộ, Homestay 5 cung cấp chỗ nghỉ có phòng chờ chung và Wi-Fi miễn phí ở toàn bộ chỗ nghỉ cũng như chỗ đậu xe riêng miễn phí...</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay6.jpg" alt="Homestay 6">
-                </div>
-                <div class="info">
-                    <h2>Homestay 6</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 700k</h3>
-                    <p>Nhìn ra núi, Homestay 6 nằm ở Sa Pa và có nhà hàng, bếp chung, quầy bar, khu vườn cũng như sân hiên. WiFi và chỗ đậu xe riêng đều có sẵn tại homestay miễn phí.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay7.jpg" alt="Homestay 2">
-                </div>
-                <div class="info">
-                    <h2>Homestay 7</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 750k</h3>
-                    <p>Nằm cách Trạm cáp treo Fansipan 6.2 km và Hồ Sa Pa 6 phút đi bộ, Homestay 7 cung cấp các phòng điều hòa và phòng tắm riêng ở Sa Pa.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay8.jpg" alt="Homestay 8">
-                </div>
-                <div class="info">
-                    <h2>Homestay 8</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 800k</h3>
-                    <p>Tọa lạc cách Trạm cáp treo Fansipan 4.7 km, Homestay 8 cung cấp chỗ nghỉ 3 sao ở Sa Pa, đồng thời có phòng chờ chung, sân hiên và nhà hàng.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay9.jpg" alt="Homestay 9">
-                </div>
-                <div class="info">
-                    <h2>Homestay 9</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 850k</h3>
-                    <p>Tọa lạc ở Sa Pa, cách Trạm cáp treo Fansipan 6 km, Homestay 9 cung cấp chỗ nghỉ có khu vườn, chỗ đậu xe riêng miễn phí, phòng chờ chung và sân hiên.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay10.jpg" alt="Homestay 10">
-                </div>
-                <div class="info">
-                    <h2>Homestay 10</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 900k</h3>
-                    <p>Nằm ở Sa Pa, cách Trạm cáp treo Fansipan 5.4 km, Homestay 10 cung cấp chỗ nghỉ có phòng chờ chung, chỗ đậu xe riêng miễn phí, sân hiên và quầy bar.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay11.jpg" alt="Homestay 11">
-                </div>
-                <div class="info">
-                    <h2>Homestay 11</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 700k</h3>
-                    <p>Nhìn ra núi, Homestay 11 tọa lạc ở Sa Pa và có nhà hàng, phòng chờ chung, bar thức ăn nhẹ, khu vườn cũng như sân hiên. Homestay có WiFi và chỗ đậu xe riêng miễn phí.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay12.jpg" alt="Homestay 12">
-                </div>
-                <div class="info">
-                    <h2>Homestay 12</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 750k</h3>
-                    <p>Tọa lạc cách Trạm cáp treo Fansipan 5.8 km, Homestay 12 cung cấp chỗ nghỉ 2 sao ở Sa Pa, đồng thời có phòng chờ chung, nhà hàng và quầy bar.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay13.jpg" alt="Homestay 13">
-                </div>
-                <div class="info">
-                    <h2>Homestay 13</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 800k</h3>
-                    <p>Homestay 13 tọa lạc ở Sa Pa, cách Ham Rong Garden - Ham Rong Mountain 16 phút đi bộ và Thung lũng Mường Hoa 11 km.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay14.jpg" alt="Homestay 14">
-                </div>
-                <div class="info">
-                    <h2>Homestay 14</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 850k</h3>
-                    <p>Nhìn ra núi, Homestay 14 nằm ở Sa Pa và có nhà hàng, bếp chung, quầy bar, khu vườn cũng như sân hiên. Wi-Fi miễn phí được cung cấp ở toàn bộ chỗ nghỉ.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-            <div class="item">
-                <div class="img">
-                    <img src="static/img/homestay15.jpg" alt="Homestay 15">
-                </div>
-                <div class="info">
-                    <h2>Homestay 15</h2>
-                    <div class="star-rating">
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                        <span class="star">★</span>
-                    </div>
-                    <h3>Giá: 900k</h3>
-                    <p>Homestay 15 có hồ bơi ngoài trời, khu vườn, phòng chờ chung và sân hiên ở Sa Pa. Chỗ nghỉ này có các tiện nghi như nhà hàng, dịch vụ phòng và quầy lễ tân 24 giờ, cùng với Wi-Fi miễn phí.</p>
-                </div>
-                <button class="book-button">Đặt phòng</button>
-            </div>
-        </div>
-    </div>
-</div> {% endcomment %}
+</div> 
 
 <script>
     function performSearch() {
