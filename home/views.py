@@ -27,7 +27,7 @@ def search_view(request):
     context = {
         'homestays': homestays,  # Truyền danh sách homestays vào template
     }
-    return render(request, 'search.html', context)#Tạm thời trả về home.html
+    return render(request, 'search.html')#Tạm thời trả về home.html
 
 # def search_view(request, name):
 #     form = HomestayFilterForm(request.GET or None)  # Khởi tạo form lọc
