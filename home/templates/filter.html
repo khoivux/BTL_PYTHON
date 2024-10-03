@@ -1,276 +1,58 @@
+<!-- searchresult.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/style2.css">
-    <script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css" integrity="sha512-UTNP5BXLIptsaj5WdKFrkFov94lDx+eBvbKyoe1YAfjeRPC+gT5kyZ10kOHCfNZqEui1sxmqvodNUx3KbuYI/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-    <title>Search Homestay</title>
+    <title>Kết quả tìm kiếm</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Optional JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    <header>   
-        <div class="content flex_space">
-    
-            <div class="logo">
-                <img src="static/img/logo.jpeg" alt="">
-            </div>
-            <div class="navlinks">
-                <ul id="menulist">
-                    <li><a href="#Home">Trang chủ</a></li> <!--url đến home-->
-                    <li><a href="#Dịch Vụ">Dịch vụ</a></li> <!--url xuống dịch vụ-->
-                    <li><a href="#homestay">Homestay</a></li> <!--url xuống danh sách homestay-->
-                    <li><a href="#Liên Hệ">Liên hệ</a></li> <!--url xuống liên hệ-->
-                    <li><a href="#Feedback">Phản hồi</a></li>   <!--url đến trang phản hồi-->
-                    <li><a href = "#"><button class="primary-btn">Đăng nhập</button></a></li> <!--url đến trang đăng nhập-->
-                </ul>
-                <span class="fa fa-bars" onclick="menutoggle()"></span>
-            </div>
-        </div>
-    </header>
-    
-    
-    <script>
-        var menulidt = document.getElementById("menulist");
-        menulist.style.maxHeight = "0px";
-        function menutoggle(){
-            if(menulist.style.maxHeight == "0px"){
-                menulist.style.maxHeight = "100vh";
-            }else{
-                menulist.style.maxHeight = "0px";
-            }
-        }
-    </script>
-<div class="container">
-    <!-- Bộ lọc -->
-    <div class="filters">
-        <h2>Bộ lọc theo:</h2>
-        <!-- Đánh giá -->
-        <div class="filter-group">
-            <h3>Đánh giá</h3>
-            <label><input type="checkbox" value="5stars"> 5 sao</label><br>
-            <label><input type="checkbox" value="4stars"> 4 sao </label><br>
-            <label><input type="checkbox" value="3stars"> 3 sao </label><br>
-            <label><input type="checkbox" value="2stars"> 2 sao </label><br>
-            <label><input type="checkbox" value="1stars"> 1 sao </label>
-        </div>
-        <div class="filter-group">
-            <h3>Giá tiền</h3>
-            <label><input type="checkbox" value="900k/1 đêm">900k/1 đêm</label><br>
-            <label><input type="checkbox" value="850k/1 đêm">850k/1 đêm</label><br>
-            <label><input type="checkbox" value="800k/1 đêm">800k/1 đêm</label><br>
-            <label><input type="checkbox" value="750k/1 đêm">750k/1 đêm</label><br>
-            <label><input type="checkbox" value="700k/1 đêm">700k/1 đêm</label>
-        </div>
-        <div class="filter-group">
-            <h3>Hoạt động giải trí</h3>
-            <label><input type="checkbox" value="spa">Spa</label><br>
-            <label><input type="checkbox" value="karaoke">Karaoke</label><br>
-            <label><input type="checkbox" value="bar">Bar</label><br>
-            <label><input type="checkbox" value="cafe">Bi a</label><br>
-            <label><input type="checkbox" value="pool">Hồ bơi</label>
-        </div>
-    </div>
+    <div class="container">
+        <h1 class="my-4">Kết quả tìm kiếm</h1>
 
- 
-    <div id="results">
-        <!-- Kết quả tìm kiếm -->
-    </div>
+        <!-- Form tìm kiếm và bộ lọc -->
+        <form action="{% url 'search' %}" method="GET" class="form-inline mb-4">
+            <!-- Tìm kiếm tên homestay -->
+            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control mr-2" placeholder="Tên homestay">
 
-    <script>
-        const homestays=[
-        {
-            name: "Homestay 1",
-            price: "900k/1 đêm",
-            rating: 5,
-            description: "Homestay 1 nằm ở vị trí đẹp, gần trung tâm thành phố, view đẹp, phòng ốc thoáng đãng, sạch sẽ, tiện nghi, phục vụ tận tình chu đáo.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay1.jpg"
-        },
-        {
-            name: "Homestay 2",
-            price: "850k/1 đêm",
-            rating: 4,
-            description: "Nằm cách Trạm cáp treo Fansipan 4.5 km, Homestay 2 cung cấp chỗ nghỉ có khu vườn, sân hiên và dịch vụ phòng. Homestay có WiFi và chỗ đậu xe riêng miễn phí.",
-            entertainment: ["cafe", "karaoke", "pool"],
-            img: "static/img/homestay2.jpg"
-        },
-        {
-            name: "Homestay 3",
-            price: "800k/1 đêm",
-            rating: 3,
-            description: "Với Trạm cáp treo Fansipan nằm cách đó 6.2 km,Homestay 3 cung cấp chỗ nghỉ, nhà hàng, khu vườn, sân hiên và quầy bar. WiFi miễn phí có sẵn.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay3.jpg"
-        },
-        {
-            name: "Homestay 4",
-            price: "750k/1 đêm",
-            rating: 2,
-            description: "Nằm ở Sa Pa, cách Trạm cáp treo Fansipan 5.5 km và Hồ Sa Pa 14 phút đi bộ, Homestay 4 cung cấp chỗ nghỉ có phòng chờ chung và Wi-Fi miễn phí ở toàn bộ chỗ nghỉ cũng như chỗ đậu xe riêng miễn phí...",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay4.jpg"
-        },
-        {
-            name: "Homestay 5",
-            price: "700k/1 đêm",
-            rating: 1,
-            description: "Nằm ở Sa Pa, cách Trạm cáp treo Fansipan 6.5 km và Hồ Sa Pa 14 phút đi bộ, Homestay 5 cung cấp chỗ nghỉ có phòng chờ chung và Wi-Fi miễn phí ở toàn bộ chỗ nghỉ cũng như chỗ đậu xe riêng miễn phí...",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay5.jpg"
-        },
-        {
-            name: "Homestay 6",
-            price: "900k/1 đêm",
-            rating: 5,
-            description: "Nhìn ra núi, Homestay 6 nằm ở Sa Pa và có nhà hàng, bếp chung, quầy bar, khu vườn cũng như sân hiên. WiFi và chỗ đậu xe riêng đều có sẵn tại homestay miễn phí.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay6.jpg"
-        },
-        {
-            name: "Homestay 7",
-            price: "850k/1 đêm",
-            rating: 4,
-            description: "Nằm cách Trạm cáp treo Fansipan 6.2 km và Hồ Sa Pa 6 phút đi bộ, Homestay 7 cung cấp các phòng điều hòa và phòng tắm riêng ở Sa Pa.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay7.jpg"
-        },
-        {
-            name: "Homestay 8",
-            price: "800k/1 đêm",
-            rating: 3,
-            description: "Tọa lạc cách Trạm cáp treo Fansipan 4.7 km, Homestay 8 cung cấp chỗ nghỉ 3 sao ở Sa Pa, đồng thời có phòng chờ chung, sân hiên và nhà hàng.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay8.jpg"
-        },
-        {
-            name: "Homestay 9",
-            price: "750k/1 đêm",
-            rating: 2,
-            description: "Tọa lạc ở Sa Pa, cách Trạm cáp treo Fansipan 6 km, Homestay 9 cung cấp chỗ nghỉ có khu vườn, chỗ đậu xe riêng miễn phí, phòng chờ chung và sân hiên.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay9.jpg"
-        },
-        {
-            name: "Homestay 10",
-            price: "700k/1 đêm",
-            rating: 1,
-            description: "Nằm ở Sa Pa, cách Trạm cáp treo Fansipan 5.4 km, Homestay 10 cung cấp chỗ nghỉ có phòng chờ chung, chỗ đậu xe riêng miễn phí, sân hiên và quầy bar.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay10.jpg"
-        },
-        {
-            name: "Homestay 11",
-            price: "900k/1 đêm",
-            rating: 5,
-            description: "Nhìn ra núi, Homestay 11 tọa lạc ở Sa Pa và có nhà hàng, phòng chờ chung, bar thức ăn nhẹ, khu vườn cũng như sân hiên. Homestay có WiFi và chỗ đậu xe riêng miễn phí.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay11.jpg"
-        },
-        {
-            name: "Homestay 12",
-            price: "850k/1 đêm",
-            rating: 4,
-            description: "Nằm cách Trạm cáp treo Fansipan 6.2 km và Hồ Sa Pa 6 phút đi bộ, Homestay 12 cung cấp các phòng điều hòa và phòng tắm riêng ở Sa Pa.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay12.jpg"
-        },
-        {
-            name: "Homestay 13",
-            price: "800k/1 đêm",
-            rating: 3,
-            description: "Tọa lạc cách Trạm cáp treo Fansipan 4.7 km, Homestay 13 cung cấp chỗ nghỉ 3 sao ở Sa Pa, đồng thời có phòng chờ chung, sân hiên và nhà hàng.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay13.jpg"
-        },
-        {
-            name: "Homestay 14",
-            price: "750k/1 đêm",
-            rating: 2,
-            description: "Tọa lạc ở Sa Pa, cách Trạm cáp treo Fansipan 6 km, Homestay 14 cung cấp chỗ nghỉ có khu vườn, chỗ đậu xe riêng miễn phí, phòng chờ chung và sân hiên.",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay14.jpg"
-        },
-        {
-            name: "Homestay 15",
-            price: "700k/1 đêm",
-            rating: 1,
-            description: "Nằm ở Sa Pa, cách Trạm cáp treo Fansipan 5.4 km, Homestay 15 cung cấp chỗ nghỉ có phòng chờ chung, chỗ đậu xe riêng miễn phí, sân hi",
-            entertainment: ["spa", "karaoke", "bar"],
-            img: "static/img/homestay15.jpg"
-        },
-        ];
-        const resultsContainer = document.getElementById("results");
-        function displayHomestays(){
-            homestays.forEach(homestay=>{
-                const itemDiv = document.createElement("div");
-                itemDiv.className="item";
+            <!-- Bộ lọc giá tiền -->
+            <input type="number" name="min_price" value="{{ request.GET.min_price }}" class="form-control mr-2" placeholder="Giá tối thiểu">
+            <input type="number" name="max_price" value="{{ request.GET.max_price }}" class="form-control mr-2" placeholder="Giá tối đa">
 
-                itemDiv.innerHTML = `
-                <div class="img">
-                    <img src="${homestay.img}" alt="${homestay.name}">
-                </div>
-                <div class="info">
-                    <h2>${homestay.name}</h2>
-                    <div class="rating">
-                        ${'★'.repeat(homestay.rating)}${'☆'.repeat(5-homestay.rating)}
+            <!-- Bộ lọc vị trí -->
+            <input type="text" name="location" value="{{ request.GET.location }}" class="form-control mr-2" placeholder="Vị trí">
+
+            <!-- Nút lọc -->
+            <button type="submit" class="btn btn-primary">Lọc kết quả</button>
+        </form>
+
+        <!-- Hiển thị kết quả tìm kiếm -->
+        {% if homestays %}
+            <div class="row">
+                {% for homestay in homestays %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ homestay.name }}</h5>
+                                <p class="card-text">
+                                    Giá: {{ homestay.price }} VND<br>
+                                    Vị trí: {{ homestay.location }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <h3>${homestay.price}</h3>
-                    <p>${homestay.description}</p>
-                </div>
-                <button onclick="showDetails(${homestay})">Xem chi tiết</button>
-                `;
-                resultsContainer.appendChild(itemDiv);
-            });
-        }
-        displayHomestays();<!-- goi ham hien thi cac homsstay -->
-
-    </script>
-
-</div>
-
-
-<footer>
-    <div class="container grid">
-        <div class="box">
-            <img src="static/img/homestay1.jpg" alt="">
-            <div class="icon">
-                <a href="#"><i class="fa fa-facebook"></i></a>
-                <a href="#"><i class="fa fa-instagram"></i></a>
-                <a href="#"><i class="fa fa-twitter"></i></a>
-                <a href="#"><i class="fa fa-youtube"></i></a>
+                {% endfor %}
             </div>
-        </div>
-        <div class="box">
-            <h2>GIỚI THIỆU</h2>
-            <a href="#">Trang chủ</a><br>
-            <a href="#">Dịch vụ</a><br>
-            <a href="#">Tin tức</a><br>
-            <a href="#">Liên hệ</a><br>
-        </div>
-        <div class="box">
-            <h2>LIÊN KẾT</h2>
-            <a href="#">Điều khoản sử dụng</a><br>
-            <a href="#">Chính sách bảo mật</a><br>
-            <a href="#">Chính sách hoàn tiền</a><br>
-            <a href="#">FAQs</a>
-        </div>
-        <div class="box">
-            <h2>LIÊN HỆ</h2>
-            <a href="#"><i class="fa fa-location-dot"></i></a>
-            <label>30 Tran Phu, Ha Dong, Ha Noi, Viet Nam</label><br>
-            <a href="#"><i class="fa fa-phone"></i></a>
-            <label>0987352163</label><br>
-            <a href="#"><i class="fas fa-envelope"></i></a>
-            <label>nhan54v@gmail.com</label><br>
-        </div>
+        {% else %}
+            <p class="alert alert-warning">Không tìm thấy kết quả phù hợp</p>
+        {% endif %}
     </div>
-</footer>
-
-
-
 </body>
 </html>
