@@ -3,7 +3,7 @@ from .models import Homestay
 from .forms import HomestayFilterForm
 
 def get_home(request):
-    return render(request,'home.html')
+    return render(request,'home1.html')
 
 def search_view(request):
     query = request.GET.get('name')
