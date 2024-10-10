@@ -5,8 +5,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homestay.com</title>
-    <link rel="stylesheet" href={% static 'myapp/css/style.css' %}>
+    <title>Trang chủ ● HomesTayBac</title>
+    <link rel="stylesheet" href={% static 'myapp/css/home.css' %}>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css"
         integrity="sha512-UTNP5BXLIptsaj5WdKFrkFov94lDx+eBvbKyoe1YAfjeRPC+gT5kyZ10kOHCfNZqEui1sxmqvodNUx3KbuYI/A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -29,7 +29,7 @@
 
             <div class="navlinks">
                 <ul id="menulist">
-                    <li><a href="#Home" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
+                    <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
                     <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
                     <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
                     <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
@@ -174,23 +174,25 @@
             }
         })
     </script>
+    <div>
+        <form action="{% url 'search' %}" method="GET">
+            <div class="container-flex text-white bg-warning py-1 px-1 book">
+                <div class="row justify-content-center">
+                    <div class="col">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Bạn muốn đi đâu?" name="locations" aria-label="Bạn muốn đi đâu?">
+                            <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" aria-label="Check-in Date">
+                            <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" aria-label="Check-out Date">
+                            <input type="number" class="form-control" placeholder="Người lớn" aria-label="Adults" min="1">
+                            <input type="number" class="form-control" placeholder="Trẻ em" aria-label="Children" min="0">
 
-    <div class="container-flex text-white bg-warning py-1 px-1 book">
-        <div class="row justify-content-center">
-            <div class="col">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Bạn muốn đi đâu?" aria-label="Bạn muốn đi đâu?">
-                    <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" aria-label="Check-in Date">
-                    <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" aria-label="Check-out Date">
-                    <input type="number" class="form-control" placeholder="Người lớn" aria-label="Adults" min="1">
-                    <input type="number" class="form-control" placeholder="Trẻ em" aria-label="Children" min="0">
-
-                    <button class="btn btn-primary" type="button">Tìm kiếm</button>
+                            <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-
 
     <!-- <section class="book">
         <div class="container flex_space">
