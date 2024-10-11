@@ -47,38 +47,22 @@ button{
 }
 
 header{
-    height: 10vh;
-    line-height: 10vh;
-    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+     position: relative; 
+    /* height: 10vh; */
+    /* line-height: 10vh; */
+    padding: 10px 20px;
 }
 
 header img{
     max-width: 200px;
-    max-height: 10vh;
-}
-.search_container {
-    padding-top: 20px;
-    display: flex;
-    align-items: center;
-    width: 300px;
-}
-header .search{
-    flex: 1;
-    padding: 7px;
-    border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px;
-}
-header .srch {
-    padding: 7px;
-    border: 1px solid #ccc;
-    border-left: none;
-    background-color: #04ff00;
-    color: white;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
+    max-height: 9vh;
 }
 header ul{
-    display: inline-block;
+    display: flex;
+    align-items: center;
 }
 header ul li{
     display: inline-block;
@@ -98,7 +82,7 @@ header i{
 header button{
     padding: 13px 40px;
 }
-header .navlinks span{
+header .navlinks #listbars{
     display: none;
 }
 .container {
