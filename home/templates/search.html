@@ -5,31 +5,29 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'myapp/css/style2.css' %}">
+    <link rel="stylesheet" href="{% static 'myapp/css/search.css' %}">
     <script src="https://kit.fontawesome.com/032d11eac3.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css" integrity="sha512-UTNP5BXLIptsaj5WdKFrkFov94lDx+eBvbKyoe1YAfjeRPC+gT5kyZ10kOHCfNZqEui1sxmqvodNUx3KbuYI/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-    <title>Search Homestay</title>
+    <title>Tìm kiếm • HomesTayBac</title>
 </head>
 <body>
     <header>   
-        <div class="content flex_space">
-    
-            <div class="logo">
-                <img src="{% static 'myapp/img/logo.jpeg' %}" alt="">
-            </div>
-            <div class="navlinks">
-                <ul id="menulist">
-                    <li><a href="#Home">Trang chủ</a></li> <!--url đến home-->
-                    <li><a href="#Dịch Vụ">Dịch vụ</a></li> <!--url xuống dịch vụ-->
-                    <li><a href="#homestay">Homestay</a></li> <!--url xuống danh sách homestay-->
-                    <li><a href="#Liên Hệ">Liên hệ</a></li> <!--url xuống liên hệ-->
-                    <li><a href="#Feedback">Phản hồi</a></li>   <!--url đến trang phản hồi-->
-                    <li><a href = "#"><button class="primary-btn">Đăng nhập</button></a></li> <!--url đến trang đăng nhập-->
-                </ul>
-                <span class="fa fa-bars" onclick="menutoggle()"></span>
-            </div>
+        <div class="logo">
+            <a href="/"><img src="{% static 'myapp/img/logo.jpeg' %}"></a> <!--back về home-->
+        </div>
+
+        <div class="navlinks">
+            <ul id="menulist">
+                <li><a href="/" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
+                <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
+                <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
+                <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
+                <li id="user-action"></li>
+            </ul>
+            <span id="listbars" class="fa fa-bars" onclick="menutoggle()"></span>
         </div>
     </header>
     
@@ -54,31 +52,31 @@
             <!-- Đánh giá -->
             <div class="filter-group">
                 <h3>Đánh giá</h3>
-                <label><input type="checkbox" name="ratings" value="5"> 5 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="4"> 4 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="3"> 3 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="2"> 2 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="1"> 1 sao</label>
+                <label><input type="checkbox" name="ratings" value="5" {% if '5' in selected_ratings %}checked{% endif %}> 5 sao</label><br>
+                <label><input type="checkbox" name="ratings" value="4" {% if '4' in selected_ratings %}checked{% endif %}> 4 sao</label><br>
+                <label><input type="checkbox" name="ratings" value="3" {% if '3' in selected_ratings %}checked{% endif %}> 3 sao</label><br>
+                <label><input type="checkbox" name="ratings" value="2" {% if '2' in selected_ratings %}checked{% endif %}> 2 sao</label><br>
+                <label><input type="checkbox" name="ratings" value="1" {% if '1' in selected_ratings %}checked{% endif %}> 1 sao</label>
             </div>
             
             <!-- Giá tiền -->
             <div class="filter-group">
                 <h3>Giá tiền</h3>
-                <label><input type="checkbox" name="prices" value="200"> 200k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="300"> 300k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="400"> 400k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="500"> 500k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="600"> 600k/1 đêm</label>
+                <label><input type="checkbox" name="prices" value="200" {% if '200' in selected_prices %}checked{% endif %}> 200k/1 đêm</label><br>
+                <label><input type="checkbox" name="prices" value="300" {% if '300' in selected_prices %}checked{% endif %}> 300k/1 đêm</label><br>
+                <label><input type="checkbox" name="prices" value="400" {% if '400' in selected_prices %}checked{% endif %}> 400k/1 đêm</label><br>
+                <label><input type="checkbox" name="prices" value="500" {% if '500' in selected_prices %}checked{% endif %}> 500k/1 đêm</label><br>
+                <label><input type="checkbox" name="prices" value="600" {% if '600' in selected_prices %}checked{% endif %}> 600k/1 đêm</label>
             </div>
             
             <!-- Hoạt động giải trí -->
             <div class="filter-group">
                 <h3>Địa điểm</h3>
-                <label><input type="checkbox" name="locations" value="1"> Lào Cai</label><br>
-                <label><input type="checkbox" name="locations" value="2"> Sơn La</label><br>
-                <label><input type="checkbox" name="locations" value="3"> Lai Châu</label><br>
-                <label><input type="checkbox" name="locations" value="4"> Điện Biên Phủ</label><br>
-                <label><input type="checkbox" name="locations" value="5"> Hòa Bình</label>
+                <label><input type="checkbox" name="locations" value="1" {% if '1' in selected_locations %}checked{% endif %}> Lào Cai</label><br>
+                <label><input type="checkbox" name="locations" value="2" {% if '2' in selected_locations %}checked{% endif %}> Sơn La</label><br>
+                <label><input type="checkbox" name="locations" value="3" {% if '3' in selected_locations %}checked{% endif %}> Lai Châu</label><br>
+                <label><input type="checkbox" name="locations" value="4" {% if '4' in selected_locations %}checked{% endif %}> Điện Biên Phủ</label><br>
+                <label><input type="checkbox" name="locations" value="5" {% if '5' in selected_locations %}checked{% endif %}> Hòa Bình</label>
             </div>
     
             <!-- Nút áp dụng bộ lọc -->
@@ -120,7 +118,9 @@
                             <h3>Giá: {{ homestay.price }}k</h3>
                             <p>Nằm cách Trạm cáp treo Fansipan 4.5 km, Homestay 1 cung cấp chỗ nghỉ có khu vườn, sân hiên và dịch vụ phòng. Homestay có WiFi và chỗ đậu xe riêng miễn phí.</p>
                         </div>
-                        <button class="book-button">Đặt phòng</button>
+                        <form action="{% url 'product' homestay.id %}" method="GET">
+                            <button class="book-button">Đặt phòng</button>
+                        </form>
                     </div>
                 {% endfor %}
             </div>
