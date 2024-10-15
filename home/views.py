@@ -3,7 +3,7 @@ from django.shortcuts import render
 from .models import Homestay
 
 def get_home(request):
-    return render(request,'home1.html')
+    return render(request,'home.html')
 
 def search_view(request):
     query = request.GET.get('location')

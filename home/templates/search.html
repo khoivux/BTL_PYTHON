@@ -92,12 +92,12 @@
 
     <!-- Kết quả tìm kiếm -->
     <div class="search-results">
-        <form action="{% url 'search' %}" method="GET"> <!--url nhận thông tin tìm kiếm-->
+        {% comment %} <form action="{% url 'search' %}" method="GET"> <!--url nhận thông tin tìm kiếm-->
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Tìm kiếm...">
                 <button onclick="performSearch()">Tìm kiếm</button>
             </div>
-        </form>
+        </form> {% endcomment %}
 
         <div id="results">
         <!-- Kết quả tìm kiếm sẽ hiển thị ở đây -->
@@ -176,8 +176,6 @@
         </div>
     </div>
 </footer>
-
-
 
 </body>
 </html>
