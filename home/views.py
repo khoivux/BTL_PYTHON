@@ -10,6 +10,7 @@ def search_view(request):
     ratings = request.GET.getlist('ratings')
     locations = request.GET.getlist('locations')
     prices = request.GET.getlist('prices')
+    sort_option = request.GET.get('sort', 'asc')
 
     homestays = Homestay.objects.all()  # Lấy tất cả homestays
 
@@ -25,12 +26,18 @@ def search_view(request):
         if locations:
             homestays = homestays.filter(province__id__in=locations)
     
+     # Sắp xếp theo giá
+    if sort_option == 'asc':
+        homestays = homestays.order_by('price')
+    elif sort_option == 'desc':
+        homestays = homestays.order_by('-price')
 
     context = {
         'homestays': homestays,
         'selected_ratings': ratings,
         'selected_prices': prices,
         'selected_locations': locations,
+        'current_sort': sort_option,
     }
     return render(request, 'search.html', context)
 

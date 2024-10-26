@@ -13,15 +13,14 @@
     <title>Tìm kiếm • HomesTayBac</title>
 </head>
 <body>
-    <header>
-
+    <header>   
         <div class="logo">
             <a href="/"><img src="{% static 'myapp/img/logo.jpeg' %}"></a> <!--back về home-->
         </div>
 
         <div class="navlinks">
             <ul id="menulist">
-                <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
+                <li><a href="/" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
                 <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
                 <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
                 <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
@@ -30,107 +29,24 @@
             </ul>
             <span id="listbars" class="fa fa-bars" onclick="menutoggle()"></span>
         </div>
+    </header>
     
-</header>
-<script>
-    let isLoggedIn = false; // thêm phương thức kiểm tra trạng thái đăng nhập
-    const userName = "Nguyễn Văn A";
-
-    function updateUserAction() {
-        const userActionDiv = document.getElementById("user-action");
-        console.log(userActionDiv);
-        if (isLoggedIn) {
-            userActionDiv.innerHTML =
-            `
-            <div show-info onclick="showInfo()" class="navlinks">
-                <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
-                <ul show-ul class="d-none" id="userlist">
-                    <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                    <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
-                    <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
-                </ul>
-            </div>
-            `;                                                      //url trang profile
-                                                                    // url trang history
-                                                                    // thoát trạng thái đăng nhập
-        } else {
-            userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
-        }
-    }
-
-    function logout() {
-        isLoggedIn = false;
-        updateUserAction(); 
-    }
-    updateUserAction();
-</script>
-<script>
-    var Menulist = document.getElementsByClassName("navlinks");
-    // menulist.style.maxHeight = "0px";
-    function menutoggle() {
-        if (menulist.style.maxHeight == "0px") {
-            menulist.style.maxHeight = "60vh";
-        } else {
-            menulist.style.maxHeight = "0px";
-        }
-    }
     
-    let shown = false;
-    const showInfor = document.querySelector('[show-info]');
-    console.log(showInfor);
-    const showUl = showInfor.querySelector(`[show-ul]`);
-    console.log(showUl);
-    function showInfo() {
-       
-        if(shown){
-            showUl.classList.remove('d-block');
-            showUl.classList.add("d-none");
-            // const userName = showInfor.querySelector(`.user`);
-            shown = false;
+    <script>
+        var menulidt = document.getElementById("menulist");
+        menulist.style.maxHeight = "0px";
+        function menutoggle(){
+            if(menulist.style.maxHeight == "0px"){
+                menulist.style.maxHeight = "100vh";
+            }else{
+                menulist.style.maxHeight = "0px";
+            }
         }
-        else{
-            showUl.classList.remove('d-none');
-            showUl.classList.add("d-block");
-            const userName = showInfor.querySelector(`.user`);
-            // console.log(userName);
-            // userName.classList.add("d-none");
-            shown = true;
-        }
-        
-    }
-</script>
+    </script>
 <div class="container">
     <!-- Bộ lọc -->
     <form action="/search" method="GET" id="filterForm">
-    
-
         <div class="filters">
-            <div class="search-box">
-                <h2>Tìm</h2>
-                <label for="destination">Tên chỗ nghỉ / điểm đến:</label>
-                <div class="search-input">
-                    <input type="text" id="destination" placeholder="Địa điểm">
-                    <i class="fa fa-search"></i>
-                </div>
-                <label for="checkin-date">Ngày nhận phòng</label>
-                <div class="date-picker">
-                    <input type="date" id="checkin-date">
-                    <i class="fa fa-calendar"></i>
-                </div>
-                <label for="checkout-date">Ngày trả phòng</label>
-                <div class="date-picker">
-                    <input type="date" id="checkout-date">
-                    <i class="fa fa-calendar"></i>
-                </div>
-                <label for="guest-info">Nghỉ 1 đêm</label>
-                <select id="guest-info">
-                    <option>1 người lớn · 0 trẻ em · 1 phòng</option>
-                    <option>2 người lớn · 0 trẻ em · 1 phòng</option>
-                    <!-- Thêm các tuỳ chọn khác nếu cần -->
-                </select>
-                <button type="submit" class="search-button">Tìm</button>
-            </div>
-            
             <h2>Bộ lọc theo:</h2>
             
             <!-- Đánh giá -->
@@ -142,6 +58,7 @@
                 <label><input type="checkbox" name="ratings" value="2" {% if '2' in selected_ratings %}checked{% endif %}> 2 sao</label><br>
                 <label><input type="checkbox" name="ratings" value="1" {% if '1' in selected_ratings %}checked{% endif %}> 1 sao</label>
             </div>
+            
             <!-- Giá tiền -->
             <div class="filter-group">
                 <h3>Giá tiền</h3>
@@ -151,6 +68,7 @@
                 <label><input type="checkbox" name="prices" value="500" {% if '500' in selected_prices %}checked{% endif %}> 500k/1 đêm</label><br>
                 <label><input type="checkbox" name="prices" value="600" {% if '600' in selected_prices %}checked{% endif %}> 600k/1 đêm</label>
             </div>
+            
             <!-- Hoạt động giải trí -->
             <div class="filter-group">
                 <h3>Địa điểm</h3>
@@ -160,6 +78,7 @@
                 <label><input type="checkbox" name="locations" value="4" {% if '4' in selected_locations %}checked{% endif %}> Điện Biên Phủ</label><br>
                 <label><input type="checkbox" name="locations" value="5" {% if '5' in selected_locations %}checked{% endif %}> Hòa Bình</label>
             </div>
+    
             <!-- Nút áp dụng bộ lọc -->
             <button type="submit" class="filter-button">Áp dụng bộ lọc</button>
         </div>
@@ -173,52 +92,16 @@
 
     <!-- Kết quả tìm kiếm -->
     <div class="search-results">
-        <!-- Kết quả tìm kiếm sẽ hiển thị ở đây -->
-        <!-- homestays: một list kết quả tìm kiếm đựơc backend trả về -->
+        {% comment %} <form action="{% url 'search' %}" method="GET"> <!--url nhận thông tin tìm kiếm-->
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm...">
+                <button onclick="performSearch()">Tìm kiếm</button>
+            </div>
+        </form> {% endcomment %}
 
-        <div class="search-price">
-            <h3>Sắp xếp:</h3>
-            <select id="price-sort" onchange="sortHomestays()">
-                <option value="asc" {% if current_sort == 'asc' %}selected{% endif %}>Giá tăng dần</option>
-                <option value="desc" {% if current_sort == 'desc' %}selected{% endif %}>Giá giảm dần</option>
-            </select>
-        </div>
-        
-        <script>
-            function sortHomestays() {
-                let sortOption = document.getElementById("price-sort").value;
-                let currentUrl = window.location.href.split('?')[0];
-                window.location.href = currentUrl + "?sort=" + sortOption;
-            }
-        </script>
-        
-        {% comment %} <div class="search-price">
-            <h3>Sắp xếp:</h3>
-            <select id="price-sort">
-            <option value="asc">Giá tăng dần</option>
-            <option value="desc">Giá giảm dần</option>
-            </select>
-        </div> {% endcomment %}
-        {% comment %} <script>
-            document.querySelector(".filter-button").addEventListener("click", function() {
-                let sortOption = document.getElementById("price-sort").value;
-        
-                if (sortOption === "asc") {
-                    // Sắp xếp giá tăng dần
-                    homestays.sort((a, b) => a.price - b.price);
-                    console.log("Sắp xếp giá tăng dần", homestays);
-                } else if (sortOption === "desc") {
-                    // Sắp xếp giá giảm dần
-                    homestays.sort((a, b) => b.price - a.price);
-                    console.log("Sắp xếp giá giảm dần", homestays);
-                }
-        
-                // Sau khi sắp xếp, bạn có thể cập nhật giao diện hiển thị homestay ở đây
-                updateHomestayDisplay(homestays);
-            });            
-        </script> {% endcomment %}
         <div id="results">
-        {% if homestays %}
+        <!-- Kết quả tìm kiếm sẽ hiển thị ở đây -->
+        {% if homestays %}  <!-- homestays: một list kết quả tìm kiếm đựơc backend trả về -->
             <div class="row">
                 {% for homestay in homestays %} <!--Duyệt list-->
                     <div class="item">
@@ -244,24 +127,8 @@
         {% else %}
             <p class="alert alert-warning">Không tìm thấy kết quả phù hợp</p>
         {% endif %}
-<<<<<<< HEAD
+        </div> 
     </div> 
-
-<<<<<<< HEAD
-=======
-    </div> 
-</div> 
->>>>>>> develop
-=======
-        </div>
-    </div> 
-</div>
-<!--<<<<<<< HEAD
-=======
-    </div> 
-</div> 
->>>>>>> develop -->
->>>>>>> develop
 
 <script>
     function performSearch() {
@@ -299,18 +166,12 @@
         </div>
         <div class="box">
             <h2>LIÊN HỆ</h2>
-            <div class = "flex">
-                <i class="fa fa-location-dot"></i>
-                <p>30 Tran Phu, Ha Dong, Ha Noi, Viet Nam</p>
-            </div>
-            <div class = "flex">
-                <i class="fa fa-phone"></i>
-                <p>0987352163</p>
-            </div>
-            <div class = "flex">
-                <i class="fa fa-envelope"></i>
-                <p>nhan54v@gmail.com</p>
-            </div>
+            <a href="#"><i class="fa fa-location-dot"></i></a>
+            <label>30 Tran Phu, Ha Dong, Ha Noi, Viet Nam</label><br>
+            <a href="#"><i class="fa fa-phone"></i></a>
+            <label>0987352163</label><br>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+            <label>nhan54v@gmail.com</label><br>
         </div>
     </div>
 </footer>
