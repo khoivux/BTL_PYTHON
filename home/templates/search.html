@@ -153,12 +153,18 @@
             </div>
             <!-- Hoạt động giải trí -->
             <div class="filter-group">
-                <h3>Địa điểm</h3>
-                <label><input type="checkbox" name="locations" value="1" {% if '1' in selected_locations %}checked{% endif %}> Lào Cai</label><br>
-                <label><input type="checkbox" name="locations" value="2" {% if '2' in selected_locations %}checked{% endif %}> Sơn La</label><br>
-                <label><input type="checkbox" name="locations" value="3" {% if '3' in selected_locations %}checked{% endif %}> Lai Châu</label><br>
-                <label><input type="checkbox" name="locations" value="4" {% if '4' in selected_locations %}checked{% endif %}> Điện Biên Phủ</label><br>
-                <label><input type="checkbox" name="locations" value="5" {% if '5' in selected_locations %}checked{% endif %}> Hòa Bình</label>
+                <h3>Tiện nghi</h3>
+                <label><input type="checkbox" name="homefacilities" value="1" {% if '1' in selected_homefacilities %}checked{% endif %}> Chỗ đỗ xe</label><br>
+                <label><input type="checkbox" name="homefacilities" value="2" {% if '2' in selected_homefacilities %}checked{% endif %}> Cho phép vật nuôi</label><br>
+                <label><input type="checkbox" name="homefacilities" value="3" {% if '3' in selected_homefacilities %}checked{% endif %}> Cho thuê xe máy/ xe đạp</label><br>
+                <label><input type="checkbox" name="homefacilities" value="4" {% if '4' in selected_homefacilities %}checked{% endif %}> Hồ bơi</label><br>
+                <label><input type="checkbox" name="homefacilities" value="5" {% if '5' in selected_homefacilities %}checked{% endif %}> Lễ tân 24 giờ</label><br>
+                <label><input type="checkbox" name="homefacilities" value="6" {% if '6' in selected_homefacilities %}checked{% endif %}> Phòng xông hơi</label><br>
+                <label><input type="checkbox" name="homefacilities" value="7" {% if '7' in selected_homefacilities %}checked{% endif %}> Sân chơi trẻ em</label><br>
+                <label><input type="checkbox" name="homefacilities" value="8" {% if '8' in selected_homefacilities %}checked{% endif %}> Trạm sạc xe điện</label><br>
+                <label><input type="checkbox" name="homefacilities" value="9" {% if '9' in selected_homefacilities %}checked{% endif %}> Trung tâm spa, massage</label><br>
+                <label><input type="checkbox" name="homefacilities" value="10" {% if '10' in selected_homefacilities %}checked{% endif %}> Trung tâm thể dục, gym</label><br>
+                <label><input type="checkbox" name="homefacilities" value="11" {% if '11' in selected_homefacilities %}checked{% endif %}> Wifi miễn phí</label><br>
             </div>
             <!-- Nút áp dụng bộ lọc -->
             <button type="submit" class="filter-button">Áp dụng bộ lọc</button>
@@ -192,31 +198,7 @@
             }
         </script>
         
-        {% comment %} <div class="search-price">
-            <h3>Sắp xếp:</h3>
-            <select id="price-sort">
-            <option value="asc">Giá tăng dần</option>
-            <option value="desc">Giá giảm dần</option>
-            </select>
-        </div> {% endcomment %}
-        {% comment %} <script>
-            document.querySelector(".filter-button").addEventListener("click", function() {
-                let sortOption = document.getElementById("price-sort").value;
-        
-                if (sortOption === "asc") {
-                    // Sắp xếp giá tăng dần
-                    homestays.sort((a, b) => a.price - b.price);
-                    console.log("Sắp xếp giá tăng dần", homestays);
-                } else if (sortOption === "desc") {
-                    // Sắp xếp giá giảm dần
-                    homestays.sort((a, b) => b.price - a.price);
-                    console.log("Sắp xếp giá giảm dần", homestays);
-                }
-        
-                // Sau khi sắp xếp, bạn có thể cập nhật giao diện hiển thị homestay ở đây
-                updateHomestayDisplay(homestays);
-            });            
-        </script> {% endcomment %}
+      
         <div id="results">
         {% if homestays %}
             <div class="row">
@@ -244,24 +226,18 @@
         {% else %}
             <p class="alert alert-warning">Không tìm thấy kết quả phù hợp</p>
         {% endif %}
-<<<<<<< HEAD
+
     </div> 
 
-<<<<<<< HEAD
-=======
+
+
     </div> 
 </div> 
->>>>>>> develop
-=======
+
         </div>
     </div> 
 </div>
-<!--<<<<<<< HEAD
-=======
-    </div> 
-</div> 
->>>>>>> develop -->
->>>>>>> develop
+
 
 <script>
     function performSearch() {
