@@ -22,5 +22,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')), # Nếu không có / thì sẽ gọi đến home.urls
     path('login/', include('login.urls')),
-    path('myadmin/', include('admin.urls')),
 ]

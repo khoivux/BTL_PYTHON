@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home',
     'login',
+    'homestay_manager',
+    'booking_manager',
 ]
 
 MIDDLEWARE = [
@@ -77,14 +79,14 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'django.db.backends.sqlite3',
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'homestaybac',
-        # 'USER': 'root',
-        # 'PASSWORD': '',
-        # 'HOST': 'localhost',
-        # 'PORT': '3307',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'python',
+        'USER': 'root',
+        'PASSWORD': 'khoi21102004',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 

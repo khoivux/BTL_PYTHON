@@ -1,6 +1,6 @@
 from gc import get_objects
 from django.shortcuts import render
-from .models import Homestay
+from homestay_manager.models import Homestay
 
 def get_home(request):
     return render(request,'home.html')
@@ -8,7 +8,7 @@ def get_home(request):
 def search_view(request):
     query = request.GET.get('location')
     ratings = request.GET.getlist('ratings')
-    locations = request.GET.getlist('locations')
+    homefacilities = request.GET.getlist('homefacilities')
     prices = request.GET.getlist('prices')
     sort_option = request.GET.get('sort', 'asc')
 
@@ -19,12 +19,10 @@ def search_view(request):
         homestays = Homestay.objects.filter(province__name__icontains=query)
     if ratings:
         homestays = homestays.filter(rating__in=ratings)
-    if prices:
-        homestays = homestays.filter(price__in=prices)
-    if locations:
-        locations = [loc for loc in locations if loc]
-        if locations:
-            homestays = homestays.filter(province__id__in=locations)
+    
+    if homefacilities:
+        homestays = homestays.filter(facilities__id__in=homefacilities).distinct()
+       
     
      # Sắp xếp theo giá
     if sort_option == 'asc':
@@ -36,7 +34,7 @@ def search_view(request):
         'homestays': homestays,
         'selected_ratings': ratings,
         'selected_prices': prices,
-        'selected_locations': locations,
+        'selected_homefacilities': homefacilities,
         'current_sort': sort_option,
     }
     return render(request, 'search.html', context)
