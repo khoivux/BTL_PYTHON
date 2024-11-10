@@ -1,0 +1,310 @@
+{% load static %}
+{% load price_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Đặt Phòng Homestay</title>
+    <link rel="stylesheet" href="{% static 'css/booking.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="/"><img src="{% static 'img/logo.jpeg' %}" alt="Logo"></a> <!--back về home-->
+        </div>
+
+        <div class="navlinks">
+            <ul id="menulist">
+                <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
+                <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
+                <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
+                <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
+                <li id="user-action"></li>
+            </ul>
+            <span id="listbars" class="fa fa-bars" onclick="menutoggle()"></span>
+        </div>
+    </header>
+    <script>
+        let isLoggedIn = false; // thêm phương thức kiểm tra trạng thái đăng nhập
+        const userName = "Nguyễn Văn A";
+
+        function updateUserAction() {
+            const userActionDiv = document.getElementById("user-action");
+            console.log(userActionDiv);
+            if (isLoggedIn) {
+                userActionDiv.innerHTML =
+                `
+                <div show-info onclick="showInfo()" class="navlinks">
+                    <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
+                    <ul show-ul class="d-none" id="userlist">
+                        <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
+                    </ul>
+                </div>
+                `;                                                      //url trang profile
+                                                                        // url trang history
+                                                                        // thoát trạng thái đăng nhập
+            } else {
+                userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
+            }
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            updateUserAction(); 
+        }
+        updateUserAction();
+    </script>
+    <script>
+        var Menulist = document.getElementsByClassName("navlinks");
+        // menulist.style.maxHeight = "0px";
+        function menutoggle() {
+            if (menulist.style.maxHeight == "0px") {
+                menulist.style.maxHeight = "60vh";
+            } else {
+                menulist.style.maxHeight = "0px";
+            }
+        }
+        
+        let shown = false;
+        const showInfor = document.querySelector('[show-info]');
+        console.log(showInfor);
+        const showUl = showInfor.querySelector(`[show-ul]`);
+        console.log(showUl);
+        function showInfo() {
+           
+            if(shown){
+                showUl.classList.remove('d-block');
+                showUl.classList.add("d-none");
+                // const userName = showInfor.querySelector(`.user`);
+                shown = false;
+            }
+            else{
+                showUl.classList.remove('d-none');
+                showUl.classList.add("d-block");
+                const userName = showInfor.querySelector(`.user`);
+                // console.log(userName);
+                // userName.classList.add("d-none");
+                shown = true;
+            }
+            
+        }
+        function usertoggle() {
+            const userlist = document.getElementById("userlist");
+            userlist.classList.toggle("d-none");
+            userlist.classList.toggle("d-block");
+        }
+    </script>
+
+    <form  id = "Details">  <!--nhập thông tin--> 
+        <div class="container mt-4">
+            <!-- Header -->
+            <div class="general-info text-center">
+                <h3>{{ homestay.name }}</h3>
+                <p>{{ homestay.address }}, {{ homestay.province.name }}</p>
+            </div>
+    
+            <div class="row">
+                <!-- Booking Details -->
+                <div class="col-md-4">
+                    <div class="details info-box">
+                        <h3>Chi tiết đặt homestay của bạn</h3>
+                        <p>Nhận phòng: {{ checkin_date }}</p>
+                        <p>Trả phòng: {{ checkout_date }}</p>
+                        <p>Tổng thời gian lưu trú: {{ stay_duration }} ngày</p>
+                        <h5>Giá thuê: {{ rent_price|format_price }}</h5>
+                        <a href="/search" class="text-primary">Đổi lựa chọn của bạn</a>
+                    </div>
+                    <div class="services info-box">
+                        <h5>Dịch vụ</h5>
+                        <div>
+                            <input type="checkbox" name="services" value="Cầu hôn"> Cầu hôn
+                        </div>
+                        <div>
+                            <input type="checkbox" name="services" value="Thể thao"> Thể thao
+                        </div>
+                        <div>
+                            <input type="checkbox" name="services" value="Ăn uống"> Ăn uống
+                        </div>
+                        <div>
+                            <input type="checkbox" name="services" value="Đi lại"> Đi lại
+                        </div>
+                    </div>
+                    <div class="facilities info-box">                
+                        <h5 class="mt-4">Tiện nghi:</h5>
+                        <ul class="list-unstyled">
+                            {% for facility in facilities %}
+                                <li><i class="fas fa-check-circle"></i>• {{ facility.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- User Information Form -->
+                <div class="col-md-8">
+                    <div class="info-box">
+                        <div class="book-cus info-box">
+                            <h5>Thông tin người đặt phòng</h5>
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Họ</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Ví dụ: Nguyễn">
+                            </div>
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">Tên</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="Ví dụ: Tuấn">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="email@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="text" class="form-control" id="phone" placeholder="+84">
+                            </div>
+                        </div>
+                        <div class="check-in-cus info-box">
+                            <h5>Thông tin người nhận phòng</h5>
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Họ</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Ví dụ: Nguyễn">
+                            </div>
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">Tên</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="Ví dụ: Tuấn">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="email@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="text" class="form-control" id="phone" placeholder="+84">
+                            </div>
+                        </div>
+                        <div class="check-in-time">
+                            <h6>Thời gian nhận phòng</h6>
+                            <select class="form-select" >
+                                <option value="" disabled="" selected="">Vui lòng chọn</option>
+                                <option value="-1">Tôi không biết</option>
+                                <option value="0">00:00 – 01:00 </option>
+                                <option value="1">01:00 – 02:00 </option>
+                                <option value="2">02:00 – 03:00 </option>
+                                <option value="3">03:00 – 04:00 </option>
+                                <option value="4">04:00 – 05:00 </option>
+                                <option value="5">05:00 – 06:00 </option>
+                                <option value="6">06:00 – 07:00 </option>
+                                <option value="7">07:00 – 08:00 </option>
+                                <option value="8">08:00 – 09:00 </option>
+                                <option value="9">09:00 – 10:00 </option>
+                                <option value="10">10:00 – 11:00 </option>
+                                <option value="11">11:00 – 12:00 </option>
+                                <option value="12">12:00 – 13:00 </option>
+                                <option value="13">13:00 – 14:00 </option>
+                                <option value="14">14:00 – 15:00 </option>
+                                <option value="15">15:00 – 16:00 </option>
+                                <option value="16">16:00 – 17:00 </option>
+                                <option value="17">17:00 – 18:00 </option>
+                                <option value="18">18:00 – 19:00 </option>
+                                <option value="19">19:00 – 20:00 </option>
+                                <option value="20">20:00 – 21:00 </option>
+                                <option value="21">21:00 – 22:00 </option>
+                                <option value="22">22:00 – 23:00 </option>
+                                <option value="23">23:00 – 00:00 </option>
+                            </select>
+                        </div>
+                        <div class="regulations">
+                            <h5>Quy định chung</h5>
+                            <ul>
+                                <li>- Không hút thuốc</li>
+                                <li>- Thời gian yên lặng từ 22:00 đến 07:00</li>
+                                <li>- Không cho phép thú cưng</li>
+                            </ul>
+                        </div>
+                        <div class="d-flex justify-content-end mt-5">
+                            <button type="submit" class="btn btn-primary">Thanh toán</button></div>                             
+                        </div>
+                    </div>
+                </div>
+        </div>                 
+    </form> 
+  
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("modal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModal = document.querySelector(".close"); // Chọn phần tử close chính xác
+    
+        // Mở modal khi nhấn vào nút
+        openModalBtn.onclick = function () {
+            modal.style.display = "flex";
+        };
+    
+        // Đóng modal khi nhấn vào dấu 'X'
+        if (closeModal) {
+            closeModal.onclick = function () {
+                modal.style.display = "none";
+            };
+        }
+    
+        // Đóng modal khi nhấn ra ngoài modal
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+    });
+</script>
+    
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col box">
+                    <img src="/static/img/background2.jpg" alt="">
+                    <div class="icon">
+                        <i class="fa fa-facebook-f"></i>
+                        <i class="fa fa-instagram"></i>
+                        <i class="fa fa-twitter"></i>
+                        <i class="fa fa-youtube"></i>
+                    </div>
+                </div>
+                <div class="col box">
+                    <h2>GIỚI THIỆU</h2>
+                    <a href="#">Trang chủ</a><br>
+                    <a href="#">Dịch vụ</a><br>
+                    <a href="#">Tin tức</a><br>
+                    <a href="#">Liên hệ</a><br>
+                </div>
+                <div class="col box">
+                    <h2>LIÊN KẾT</h2>
+                    <a href="#">Điều khoản sử dụng</a><br>
+                    <a href="#">Chính sách bảo mật</a><br>
+                    <a href="#">Chính sách hoàn tiền</a><br>
+                    <a href="#">FAQs</a>
+                </div>
+                <div class="col-md-2 box">
+                    <h2>LIÊN HỆ</h2>
+                    <div class = "flex">
+                        <i class="fa fa-location-dot"></i>
+                        <p>30 Tran Phu, Ha Dong, Ha Noi, Viet Nam</p>
+                    </div>
+                    <div class = "flex">
+                        <i class="fa fa-phone"></i>
+                        <p>0987352163</p>
+                    </div>
+                    <div class = "flex">
+                        <i class="fa fa-envelope"></i>
+                        <p>nhan54v@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+1

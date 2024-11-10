@@ -1,4 +1,5 @@
 {% load static %}
+{% load price_filters %}
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
@@ -108,6 +109,7 @@
     </script>
 
 <main class="container my-5">
+    <form action="{% url 'booking_manager:booking' %}" method="GET">
     <div class="row">
         <div class="col-lg-7">
             <!--Hình ảnh sản phẩm-->
@@ -143,24 +145,110 @@
                 }
             </script>
         </div>
-        {% comment %} {% if homestays %} {% endcomment %}
-            <div class="col-lg-5">
-                <h2 class="card-title">Tên: {{ homestay.name }}</h2>
-                <p class="text-muted">Địa chỉ: {{ homestay.address }}</p>
-                <p class="text-muted">Homestay Tây Bắc mang đậm bản sắc văn hóa dân tộc vùng cao...</p>
-                <h4 class="mt-4">Tiện nghi</h4>
-                <ul class="list-unstyled">
-                    <li>Phòng nghỉ dân dã, ấm cúng</li>
-                    <li>Khu vực đốt lửa trại</li>
-                    <li>Tour tham quan bản làng và ruộng bậc thang</li>
-                    <li>Bữa ăn địa phương truyền thống</li>
-                </ul>
-                <h4 class="mt-4">Giá</h4>
-                <p>{{ homestay.price }}.000 VND / đêm</p>
-                <a href="book" class="btn btn-primary">Đặt ngay</a>
+        
+        <div class="col-lg-5 homestay-info">
+            <label for="checkin-date">Ngày nhận phòng</label>
+
+            <div class="date-picker">
+                <input type="date" id="checkin-date" required  name="checkin_date" value="{{ checkin_date|default:''}}">
+                <i class="fa fa-calendar"></i>
             </div>
-        {% comment %} {% endif %}             {% endcomment %}
+            <label for="checkout-date">Ngày trả phòng</label>
+            <div class="date-picker">
+                <input type="date" id="checkout-date" required  name="checkout_date" value="{{ checkout_date|default:''}}">
+                <i class="fa fa-calendar"></i>
+            </div>
+
+            <h2 class="card-title">{{ homestay.name }}</h2>
+            <p class="text-muted">Địa chỉ: {{ homestay.address }}</p>
+            <p class="text-muted">{{ homestay.description }}</p>
+            <h4 class="mt-4">Giá</h4>
+            <b style="font-size: 30px;">{{ homestay.price|format_price }} / đêm</b><br>
+            
+                {% csrf_token %}
+                <input type="hidden"style="display:none;" name="id" value="{{ homestay.id }}"/>
+                {% comment %} <input type="date" style="display:none;" name="checkin_date"value="{{ checkin_date|default:'' }}">
+                <input type="date" style="display:none;" name="checkout_date"value="{{ checkout_date|default:'' }}"> {% endcomment %}
+                <button type="submit" class="btn btn-primary">Đặt ngay</button>
+            
+        </div>     
     </div>
+    </form>
+    <div>
+        <h4><strong>Tiện nghi:</strong></h4>
+        <ul class="list-unstyled">
+            {% for facility in facilities %}
+                <li><i class="fas fa-check-circle"></i> {{ facility.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div>
+        <h2 class="my-4"><strong>Thông tin chi tiết:</strong></h2>
+        <table class=" table table-bordered ">
+            <thead>
+                <tr>
+                    <th style="width:30%"></th>
+                    <th style="width:15%">Loại Phòng</th>
+                    <th style="width:10%">Số Lượng</th>
+                    <th style="width:40%">Mô Tả Phòng</th>
+                </tr>
+            </thead>
+            <tbody id="roomTable">
+                <td></td>
+                <td>daccau</td>
+                <td>3</td>
+                <td>,jsdhgfakjdgkjldg</td>
+                <!-- Dữ liệu phòng sẽ được thêm vào đây -->
+            </tbody>
+        </table>
+    </div>
+                                                                                                                 <!--kết nối database-->
+    <script>                                                                           
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/rooms/')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('roomTable');
+                    data.forEach(room => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><img src="${room.image}" alt="Ảnh Phòng" style="width: 100%; height: auto;"></td>
+                            <td>${room.room_type}</td>
+                            <td>${room.quantity}</td>
+                            <td>${room.description}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching room data:', error));
+        });
+    </script>
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        <p id="popup-message"></p>
+    </div>
+
+    <!-- Django Messages -->
+    {% if messages %}
+        <script>
+            window.onload = function() {
+                var message = "{{ messages.0 }}";// Lấy thông điệp đầu tiên từ messages
+                if (message) {
+                    // Hiển thị popup
+                    document.getElementById('popup').style.display = 'block';
+                    document.getElementById('overlay').style.display = 'block';
+                    document.getElementById('popup-message').innerText = message;
+                }
+            };
+
+            function closePopup() {
+                document.getElementById('popup').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }
+        </script>
+    {% endif %}
 
     <hr>
     <section class="services">
