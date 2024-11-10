@@ -20,8 +20,9 @@ def create_booking(request):
                 Q(booking__isnull=True)                         
             ).distinct()
 
+    # Kiểm tra ngày tại trang product
     if not homestaytmp.exists():
-       
+       # Không thỏa mãn thì ở lại product
         context1 = {
         'homestay': homestay,
         'facilities': facilities,
@@ -30,6 +31,7 @@ def create_booking(request):
         }
         return render(request, 'product.html', context1)
     else:
+        # Thỏa mãn thì đến trang booking
         stay_duration = (checkout_date - checkin_date).days
         rent_price = stay_duration * homestay.price
         context2 = {

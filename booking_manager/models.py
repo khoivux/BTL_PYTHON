@@ -8,7 +8,7 @@ class Booking(models.Model):
     checkout_date = models.DateField()
     status = models.CharField(max_length=255)
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
-    # user = models.ForeignKey(Users, on_delete=models.CASCADE) # type: ignore
+    # user = models.ForeignKey(Users, on_delete=models.CASCADE) # type: inore
 
 class BookingService(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
