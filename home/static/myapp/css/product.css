@@ -216,10 +216,6 @@ header .navlinks #listbars{
     background-color: #004d00;
 }
 
-container{
-    max-width: 85%;
-    margin: auto;
-}
 .heading h1{
     font-size: 100px;
     font-weight: 500;
@@ -234,6 +230,21 @@ container{
     font-family: serif;
     font-weight: 400;
 }
+
+thead{
+    --bs-table-color: #000;
+    --bs-table-bg: #88f65cac;
+    --bs-table-border-color: #a6b5cc;
+    --bs-table-striped-bg: #c5d7f2;
+    --bs-table-striped-color: #000;
+    --bs-table-active-bg: #bacbe6;
+    --bs-table-active-color: #000;
+    --bs-table-hover-bg: #bfd1ec;
+    --bs-table-hover-color: #000;   
+    color: var(--bs-table-color);
+    border-color: var(--bs-table-border-color);
+}
+
 .services{
     position: relative;
 }
@@ -333,4 +344,107 @@ footer{
 .left,.right{
     width: 50%;
     padding: 30px;
+}
+
+h4.mt-4 {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+/* Danh sách tiện nghi */
+.list-unstyled {
+    padding-left: 0;
+    list-style: none;
+}
+
+.list-unstyled li {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Biểu tượng dấu tích */
+.list-unstyled li i {
+    color: #28a745; /* Màu xanh cho dấu tích */
+    margin-right: 0.5rem;
+}
+
+/* Khoảng cách của danh sách */
+.list-unstyled li:last-child {
+    border-bottom: none;
+}
+.homestay-info {
+    background-color: #ffffff; /* Màu nền trắng */
+    padding: 20px; /* Khoảng cách nội dung với viền */
+    border-radius: 12px; /* Bo góc để mềm mại */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Bóng đổ */
+    border: 2px solid transparent; /* Viền màu xanh */
+    transition: all 0.3s ease-in-out; /* Hiệu ứng khi hover */
+}
+
+.homestay-info:hover {
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2); /* Tăng độ đổ bóng khi hover */
+    transform: translateY(-5px); /* Đẩy lên khi hover */
+}
+
+.card-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #34495e;
+    margin-bottom: 10px;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+.popup {
+    display: none; /* Đặt trạng thái ban đầu là ẩn */
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f44336;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Màn hình mờ phía sau pop-up */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* Nút đóng pop-up */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
 }

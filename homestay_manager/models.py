@@ -1,6 +1,12 @@
 from django.db import models
 # Create your models here.
 
+
+class Room(models.Model):
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+    
 class Province(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -37,13 +43,17 @@ class Homestay(models.Model):
     province = models.ForeignKey(Province, on_delete=models.CASCADE)
     facilities = models.ManyToManyField(HomestayFacilities)
     services = models.ManyToManyField(Service)
+    rooms = models.ManyToManyField(Room, through='HomestayRoom', related_name='homestays')
+
     def __str__(self):
         return self.name
 
-class Room(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    numbers = models.BigIntegerField()
-    type = models.CharField(max_length=255)
+class HomestayRoom(models.Model):
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.homestay.name} - {self.room.name} ({self.quantity})"
 
 

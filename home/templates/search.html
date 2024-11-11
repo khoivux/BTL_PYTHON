@@ -115,12 +115,12 @@
                 </div>
                 <label for="checkin-date">Ngày nhận phòng</label>
                 <div class="date-picker">
-                    <input type="date" name="checkin-date">
+                    <input type="date" id="checkin-date" name="checkin-date" value="{{ checkin_date|default:'' }}">
                     <i class="fa fa-calendar"></i>
                 </div>
                 <label for="checkout-date">Ngày trả phòng</label>
                 <div class="date-picker">
-                    <input type="date" ="checkout-date">
+                    <input type="date" id="checkout-date" name="checkout-date" value="{{ checkout_date|default:'' }}">
                     <i class="fa fa-calendar"></i>
                 </div>
                 <label for="capacity">Số lượng người</label>
@@ -156,21 +156,24 @@
                 <h3>Tiện nghi</h3>
                 {% for facility in facilities %}
                     <label>
-                        <input type="checkbox" name="homefacilities" value="{{ facility.id }}" {% if facility.id in selected_facilitíe %}checked{% endif %}> 
+                        <input type="checkbox" name="facilities" value="{{ facility.id }}" 
+                        {% if facility.id|stringformat:"s" in selected_facilities %}checked{% endif %}> 
                         {{ facility.name }} </label><br>
                 {% endfor %}
             </div>
             
-            {% comment %} <div class="filter-group">
+            <div class="filter-group">
                 <h3>Dịch vụ</h3>
                 {% for service in services %}
                     <label>
-                        <input type="checkbox" name="homeservices" value="{{ service.id }}" 
-                        {% if service.id in selected_services %}checked{% endif %}>
+                        <input type="checkbox" name="services" value="{{ service.id }}" 
+                        {% if service.id|stringformat:"s" in selected_services %}checked{% endif %}>
                         {{ service.name }}
                     </label><br>
                 {% endfor %}
-            </div> {% endcomment %}
+            </div> 
+
+ 
             <!-- Nút áp dụng bộ lọc -->
             <button type="submit" class="filter-button">Áp dụng bộ lọc</button>
         </div>
@@ -195,25 +198,6 @@
             </select>
         </div>
         
-        <script>
-            function sortHomestays() {
-                let sortOption = document.getElementById("price-sort").value;
-                let currentUrl = window.location.href.split('?')[0]; // Lấy phần URL trước dấu hỏi chấm (không bao gồm các tham số)
-
-                // Lấy tất cả tham số trong URL hiện tại
-                let params = new URLSearchParams(window.location.search);
-
-                // Cập nhật hoặc thêm tham số 'sort'
-                params.set('sort', sortOption);
-
-                // Tạo lại URL với các tham số đã cập nhật
-                let newUrl = currentUrl + '?' + params.toString();
-
-                // Chuyển hướng tới URL mới
-                window.location.href = newUrl;
-            }
-        </script>
-        
       
         <div id="results">
         {% if homestays %}
@@ -233,8 +217,14 @@
                             <h3>Giá: {{ homestay.price|format_price }}</h3>
                             <p>Nằm cách Trạm cáp treo Fansipan 4.5 km, Homestay 1 cung cấp chỗ nghỉ có khu vườn, sân hiên và dịch vụ phòng. Homestay có WiFi và chỗ đậu xe riêng miễn phí.</p>
                         </div>
-                        <form action="{% url 'product' homestay.id %}" method="GET">
-                            <button class="book-button">Đặt phòng</button>
+                        
+                        <form id="booking-form" action="{% url 'product' homestay.id %}" method="GET">
+                            {% csrf_token %}
+                            <div>
+                                <input type="date" style="display:none;" name="checkin_date"value="{{ checkin_date|default:'' }}" >
+                                <input type="date" style="display:none;" name="checkout_date"value="{{ checkout_date|default:'' }}" >
+                            </div>
+                            <button type="submit" class="book-button" >Đặt phòng</button>
                         </form>
                     </div>
                 {% endfor %}
@@ -242,9 +232,7 @@
         {% else %}
             <p class="alert alert-warning">Không tìm thấy kết quả phù hợp</p>
         {% endif %}
-
     </div> 
-
 
 
     </div> 
@@ -264,6 +252,41 @@
 
 
 
+<script>
+    function sortHomestays() {
+        let sortOption = document.getElementById("price-sort").value;
+        let currentUrl = window.location.href.split('?')[0]; // Lấy phần URL trước dấu hỏi chấm (không bao gồm các tham số)
+        // Lấy tất cả tham số trong URL hiện tại
+        let params = new URLSearchParams(window.location.search);
+        // Cập nhật hoặc thêm tham số 'sort'
+        params.set('sort', sortOption);
+        // Tạo lại URL với các tham số đã cập nhật
+        let newUrl = currentUrl + '?' + params.toString();
+        // Chuyển hướng tới URL mới
+        window.location.href = newUrl;
+    }
+</script>
+
+
+<script>
+    function validateDates() {
+        var checkinDate = document.getElementById('checkin-date').value;
+        var checkoutDate = document.getElementById('checkout-date').value;
+
+        // Kiểm tra điều kiện: cả hai ô phải tồn tại cùng lúc hoặc cả hai ô đều null
+        if ((checkinDate && !checkoutDate) || (!checkinDate && checkoutDate)) {
+            alert('Cả hai ngày nhận phòng và trả phòng phải cùng tồn tại hoặc cùng không có giá trị.');
+            // Reset lại cả hai ô nếu chỉ có một ô có giá trị
+            document.getElementById('checkin-date').value = '';
+            document.getElementById('checkout-date').value = '';
+        }
+        // Kiểm tra nếu checkoutDate <= checkinDate
+        else if (checkinDate && checkoutDate && checkoutDate <= checkinDate) {
+            alert('Ngày trả phòng phải lớn hơn ngày nhận phòng.');
+            document.getElementById('checkout-date').value = ''; // reset lại checkout-date nếu không hợp lệ
+        }
+    }
+</script>
 <footer>
     <div class="container grid">
         <div class="box">
