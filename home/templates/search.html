@@ -1,4 +1,5 @@
 {% load static %}
+{% load price_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,31 +108,37 @@
         <div class="filters">
             <div class="search-box">
                 <h2>Tìm</h2>
-                <label for="destination">Tên chỗ nghỉ / điểm đến:</label>
+                <label for="address">Tên chỗ nghỉ / điểm đến:</label>
                 <div class="search-input">
-                    <input type="text" id="destination" placeholder="Địa điểm">
+                    <input type="text" name="address" placeholder="Địa điểm" value="{{ address|default_if_none:'' }}">
                     <i class="fa fa-search"></i>
                 </div>
                 <label for="checkin-date">Ngày nhận phòng</label>
                 <div class="date-picker">
-                    <input type="date" id="checkin-date">
+                    <input type="date" id="checkin-date" name="checkin-date" value="{{ checkin_date|default:'' }}">
                     <i class="fa fa-calendar"></i>
                 </div>
                 <label for="checkout-date">Ngày trả phòng</label>
                 <div class="date-picker">
-                    <input type="date" id="checkout-date">
+                    <input type="date" id="checkout-date" name="checkout-date" value="{{ checkout_date|default:'' }}">
                     <i class="fa fa-calendar"></i>
                 </div>
-                <label for="guest-info">Nghỉ 1 đêm</label>
-                <select id="guest-info">
-                    <option>1 người lớn · 0 trẻ em · 1 phòng</option>
-                    <option>2 người lớn · 0 trẻ em · 1 phòng</option>
-                    <!-- Thêm các tuỳ chọn khác nếu cần -->
-                </select>
+                <label for="capacity">Số lượng người</label>
+                <div class="search-input">
+                    <input type="text" name="capacity" placeholder="Số lượng người" value="{{ capacity|default_if_none:'' }}">
+                    <i class="fa fa-search"></i>
+                </div>
                 <button type="submit" class="search-button">Tìm</button>
             </div>
             
             <h2>Bộ lọc theo:</h2>
+
+            <div class="price-range-container">
+                <h3>Khoảng Giá</h3>
+                <input type="number" class="price-input" name="pricefrom" placeholder=".000 VND" value="{{ pricefrom|default_if_none:'' }}">
+                <span> - </span>
+                <input type="number" class="price-input" name="priceto" placeholder=".000 VND ĐẾN" value="{{ priceto|default_if_none:'' }}">
+            </div>
             
             <!-- Đánh giá -->
             <div class="filter-group">
@@ -143,29 +150,30 @@
                 <label><input type="checkbox" name="ratings" value="1" {% if '1' in selected_ratings %}checked{% endif %}> 1 sao</label>
             </div>
             <!-- Giá tiền -->
-            <div class="filter-group">
-                <h3>Giá tiền</h3>
-                <label><input type="checkbox" name="prices" value="200" {% if '200' in selected_prices %}checked{% endif %}> 200k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="300" {% if '300' in selected_prices %}checked{% endif %}> 300k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="400" {% if '400' in selected_prices %}checked{% endif %}> 400k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="500" {% if '500' in selected_prices %}checked{% endif %}> 500k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="600" {% if '600' in selected_prices %}checked{% endif %}> 600k/1 đêm</label>
-            </div>
-            <!-- Hoạt động giải trí -->
-            <div class="filter-group">
+            
+            <!-- Tiện nghi -->
+            <div class="filter-group1">
                 <h3>Tiện nghi</h3>
-                <label><input type="checkbox" name="homefacilities" value="1" {% if '1' in selected_homefacilities %}checked{% endif %}> Chỗ đỗ xe</label><br>
-                <label><input type="checkbox" name="homefacilities" value="2" {% if '2' in selected_homefacilities %}checked{% endif %}> Cho phép vật nuôi</label><br>
-                <label><input type="checkbox" name="homefacilities" value="3" {% if '3' in selected_homefacilities %}checked{% endif %}> Cho thuê xe máy/ xe đạp</label><br>
-                <label><input type="checkbox" name="homefacilities" value="4" {% if '4' in selected_homefacilities %}checked{% endif %}> Hồ bơi</label><br>
-                <label><input type="checkbox" name="homefacilities" value="5" {% if '5' in selected_homefacilities %}checked{% endif %}> Lễ tân 24 giờ</label><br>
-                <label><input type="checkbox" name="homefacilities" value="6" {% if '6' in selected_homefacilities %}checked{% endif %}> Phòng xông hơi</label><br>
-                <label><input type="checkbox" name="homefacilities" value="7" {% if '7' in selected_homefacilities %}checked{% endif %}> Sân chơi trẻ em</label><br>
-                <label><input type="checkbox" name="homefacilities" value="8" {% if '8' in selected_homefacilities %}checked{% endif %}> Trạm sạc xe điện</label><br>
-                <label><input type="checkbox" name="homefacilities" value="9" {% if '9' in selected_homefacilities %}checked{% endif %}> Trung tâm spa, massage</label><br>
-                <label><input type="checkbox" name="homefacilities" value="10" {% if '10' in selected_homefacilities %}checked{% endif %}> Trung tâm thể dục, gym</label><br>
-                <label><input type="checkbox" name="homefacilities" value="11" {% if '11' in selected_homefacilities %}checked{% endif %}> Wifi miễn phí</label><br>
+                {% for facility in facilities %}
+                    <label>
+                        <input type="checkbox" name="facilities" value="{{ facility.id }}" 
+                        {% if facility.id|stringformat:"s" in selected_facilities %}checked{% endif %}> 
+                        {{ facility.name }} </label><br>
+                {% endfor %}
             </div>
+            
+            <div class="filter-group">
+                <h3>Dịch vụ</h3>
+                {% for service in services %}
+                    <label>
+                        <input type="checkbox" name="services" value="{{ service.id }}" 
+                        {% if service.id|stringformat:"s" in selected_services %}checked{% endif %}>
+                        {{ service.name }}
+                    </label><br>
+                {% endfor %}
+            </div> 
+
+ 
             <!-- Nút áp dụng bộ lọc -->
             <button type="submit" class="filter-button">Áp dụng bộ lọc</button>
         </div>
@@ -190,14 +198,6 @@
             </select>
         </div>
         
-        <script>
-            function sortHomestays() {
-                let sortOption = document.getElementById("price-sort").value;
-                let currentUrl = window.location.href.split('?')[0];
-                window.location.href = currentUrl + "?sort=" + sortOption;
-            }
-        </script>
-        
       
         <div id="results">
         {% if homestays %}
@@ -214,11 +214,17 @@
                                     <span class="star">★</span>
                                 {% endfor %} {% endcomment %}
                             </div>
-                            <h3>Giá: {{ homestay.price }}k</h3>
+                            <h3>Giá: {{ homestay.price|format_price }}</h3>
                             <p>Nằm cách Trạm cáp treo Fansipan 4.5 km, Homestay 1 cung cấp chỗ nghỉ có khu vườn, sân hiên và dịch vụ phòng. Homestay có WiFi và chỗ đậu xe riêng miễn phí.</p>
                         </div>
-                        <form action="{% url 'product' homestay.id %}" method="GET">
-                            <button class="book-button">Đặt phòng</button>
+                        
+                        <form id="booking-form" action="{% url 'product' homestay.id %}" method="GET">
+                            {% csrf_token %}
+                            <div>
+                                <input type="date" style="display:none;" name="checkin_date"value="{{ checkin_date|default:'' }}" >
+                                <input type="date" style="display:none;" name="checkout_date"value="{{ checkout_date|default:'' }}" >
+                            </div>
+                            <button type="submit" class="book-button" >Đặt phòng</button>
                         </form>
                     </div>
                 {% endfor %}
@@ -226,9 +232,7 @@
         {% else %}
             <p class="alert alert-warning">Không tìm thấy kết quả phù hợp</p>
         {% endif %}
-
     </div> 
-
 
 
     </div> 
@@ -248,6 +252,41 @@
 
 
 
+<script>
+    function sortHomestays() {
+        let sortOption = document.getElementById("price-sort").value;
+        let currentUrl = window.location.href.split('?')[0]; // Lấy phần URL trước dấu hỏi chấm (không bao gồm các tham số)
+        // Lấy tất cả tham số trong URL hiện tại
+        let params = new URLSearchParams(window.location.search);
+        // Cập nhật hoặc thêm tham số 'sort'
+        params.set('sort', sortOption);
+        // Tạo lại URL với các tham số đã cập nhật
+        let newUrl = currentUrl + '?' + params.toString();
+        // Chuyển hướng tới URL mới
+        window.location.href = newUrl;
+    }
+</script>
+
+
+<script>
+    function validateDates() {
+        var checkinDate = document.getElementById('checkin-date').value;
+        var checkoutDate = document.getElementById('checkout-date').value;
+
+        // Kiểm tra điều kiện: cả hai ô phải tồn tại cùng lúc hoặc cả hai ô đều null
+        if ((checkinDate && !checkoutDate) || (!checkinDate && checkoutDate)) {
+            alert('Cả hai ngày nhận phòng và trả phòng phải cùng tồn tại hoặc cùng không có giá trị.');
+            // Reset lại cả hai ô nếu chỉ có một ô có giá trị
+            document.getElementById('checkin-date').value = '';
+            document.getElementById('checkout-date').value = '';
+        }
+        // Kiểm tra nếu checkoutDate <= checkinDate
+        else if (checkinDate && checkoutDate && checkoutDate <= checkinDate) {
+            alert('Ngày trả phòng phải lớn hơn ngày nhận phòng.');
+            document.getElementById('checkout-date').value = ''; // reset lại checkout-date nếu không hợp lệ
+        }
+    }
+</script>
 <footer>
     <div class="container grid">
         <div class="box">
