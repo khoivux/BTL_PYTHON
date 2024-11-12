@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'login',
     'homestay_manager',
     'booking_manager',
+    "profileUser",
 ]
 
 MIDDLEWARE = [
@@ -81,21 +82,13 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': BASE_DIR / 'django.db.backends.sqlite3',
-<<<<<<< HEAD
-        'ENGINE': 'django.db.backends.mysql',  
-        'NAME': 'python', 
-        'USER': 'root',
-        'PASSWORD':'25012004',
-        'HOST':'pnlong',
-        'PORT':'2501'
-=======
+
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'btl',
         'USER': 'root1',
         'PASSWORD': '25012004',
         'HOST': 'localhost',
         'PORT': '2501',
->>>>>>> develop
     }
 }
 
@@ -143,3 +136,5 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_URL = '/login/'  # Đường dẫn đăng nhập
+LOGIN_REDIRECT_URL = '/profile/'  # Nơi chuyển hướng sau khi đăng nhập thành công
