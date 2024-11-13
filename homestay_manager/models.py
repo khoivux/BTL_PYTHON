@@ -44,7 +44,7 @@ class Homestay(models.Model):
     facilities = models.ManyToManyField(HomestayFacilities)
     services = models.ManyToManyField(Service)
     rooms = models.ManyToManyField(Room, through='HomestayRoom', related_name='homestays')
-
+    image = models.ImageField(upload_to='homestay_images/', blank=True, null=True) 
     def __str__(self):
         return self.name
 
