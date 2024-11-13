@@ -122,8 +122,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
-
+AUTH_USER_MODEL = 'auth.User'
+# Sử dụng session trong bộ nhớ (chỉ tồn tại trong một phiên làm việc, mất khi server restart)
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 

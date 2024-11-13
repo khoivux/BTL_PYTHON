@@ -4,8 +4,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from .mail import send_email
 from django.http import HttpResponse
+from django.http import JsonResponse
 import smtplib
+import json
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 import random
 import string
 def loginv(request):
@@ -63,7 +66,10 @@ def inf(request):
         
         except Exception as e:
             
-            errors['username'] = 'Tên đăng nhập đã tồn tại, vui lòng chọn tên đăng nhập khác!'
+            if 'username' in str(e):
+                errors['username'] = 'Tên đăng nhập đã tồn tại, vui lòng chọn tên đăng nhập khác!'
+            elif 'email' in str(e):
+                errors['email'] = 'Email đã tồn tại, vui lòng chọn email khác!'
             return render(request, 'register.html', {'errors': errors})
         
         
@@ -76,7 +82,13 @@ def mail(request):
     print('mail duoc an!')
     if request.method == 'POST':
         email = request.POST.get('email')
-        if email:
+        try:
+            user = User.objects.get(email=email)  # Tìm người dùng theo email
+        except User.DoesNotExist:
+            user = None
+        
+        if user:
+            print("có")
             # Gửi mã OTP qua email
             otp = generate_otp()
             subject = "OTP reset password"
@@ -84,19 +96,16 @@ def mail(request):
             
             try:
                 send_email(subject, body, email)
-                messages.success(request, "Mã OTP đã được gửi tới email của bạn.")
                 request.session['otp'] = otp
                 print(otp)
-                return render(request, 'forget.html', {'otp_sent': True,'otp':otp})
+                return render(request, 'forget.html', {'otp_sent': True,'otp':otp,'id': user.id})
             except Exception as e:
-                 messages.error(request, f"Đã có lỗi xảy ra khi gửi email: {e}")
-            
-            return render(request, 'forget.html')
+                return render(request, 'forget.html', {'errors': "không gửi được mail"})
+                
         else:
-            messages.error(request, "Vui lòng nhập email hợp lệ.")
-            return render(request, 'forget.html')
-    
-    return render(request, 'forget.html')
+            print("không")
+            return render(request, 'forget.html', {'errors': "Email không tồn tại!"})
+
     
 
 
@@ -106,4 +115,28 @@ def generate_otp():
     otp = ''.join(random.choices(characters, k=6))
     return otp
 
-    
+
+
+def reset_password(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)  # Lấy dữ liệu JSON từ request
+            user_id = data.get('user_id')
+            new_password = data.get('new_password')
+            print(user_id)
+            # Kiểm tra và xử lý user_id và new_password
+            if not user_id or not new_password:
+                return JsonResponse({'success': False, 'message': 'Dữ liệu không hợp lệ.'})
+
+            try:
+                user = User.objects.get(id=user_id)
+                user.set_password(new_password)
+                user.save()
+                return JsonResponse({'success': True, 'message': 'Mật khẩu đã được cập nhật thành công.'})
+            except User.DoesNotExist:
+                return JsonResponse({'success': False, 'message': 'Người dùng không tồn tại.'})
+
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Dữ liệu JSON không hợp lệ.'})
+
+    return JsonResponse({'success': False, 'message': 'Yêu cầu không hợp lệ.'})

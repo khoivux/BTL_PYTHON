@@ -7,4 +7,5 @@ urlpatterns = [
     path('inf/', views.inf, name = 'inf'),
     path('forget-password',views.forget, name = 'forget-password'),
     path('mail/', views.mail, name='mail'),
+    path('reset-password/', views.reset_password, name='reset_password'),
 ]
