@@ -44,6 +44,7 @@ class Homestay(models.Model):
     facilities = models.ManyToManyField(HomestayFacilities)
     services = models.ManyToManyField(Service)
     rooms = models.ManyToManyField(Room, through='HomestayRoom', related_name='homestays')
+    image = models.ImageField(upload_to='homestay_images/', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -52,7 +53,7 @@ class HomestayRoom(models.Model):
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
-
+    image = models.ImageField(upload_to='room_images/', blank=True, null=True)
     def __str__(self):
         return f"{self.homestay.name} - {self.room.name} ({self.quantity})"
 

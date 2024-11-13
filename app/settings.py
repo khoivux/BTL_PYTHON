@@ -125,6 +125,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+
+MEDIA_URL = '/media/'  # URL truy cập ảnh
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Thư mục trên hệ thống để lưu ảnh
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
