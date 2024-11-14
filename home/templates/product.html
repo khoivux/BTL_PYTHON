@@ -20,9 +20,98 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+        <style>   
+            .toast {
+                position: fixed;
+                top: 20px; /* Hiển thị ở trên cùng */
+                left: 50%;
+                transform: translateX(-50%); /* Đẩy sang giữa */
+                padding: 10px;
+                background-color: #ffffff; /* Màu nền trắng cho thông báo */
+                color: #333; /* Màu chữ */
+                border-radius: 5px;
+                opacity: 0; /* Ban đầu ẩn */
+                visibility: hidden; /* Không hiển thị */
+                transition: opacity 0.5s, visibility 0.5s, transform 0.3s ease-in-out; /* Hiệu ứng mờ dần và mở rộng */
+                z-index: 1050; /* Đảm bảo nó ở trên các phần tử khác */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng nhẹ cho toast */
+                border: 1px solid #28a745; /* Viền màu xanh lá cây */
+                transform: translateX(-50%) scale(0.9); /* Bắt đầu nhỏ hơn và sẽ phóng to */
+            }
+            
+            .toast.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateX(-50%) scale(1); /* Phóng to */
+            }
+            
+            /* Tiêu đề Toast */
+            .toast-title {
+                background-color: #7FC142; /* Nền xanh lá cây cho tiêu đề */
+                color: white; /* Chữ màu trắng */
+                padding: 5px 5px;
+            /*            border-radius: 5px 5px 0 0; *//* Cạnh trên tròn */
+                font-weight: bold;
+            }
+            
+            .toast-body {
+                padding: 10px;
+            }
+            
+            /* CSS cho nút đóng Toast */
+            .toast-close {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                color: #696969;
+                background: transparent;
+                border: none;
+                font-size: 16px;
+                cursor: pointer;
+            }
+            
+            .toast-close:hover {
+                color: #dc3545; /* Màu đỏ khi hover */
+            }
+            
+        </style>
 </head>
 
 <body>
+    <div id="toast" class="toast">
+        <div class="toast-title">Thông Báo</div>
+        <div class="toast-body">
+            <p id="toast-message"></p>
+            <button class="toast-close" onclick="closeToast()">×</button>
+        </div>
+    </div>
+    
+    <script>
+        // JavaScript để hiển thị Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+    
+            // Thêm lớp 'show' để hiển thị Toast
+            toast.classList.add('show');
+    
+            // Ẩn Toast sau 5 giây
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 5000); // 5000ms = 5 giây
+        }
+    
+        // Đóng Toast khi click vào nút "×"
+        function closeToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('show');
+        }
+    
+        // Kiểm tra và hiển thị thông báo khi trang tải
+        {% if error_message %}
+            showToast("{{ error_message }}");
+        {% endif %}
+    </script>
     <header>
         <div class="logo">
             <a href="/"><img src="{% static 'myapp/img/logo.jpeg' %}"></a> <!--back về home-->
@@ -114,12 +203,16 @@
         <div class="col-lg-7">
             <!--Hình ảnh sản phẩm-->
             <div class="image-gallery mb-4">
-                <img src="{% static 'myapp/img/homestay4.jpg' %}" class="img-fluid" alt="Phòng lớn homestay" style="width: 100%; max-height: 500px; object-fit: cover;" onclick="openModal(this.src)">
+                <img src="{{ homestay.image.url|default:'/static/myapp/img/default.jpg' }}" alt="{{ homestay.name }}" class="img-fluid" style="width: 100%; max-height: 500px; object-fit: cover;" onclick="openModal(this.src)">
+                {% comment %} <img src="{% static 'myapp/img/homestay4.jpg' %}" class="img-fluid" alt="Phòng lớn homestay" style="width: 100%; max-height: 500px; object-fit: cover;" onclick="openModal(this.src)"> {% endcomment %}
             </div>
             <div class="image-thumbnails d-flex gap-2">
-                <img src="{% static 'myapp/img/homestay1.jpg' %}" class="img-thumbnail" alt="Hình ảnh homestay 1" style="width: 100px; height: 100px;" onclick="openModal(this.src)">
-                <img src="{% static 'myapp/img/homestay2.jpg' %}" class="img-thumbnail" alt="Hình ảnh homestay 2" style="width: 100px; height: 100px;" onclick="openModal(this.src)">
-                <img src="{% static 'myapp/img/homestay3.jpg' %}" class="img-thumbnail" alt="Hình ảnh homestay 3" style="width: 100px; height: 100px;" onclick="openModal(this.src)">
+                {% for homestay_room in homestay_rooms %}
+                    <img src="{{ homestay_room.image.url|default:'/static/myapp/img/default_room.jpg' }}" 
+                        class="img-thumbnail" 
+                        style="width: 100px; height: 100px;" 
+                        onclick="openModal(this.src)">
+                    {% endfor %}
             </div>
 
             <!-- model phóng to hình ảnh khi click vào -->
@@ -150,12 +243,12 @@
             <label for="checkin-date">Ngày nhận phòng</label>
 
             <div class="date-picker">
-                <input type="date" id="checkin-date" required  name="checkin_date" value="{{ checkin_date|default:''}}">
+                <input type="date" required  name="checkin_date" value="{{ checkin_date|default:''}}">
                 <i class="fa fa-calendar"></i>
             </div>
             <label for="checkout-date">Ngày trả phòng</label>
             <div class="date-picker">
-                <input type="date" id="checkout-date" required  name="checkout_date" value="{{ checkout_date|default:''}}">
+                <input type="date" required  name="checkout_date" value="{{ checkout_date|default:''}}">
                 <i class="fa fa-calendar"></i>
             </div>
 
@@ -170,7 +263,6 @@
                 {% comment %} <input type="date" style="display:none;" name="checkin_date"value="{{ checkin_date|default:'' }}">
                 <input type="date" style="display:none;" name="checkout_date"value="{{ checkout_date|default:'' }}"> {% endcomment %}
                 <button type="submit" class="btn btn-primary">Đặt ngay</button>
-            
         </div>     
     </div>
     </form>
@@ -195,11 +287,24 @@
                 </tr>
             </thead>
             <tbody id="roomTable">
-                <td></td>
-                <td>daccau</td>
-                <td>3</td>
-                <td>,jsdhgfakjdgkjldg</td>
-                <!-- Dữ liệu phòng sẽ được thêm vào đây -->
+                {% for homestay_room in homestay_rooms %}
+                    <tr>
+                        <!-- Cột 1: Ảnh phòng -->
+                        <td>
+                            <img src="{{ homestay_room.image.url|default:'/static/myapp/img/default_room.jpg' }}" 
+                                 class="img-thumbnail" 
+                                 alt="Room: {{ homestay_room.room.name }}" 
+                                 style="width: 100px; height: 100px;" 
+                                 onclick="openModal(this.src)">
+                        </td>
+                        <!-- Cột 2: Tên phòng (Loại phòng) -->
+                        <td>{{ homestay_room.room.name }}</td>
+                        <!-- Cột 3: Số lượng -->
+                        <td>{{ homestay_room.quantity }}</td>
+                        <!-- Cột 4: Miêu tả phòng -->
+                        {% comment %} <td>{{ homestay_room.room.description }}</td> {% endcomment %}
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
