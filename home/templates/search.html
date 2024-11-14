@@ -65,7 +65,22 @@
         .toast-close:hover {
             color: #dc3545; /* Màu đỏ khi hover */
         }
-        
+        body {
+            margin: 0; /* Xóa khoảng trắng mặc định */
+            padding: 0;
+            font-family: Arial, sans-serif; /* Tùy chọn font */
+        }
+
+        .container {
+            max-width: 1300px; /* Chiều rộng tối đa của nội dung */
+            margin: 0 auto; /* Căn giữa nội dung theo chiều ngang */
+            padding: 20px; /* Thêm khoảng cách bên trong */
+/*            background-color: #f9f9f9; *//* Tùy chọn màu nền */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
+        }
+        .small-text {
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -300,13 +315,13 @@
                         </div>
                         <div class="info">
                             <h2 class="card-title">{{ homestay.name }}</h2>
-                            <div class="star-rating"> 
-                                {% comment %} {% for i in homestay.rate %}
-                                    <span class="star">★</span>
-                                {% endfor %} {% endcomment %}
-                            </div>
+                            <p>Địa chỉ: {{ homestay.address }}</p>
                             <h3>Giá: {{ homestay.price|format_price }}</h3>
-                            <p>Nằm cách Trạm cáp treo Fansipan 4.5 km, Homestay 1 cung cấp chỗ nghỉ có khu vườn, sân hiên và dịch vụ phòng. Homestay có WiFi và chỗ đậu xe riêng miễn phí.</p>
+                            {% for homestay_room in homestay.homestayroom_set.all %}
+                                <span class="small-text">{{ homestay_room.quantity }} {{ homestay_room.room.name }}</span>
+                                {% if not forloop.last %} ● {% endif %}
+                            {% endfor %}
+                            <p class="small-text">Nằm cách Trạm cáp treo Fansipan 4.5 km, Homestay 1 cung cấp chỗ nghỉ có khu vườn, sân hiên và dịch vụ phòng. Homestay có WiFi và chỗ đậu xe riêng miễn phí.</p>
                         </div>
                         
                         <form id="booking-form" action="{% url 'product' homestay.id %}" method="GET">

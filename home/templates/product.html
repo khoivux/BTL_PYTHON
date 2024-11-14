@@ -73,6 +73,19 @@
             .toast-close:hover {
                 color: #dc3545; /* Màu đỏ khi hover */
             }
+            body {
+            margin: 0; /* Xóa khoảng trắng mặc định */
+            padding: 0;
+            font-family: Arial, sans-serif; /* Tùy chọn font */
+        }
+
+        .container {
+            max-width: 1300px; /* Chiều rộng tối đa của nội dung */
+            margin: 0 auto; /* Căn giữa nội dung theo chiều ngang */
+            padding: 20px; /* Thêm khoảng cách bên trong */
+/*            background-color: #f9f9f9; *//* Tùy chọn màu nền */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
+        }
             
         </style>
 </head>
@@ -239,15 +252,17 @@
             </script>
         </div>
         
-        <div class="col-lg-5 homestay-info">
-            <label for="checkin-date">Ngày nhận phòng</label>
+        <div class="col-lg-5 homestay-info container-flex">
+            
 
             <div class="date-picker">
+                <label for="checkin-date">Ngày nhận phòng</label><br>
                 <input type="date" required  name="checkin_date" value="{{ checkin_date|default:''}}">
                 <i class="fa fa-calendar"></i>
             </div>
-            <label for="checkout-date">Ngày trả phòng</label>
+            
             <div class="date-picker">
+                <label for="checkout-date">Ngày trả phòng</label><br>
                 <input type="date" required  name="checkout_date" value="{{ checkout_date|default:''}}">
                 <i class="fa fa-calendar"></i>
             </div>
@@ -294,7 +309,7 @@
                             <img src="{{ homestay_room.image.url|default:'/static/myapp/img/default_room.jpg' }}" 
                                  class="img-thumbnail" 
                                  alt="Room: {{ homestay_room.room.name }}" 
-                                 style="width: 100px; height: 100px;" 
+                                 style="width: 300px; height: 300px;" 
                                  onclick="openModal(this.src)">
                         </td>
                         <!-- Cột 2: Tên phòng (Loại phòng) -->
