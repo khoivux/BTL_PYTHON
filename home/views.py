@@ -1,7 +1,7 @@
 from asyncio.windows_events import NULL
 from gc import get_objects
 from django.shortcuts import render
-from homestay_manager.models import Homestay, HomestayFacilities, Service, Room
+from homestay_manager.models import Homestay, HomestayFacilities, Service, Room, HomestayRoom
 from django.db.models import Q
 from datetime import datetime
 def get_home(request):
@@ -55,23 +55,6 @@ def search_view(request):
     if selected_rooms:
         homestays = homestays.filter(rooms__id__in=selected_rooms).distinct()
 
-
-
-    if checkin_date_str and checkout_date_str:
-        checkin_date = datetime.strptime(checkin_date_str, "%Y-%m-%d").date()
-        checkout_date = datetime.strptime(checkout_date_str, "%Y-%m-%d").date()
-        homestays = homestays.filter(
-            Q(booking__checkin_date__gt=checkout_date) |   # Ngày in > ngày checkout của Booking
-            Q(booking__checkout_date__lt=checkin_date) |   # Ngày out < ngày checkin của Booking
-            Q(booking__isnull=True)                 
-        ).distinct()
-        print(checkin_date)
-
-    if sort_option == 'asc':
-        homestays = homestays.order_by('price')
-    elif sort_option == 'desc':
-        homestays = homestays.order_by('-price')
-
     context = {
         'services': services,
         'capacity': capacity,
@@ -89,11 +72,40 @@ def search_view(request):
         'checkin_date': checkin_date_str,
         'checkout_date': checkout_date_str,
     }
+    
+    if (not checkin_date_str) != (not checkout_date_str):
+            context['error_message'] = 'Ngày nhận và trả phòng không được trống!'
+            return render(request, 'search.html', context)
+
+    if checkin_date_str and checkout_date_str:
+        checkin_date = datetime.strptime(checkin_date_str, "%Y-%m-%d").date()
+        checkout_date = datetime.strptime(checkout_date_str, "%Y-%m-%d").date()
+
+        if checkin_date >= checkout_date:
+            context['error_message'] = 'Ngày nhận và trả phòng không hợp lệ!'
+            return render(request, 'search.html', context)
+        
+        
+        homestays = homestays.filter(
+            Q(booking__checkin_date__gt=checkout_date) |   # Ngày in > ngày checkout của Booking
+            Q(booking__checkout_date__lt=checkin_date) |   # Ngày out < ngày checkin của Booking
+            Q(booking__isnull=True)                 
+        ).distinct()
+        print(checkin_date)
+
+    if sort_option == 'asc':
+        homestays = homestays.order_by('price')
+    elif sort_option == 'desc':
+        homestays = homestays.order_by('-price')
+
+    context['homestays'] = homestays
     return render(request, 'search.html', context)
 
 def product_detail(request, id):
     homestay = Homestay.objects.filter(id=id).first()
-    facilities = homestay.facilities.all()    
+    facilities = homestay.facilities.all() 
+    homestay_rooms = HomestayRoom.objects.filter(homestay=homestay)
+    rooms = homestay.rooms.all()
     checkout_date = request.GET.get('checkout_date')
     checkin_date = request.GET.get('checkin_date')
     context = {
@@ -101,5 +113,7 @@ def product_detail(request, id):
         'facilities': facilities,
         'checkout_date': checkout_date,
         'checkin_date': checkin_date, 
+        'homestay_rooms': homestay_rooms,
+        'rooms': rooms,
     }
     return render(request, 'product.html', context)
