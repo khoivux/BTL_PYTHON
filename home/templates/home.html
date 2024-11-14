@@ -42,7 +42,7 @@
     </header>
     <script>
         let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
-        const userName = "{{ request.session.userName|default:'' }}"; // Lấy tên người dùng từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
 
         function updateUserAction() {
             const userActionDiv = document.getElementById("user-action");
@@ -70,8 +70,19 @@
         }
 
         function logout() {
-            isLoggedIn = false; // Cập nhật trạng thái đăng xuất
-            updateUserAction(); // Cập nhật lại giao diện
+            fetch('/login/logout/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    isLoggedIn = false;
+                    updateUserAction(); // Cập nhật lại giao diện
+                }
+            })
+            .catch(error => console.error('Lỗi:', error));
         }
 
         // Gọi hàm để cập nhật giao diện khi trang được tải

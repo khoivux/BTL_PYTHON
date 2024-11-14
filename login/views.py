@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from .mail import send_email
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -11,6 +11,12 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 import random
 import string
+
+def custom_logout(request):
+    
+    logout(request)              
+    request.session.flush()
+    return JsonResponse({'message': 'Đăng xuất thành công'}, status=200)
 def loginv(request):
     if request.method == "POST":
         # Lấy dữ liệu từ form
@@ -19,7 +25,7 @@ def loginv(request):
         print(username)
         print(password)
         errors ={}
-        if not username:
+        if not username:    
             errors['username'] = 'Vui lòng nhập tên đăng nhập'
         if not password:
             errors['password'] = 'Vui lòng nhập mật khẩu'
@@ -29,7 +35,8 @@ def loginv(request):
         if user is not None:
             login(request, user)
             request.session['isLoggedIn'] = True  # Thêm trạng thái đăng nhập vào session
-            request.session['userName'] = user.username  # Lưu tên người dùng
+            request.session['first_name'] = user.first_name # Lưu tên người dùng
+            request.session['userId'] = user.id #lưu id
             return redirect('home')  # Chuyển hướng đến trang home
         else:
             errors['credentials'] = 'Tên đăng nhập hoặc mật khẩu không đúng'
