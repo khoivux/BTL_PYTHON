@@ -1,7 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from django.contrib import messages
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
 from django.db.models import Q
+from booking_manager.models import Booking
 from homestay_manager.models import Homestay, HomestayFacilities
 
 # Create your views here.
