@@ -25,9 +25,8 @@ urlpatterns = [
     path('', include('home.urls')), 
     path('login/', include('login.urls')),
     path('booking/', include('booking_manager.urls')),
-<<<<<<< HEAD
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-=======
     path("profile/", include('profileUser.urls')),
-]
->>>>>>> 7b8bbf31e06ef567484b567325f169ec577055a3
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+

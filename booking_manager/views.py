@@ -47,7 +47,6 @@ def create_booking(request):
         context['error_message'] = 'Ngày nhận và trả phòng không phù hợp!'
         return render(request, 'product.html', context)
     else:
-        
         # Thỏa mãn thì đến trang booking
         stay_duration = (checkout_date - checkin_date).days
         rent_price = stay_duration * homestay.price
