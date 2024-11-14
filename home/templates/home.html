@@ -26,14 +26,14 @@
             <div class="logo">
                 <a href=""><img src={% static 'myapp/img/logo.jpeg' %}></a> <!--back về home-->
             </div>
-
+            
             <div class="navlinks">
                 <ul id="menulist">
                     <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
-                    <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
-                    <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
-                    <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
-                    <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
+                    <li><a href="#dichvu">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                    <li><a href="#homestay">Homestay</a></li> <!--url xuống danh sách homestay-->
+                    <li><a href='https://www.facebook.com/gnolp2513'>Liên hệ</a></li> <!--url xuống liên hệ-->
+                    <li><a href="#Feedback">Phản hồi</a></li>   <!--url đến trang phản hồi-->
                     <li id="user-action"></li>
                 </ul>
                 <span id="listbars" class="fa fa-bars" onclick="menutoggle()"></span>
@@ -41,8 +41,8 @@
         
     </header>
     <script>
-        let isLoggedIn = false; // thêm phương thức kiểm tra trạng thái đăng nhập
-        const userName = "Nguyễn Văn A";
+        let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
 
         function updateUserAction() {
             const userActionDiv = document.getElementById("user-action");
@@ -53,24 +53,40 @@
                 <div show-info onclick="showInfo()" class="navlinks">
                     <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                     <ul show-ul class="d-none" id="userlist">
-                        <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
                         <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                     </ul>
                 </div>
-                `;                                                      //url trang profile
-                                                                        // url trang history
-                                                                        // thoát trạng thái đăng nhập
+                `;
             } else {
                 userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
             }
         }
 
-        function logout() {
-            isLoggedIn = false;
-            updateUserAction(); 
+        function login() {
+            isLoggedIn = true; // Cập nhật trạng thái đăng nhập
+            updateUserAction(); // Cập nhật lại giao diện
         }
-        updateUserAction();
+
+        function logout() {
+            fetch('/login/logout/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    isLoggedIn = false;
+                    updateUserAction(); // Cập nhật lại giao diện
+                }
+            })
+            .catch(error => console.error('Lỗi:', error));
+        }
+
+        // Gọi hàm để cập nhật giao diện khi trang được tải
+        document.addEventListener("DOMContentLoaded", updateUserAction);
     </script>
     <script>
         var Menulist = document.getElementsByClassName("navlinks");
@@ -105,6 +121,11 @@
                 shown = true;
             }
             
+        }
+        function usertoggle() {
+            const userlist = document.getElementById("userlist");
+            userlist.classList.toggle("d-none");
+            userlist.classList.toggle("d-block");
         }
     </script>
     <section class="home">
@@ -475,9 +496,9 @@
                 <div class="col box">
                     <h2>GIỚI THIỆU</h2>
                     <a href="#">Trang chủ</a><br>
-                    <a href="#">Dịch vụ</a><br>
+                    <a href="#dichvu">Dịch vụ</a><br>
                     <a href="#">Tin tức</a><br>
-                    <a href="#">Liên hệ</a><br>
+                    <a href="https://www.facebook.com/gnolp2513">Liên hệ</a><br>
                 </div>
                 <div class="col box">
                     <h2>LIÊN KẾT</h2>

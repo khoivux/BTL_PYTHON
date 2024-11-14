@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <title>Quên mật khẩu • HomesTayBac</title>
+    <link rel="stylesheet" href="{% static 'login/css/login.css' %}">
+    
+    <script>
+        
+        let generatedOtp = "{{ otp }}";  
+        
+        function showOtpForm() {
+            document.getElementById("forgot-password-form").style.display = "none";
+            document.getElementById("otp-form").style.display = "block";
+        }
+        window.onload = function() {
+            
+            {% if otp_sent %}
+                alert ("OTP have been send to your email!");
+                showOtpForm();
+            {% endif %}
+        };
+
+        function verifyOtp() {
+            const enteredOtp = document.getElementById("otp").value;
+            if (enteredOtp === generatedOtp) {
+                alert("OTP xác thực thành công!");
+                document.getElementById("reset-password-form").style.display = "block";
+                document.getElementById("otp-form").style.display = "none";
+            } else {
+                alert("Mã OTP không đúng. Vui lòng thử lại.");
+            }
+        }
+        function resetPassword(id) {
+            const userId = id;
+            const newPassword = document.querySelector("input[name='new_password']").value;
+            const confirmPassword = document.querySelector("input[name='confirm_password']").value;
+            console.log("id",userId)
+            if (newPassword !== confirmPassword) {
+                alert("Mật khẩu không khớp.");
+                return;
+            }
+        
+            fetch('/login/reset-password/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'user_id': userId,
+                    'new_password': newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = "{% url 'login' %}";
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+            });
+        }
+        
+    </script>
+</head>
+<body>
+    <div class="form">
+        <a href="{% url 'home' %}">
+      
+            <button class="back" type="button">&#8592</button>
+        </a>
+        <br>
+        
+        <div id="forgot-password-form">
+            <h2>Quên mật khẩu</h2>
+            <form action="{% url 'mail' %}" method="POST" autocomplete="off">
+                {% csrf_token %}
+                <input type="text" name="email" placeholder="Nhập email" autocomplete="off"
+                       style="border-color: {% if errors %} red {% endif %};"/>
+                       <span style="color: red;">{{ errors}}</span>
+                <button class="submit" type="submit">Quên tài khoản</button>
+                <p class="message"><a href="{% url 'login' %}">Đăng nhập</a></p>
+            </form>
+        </div>
+        <div id="otp-form" style="display: none;">
+            <h2>Nhập OTP</h2>
+            <input type="text" id="otp" placeholder="Nhập mã OTP" required />
+            <button class="submit" type="button" onclick="verifyOtp()">Xác nhận OTP</button>
+        </div>
+        <div id="reset-password-form" style="display: none;">
+            <h2>Đặt lại mật khẩu</h2>
+            <input type="password" name="new_password" placeholder="Mật khẩu mới" required />
+            <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required />
+            <button class="submit" type="button" onclick="resetPassword({{ id }})">Đặt lại mật khẩu</button>
+            <p class="message"><a href="{% url 'login' %}">Đăng nhập</a></p>
+        </div>
+    
+</body>
+</html>

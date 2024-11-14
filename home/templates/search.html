@@ -34,71 +34,81 @@
     
 </header>
 <script>
-    let isLoggedIn = false; // thêm phương thức kiểm tra trạng thái đăng nhập
-    const userName = "Nguyễn Văn A";
+    let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
 
-    function updateUserAction() {
-        const userActionDiv = document.getElementById("user-action");
-        console.log(userActionDiv);
-        if (isLoggedIn) {
-            userActionDiv.innerHTML =
-            `
-            <div show-info onclick="showInfo()" class="navlinks">
-                <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
-                <ul show-ul class="d-none" id="userlist">
-                    <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                    <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
-                    <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
-                </ul>
-            </div>
-            `;                                                      //url trang profile
-                                                                    // url trang history
-                                                                    // thoát trạng thái đăng nhập
-        } else {
-            userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
+        function updateUserAction() {
+            const userActionDiv = document.getElementById("user-action");
+            console.log(userActionDiv);
+            if (isLoggedIn) {
+                userActionDiv.innerHTML =
+                `
+                <div show-info onclick="showInfo()" class="navlinks">
+                    <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
+                    <ul show-ul class="d-none" id="userlist">
+                        <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
+                    </ul>
+                </div>
+                `;
+            } else {
+                userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
+            }
         }
-    }
 
-    function logout() {
-        isLoggedIn = false;
-        updateUserAction(); 
-    }
-    updateUserAction();
+        function login() {
+            isLoggedIn = true; // Cập nhật trạng thái đăng nhập
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        function logout() {
+            isLoggedIn = false; // Cập nhật trạng thái đăng xuất
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        // Gọi hàm để cập nhật giao diện khi trang được tải
+        document.addEventListener("DOMContentLoaded", updateUserAction);
 </script>
 <script>
     var Menulist = document.getElementsByClassName("navlinks");
-    // menulist.style.maxHeight = "0px";
-    function menutoggle() {
-        if (menulist.style.maxHeight == "0px") {
-            menulist.style.maxHeight = "60vh";
-        } else {
-            menulist.style.maxHeight = "0px";
-        }
-    }
-    
-    let shown = false;
-    const showInfor = document.querySelector('[show-info]');
-    console.log(showInfor);
-    const showUl = showInfor.querySelector(`[show-ul]`);
-    console.log(showUl);
-    function showInfo() {
-       
-        if(shown){
-            showUl.classList.remove('d-block');
-            showUl.classList.add("d-none");
-            // const userName = showInfor.querySelector(`.user`);
-            shown = false;
-        }
-        else{
-            showUl.classList.remove('d-none');
-            showUl.classList.add("d-block");
-            const userName = showInfor.querySelector(`.user`);
-            // console.log(userName);
-            // userName.classList.add("d-none");
-            shown = true;
+        // menulist.style.maxHeight = "0px";
+        function menutoggle() {
+            if (menulist.style.maxHeight == "0px") {
+                menulist.style.maxHeight = "60vh";
+            } else {
+                menulist.style.maxHeight = "0px";
+            }
         }
         
-    }
+        let shown = false;
+        const showInfor = document.querySelector('[show-info]');
+        console.log(showInfor);
+        const showUl = showInfor.querySelector(`[show-ul]`);
+        console.log(showUl);
+        function showInfo() {
+           
+            if(shown){
+                showUl.classList.remove('d-block');
+                showUl.classList.add("d-none");
+                // const userName = showInfor.querySelector(`.user`);
+                shown = false;
+            }
+            else{
+                showUl.classList.remove('d-none');
+                showUl.classList.add("d-block");
+                const userName = showInfor.querySelector(`.user`);
+                // console.log(userName);
+                // userName.classList.add("d-none");
+                shown = true;
+            }
+            
+        }
+        function usertoggle() {
+            const userlist = document.getElementById("userlist");
+            userlist.classList.toggle("d-none");
+            userlist.classList.toggle("d-block");
+        }
 </script>
 <div class="container">
     <!-- Bộ lọc -->

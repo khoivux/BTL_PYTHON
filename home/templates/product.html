@@ -41,8 +41,8 @@
         </div>
     </header>
     <script>
-        let isLoggedIn = true; // thêm phương thức kiểm tra trạng thái đăng nhập
-        const userName = "Nguyễn Văn A";
+        let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
 
         function updateUserAction() {
             const userActionDiv = document.getElementById("user-action");
@@ -53,24 +53,29 @@
                 <div show-info onclick="showInfo()" class="navlinks">
                     <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                     <ul show-ul class="d-none" id="userlist">
-                        <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
                         <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                     </ul>
                 </div>
-                `;                                                      //url trang profile
-                                                                        // url trang history
-                                                                        // thoát trạng thái đăng nhập
+                `;
             } else {
-                userActionDiv.innerHTML = `<a href="#"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
+                userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
             }
         }
 
-        function logout() {
-            isLoggedIn = false;
-            updateUserAction(); 
+        function login() {
+            isLoggedIn = true; // Cập nhật trạng thái đăng nhập
+            updateUserAction(); // Cập nhật lại giao diện
         }
-        updateUserAction();
+
+        function logout() {
+            isLoggedIn = false; // Cập nhật trạng thái đăng xuất
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        // Gọi hàm để cập nhật giao diện khi trang được tải
+        document.addEventListener("DOMContentLoaded", updateUserAction);
     </script>
     <script>
         var Menulist = document.getElementsByClassName("navlinks");
@@ -105,6 +110,11 @@
                 shown = true;
             }
             
+        }
+        function usertoggle() {
+            const userlist = document.getElementById("userlist");
+            userlist.classList.toggle("d-none");
+            userlist.classList.toggle("d-block");
         }
     </script>
 

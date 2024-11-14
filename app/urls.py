@@ -23,4 +23,5 @@ urlpatterns = [
     path('', include('home.urls')), # Nếu không có / thì sẽ gọi đến home.urls
     path('login/', include('login.urls')),
     path('booking/', include('booking_manager.urls')),
+    path("profile/", include('profileUser.urls')),
 ]
