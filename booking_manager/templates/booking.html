@@ -117,8 +117,8 @@
         </div>
     </header>
     <script>
-        let isLoggedIn = false; // thêm phương thức kiểm tra trạng thái đăng nhập
-        const userName = "Nguyễn Văn A";
+        let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
 
         function updateUserAction() {
             const userActionDiv = document.getElementById("user-action");
@@ -129,24 +129,29 @@
                 <div show-info onclick="showInfo()" class="navlinks">
                     <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                     <ul show-ul class="d-none" id="userlist">
-                        <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
                         <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                     </ul>
                 </div>
-                `;                                                      //url trang profile
-                                                                        // url trang history
-                                                                        // thoát trạng thái đăng nhập
+                `;
             } else {
                 userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
             }
         }
 
-        function logout() {
-            isLoggedIn = false;
-            updateUserAction(); 
+        function login() {
+            isLoggedIn = true; // Cập nhật trạng thái đăng nhập
+            updateUserAction(); // Cập nhật lại giao diện
         }
-        updateUserAction();
+
+        function logout() {
+            isLoggedIn = false; // Cập nhật trạng thái đăng xuất
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        // Gọi hàm để cập nhật giao diện khi trang được tải
+        document.addEventListener("DOMContentLoaded", updateUserAction);
     </script>
     <script>
         var Menulist = document.getElementsByClassName("navlinks");
@@ -189,14 +194,16 @@
         }
     </script>
 
-    <form  id = "Details">  <!--nhập thông tin--> 
+    <form  id = "Details" action = {% url '/pay/' %} method = "POST">  <!--nhập thông tin--> 
         <div class="container mt-4">
             <!-- Header -->
             <div class="general-info text-center">
                 <h3>{{ homestay.name }}</h3>
                 <p>{{ homestay.address }}, {{ homestay.province.name }}</p>
             </div>
-    
+            <input type="hidden" name="homestay_name" value="{{ homestay.name }}">
+            <input type="hidden" name="homestay_address" value="{{ homestay.address }}">
+            <input type="hidden" name="homestay_province" value="{{ homestay.province.name }}">
             <div class="row">
                 <!-- Booking Details -->
                 <div class="col-md-4">
@@ -207,6 +214,12 @@
                         <p>Tổng thời gian lưu trú: {{ stay_duration }} ngày</p>
                         <h5>Giá thuê: {{ rent_price|format_price }}</h5>
                         <a href="/search" class="text-primary">Đổi lựa chọn của bạn</a>
+
+
+                        <input type="hidden" name="checkin_date" value="{{ checkin_date }}">
+                        <input type="hidden" name="checkout_date" value="{{ checkout_date }}">
+                        <input type="hidden" name="stay_duration" value="{{ stay_duration }}">
+                        <input type="hidden" name="rent_price" value="{{ rent_price }}">
                     </div>
                     <div class="services info-box">
                         <h5>Dịch vụ</h5>
@@ -228,6 +241,7 @@
                         <ul class="list-unstyled">
                             {% for facility in facilities %}
                                 <li><i class="fas fa-check-circle"></i>• {{ facility.name }}</li>
+                                <input type="hidden" name="facilities" value="{{ facility.name }}">
                             {% endfor %}
                         </ul>
                     </div>
@@ -240,52 +254,45 @@
                             <h5>Thông tin người đặt phòng</h5>
                             <div class="mb-3">
                                 <label for="lastName" class="form-label">Họ</label>
-                                <input type="text" class="form-control" id="lastName" placeholder="Ví dụ: Nguyễn">
+                                <input type="text" class="form-control" name = "lastName"id="lastName" placeholder="Ví dụ: Nguyễn">
                             </div>
                             <div class="mb-3">
                                 <label for="firstName" class="form-label">Tên</label>
-                                <input type="text" class="form-control" id="firstName" placeholder="Ví dụ: Tuấn">
+                                <input type="text" class="form-control" name = "firstName" id="firstName" placeholder="Ví dụ: Tuấn">
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" placeholder="email@example.com">
+                                <input type="email" class="form-control" name = "email" id="email" placeholder="email@example.com">
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Số điện thoại</label>
-                                <input type="text" class="form-control" id="phone" placeholder="+84">
+                                <input type="text" class="form-control" name = "phone" id="phone" placeholder="+84">
                             </div>
                         </div>
                         <div class="check-in-cus info-box">
                             <h5>Thông tin người nhận phòng</h5>
                             <div class="mb-3">
                                 <label for="lastName" class="form-label">Họ</label>
-                                <input type="text" class="form-control" id="lastName" placeholder="Ví dụ: Nguyễn">
+                                <input type="text" class="form-control" name = "lastNameR" id="lastName" placeholder="Ví dụ: Nguyễn">
                             </div>
                             <div class="mb-3">
                                 <label for="firstName" class="form-label">Tên</label>
-                                <input type="text" class="form-control" id="firstName" placeholder="Ví dụ: Tuấn">
+                                <input type="text" class="form-control" name = "firstNameR" id="firstName" placeholder="Ví dụ: Tuấn">
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" placeholder="email@example.com">
+                                <input type="email" class="form-control" name = "emailR" id="email" placeholder="email@example.com">
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Số điện thoại</label>
-                                <input type="text" class="form-control" id="phone" placeholder="+84">
+                                <input type="text" class="form-control" name = "phoneR" id="phone" placeholder="+84">
                             </div>
                         </div>
                         <div class="check-in-time">
                             <h6>Thời gian nhận phòng</h6>
-                            <select class="form-select" >
+                            <select class="form-select" name = "onTime">
                                 <option value="" disabled="" selected="">Vui lòng chọn</option>
-                                <option value="-1">Tôi không biết</option>
-                                <option value="0">00:00 – 01:00 </option>
-                                <option value="1">01:00 – 02:00 </option>
-                                <option value="2">02:00 – 03:00 </option>
-                                <option value="3">03:00 – 04:00 </option>
-                                <option value="4">04:00 – 05:00 </option>
-                                <option value="5">05:00 – 06:00 </option>
-                                <option value="6">06:00 – 07:00 </option>
+                                
                                 <option value="7">07:00 – 08:00 </option>
                                 <option value="8">08:00 – 09:00 </option>
                                 <option value="9">09:00 – 10:00 </option>
@@ -299,10 +306,7 @@
                                 <option value="17">17:00 – 18:00 </option>
                                 <option value="18">18:00 – 19:00 </option>
                                 <option value="19">19:00 – 20:00 </option>
-                                <option value="20">20:00 – 21:00 </option>
-                                <option value="21">21:00 – 22:00 </option>
-                                <option value="22">22:00 – 23:00 </option>
-                                <option value="23">23:00 – 00:00 </option>
+                                
                             </select>
                         </div>
                         <div class="regulations">
@@ -396,4 +400,3 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-1

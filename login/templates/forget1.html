@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <title>Xác minh OTP</title>
+    <link rel="stylesheet" href="{% static 'login/css/login.css' %}">
+    
+</head>
+<body>
+    <div class="form">
+        <form action="{% url 'home' %}" method="GET" autocomplete="off">
+            <button class="back">&#8592;</button>
+        </form>
+        <br>
+
+        <!-- Form Quên mật khẩu -->
+        <div id="email-form">
+            <h2>Quên mật khẩu</h2>
+            <form action="{% url 'request_otp' %}" method="POST" autocomplete="off">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="Nhập email" autocomplete="off"
+                       style="border-color: {% if errors.username %} red {% endif %};"/>
+                <button class="submit" type="button" onclick="showOtpForm()">Quên tài khoản</button>
+                <p class="message"><a href="{% url 'login' %}">Đăng nhập</a></p>
+            </form>
+        </div>
+
+        <!-- Form Nhập OTP -->
+        <div id="otp-form" style="display: {% if otp_verified %}none{% else %}block{% endif %};">
+            <h2>Nhập OTP</h2>
+            <form action="{% url 'verify_otp' user_id=user_id %}" method="POST" autocomplete="off">
+                {% csrf_token %}
+                <input type="text" name="otp" placeholder="Nhập mã OTP" required />
+                <button class="submit" type="submit">Xác nhận OTP</button>
+                <p class="message"><a href="{% url 'login' %}">Đăng nhập</a></p>
+            </form>
+            
+            <!-- Hiển thị thông báo lỗi nếu OTP không hợp lệ -->
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <!-- Form Đặt lại mật khẩu -->
+        <div id="reset-password-form" style="display: {% if otp_verified %}block{% else %}none{% endif %};">
+            <h2>Đặt lại mật khẩu</h2>
+            <form action="{% url 'reset_password' user_id=user_id %}" method="POST" autocomplete="off">
+                {% csrf_token %}
+                <input type="password" name="new_password" placeholder="Mật khẩu mới" required />
+                <input type="password" name="confirm_password" placeholder="Xác nhận mật khẩu" required />
+                <button class="submit" type="submit">Đặt lại mật khẩu</button>
+                <p class="message"><a href="{% url 'login' %}">Đăng nhập</a></p>
+            </form>
+        </div>
+    </div>
+    <script>
+        function showOtpForm() {
+            document.getElementById("email-form").style.display = "none";
+            document.getElementById("otp-form").style.display = "block";
+        }
+    </script>
+    
+</body>
+</html>
