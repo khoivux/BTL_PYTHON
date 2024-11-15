@@ -1,8 +1,12 @@
 from datetime import datetime
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.db.models import Q
 from homestay_manager.models import Homestay, HomestayFacilities
+from django.http import JsonResponse
+from .models import Booking
+from django.utils import timezone
+from datetime import datetime
 
 # Create your views here.
 
@@ -12,9 +16,9 @@ def create_booking(request):
     checkout_date_str = request.GET.get('checkout_date')
     checkin_date_str = request.GET.get('checkin_date')
     facilities = homestay.facilities.all() 
-    checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date() 
+    checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date()
     checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
-
+    
     homestaytmp = Homestay.objects.filter(id=id).filter(
                 Q(booking__checkin_date__gt=checkout_date) |  
                 Q(booking__checkout_date__lt=checkin_date) |   
@@ -30,16 +34,19 @@ def create_booking(request):
         'checkout_date': checkout_date,
         'checkin_date': checkin_date, 
         }
+        print(0)
         return render(request, 'product.html', context1)
     else:
-        
+        print(1)
         # Thỏa mãn thì đến trang booking
         stay_duration = (checkout_date - checkin_date).days
         rent_price = stay_duration * homestay.price
+        checkin_date_str_correct = checkin_date.strftime('%Y-%m-%d')
+        checkout_date_str_correct = checkout_date.strftime('%Y-%m-%d')
         context2 = {
             'homestay': homestay,
-            'checkout_date': checkout_date,
-            'checkin_date': checkin_date,
+            'checkout_date': checkout_date_str_correct,
+            'checkin_date': checkin_date_str_correct,
             'province': homestay.province,
             'stay_duration': stay_duration,
             'rent_price': rent_price,
@@ -51,7 +58,9 @@ def payment(request):
     if request.method == "POST":
         
         
-        user_id = request.session.get('user_id', None)
+        user_id = request.session.get('userId', None)
+        print(user_id)
+        homestay_id = request.POST.get('homestay_id')
         homestay_name = request.POST.get('homestay_name')
         homestay_address = request.POST.get('homestay_address')
         homestay_province = request.POST.get('homestay_province')
@@ -72,6 +81,7 @@ def payment(request):
         onTime = request.POST.get('onTime')
         
         data = {
+                        "homestay_id" : homestay_id,
                         "homestay_name": homestay_name,
                         "homestay_address": homestay_address,
                         "homestay_province": homestay_province,
@@ -96,18 +106,18 @@ def payment(request):
         
         if user_id:
             # Tạo một instance mới của Booking và lưu dữ liệu JSON vào trường booking_data
-            booking = Booking.objects.create(
-                            booking_time=timezone.now(),  # Cập nhật thời gian hiện tại
-                            checkin_date=checkin_date,
-                            checkout_date=checkout_date,
-                            status="Chưa thanh toán",  # Ví dụ, trạng thái là 'Pending'
-                            homestay_id=1,  # Giả sử homestay_id đã được chọn từ dữ liệu của bạn
-                            user_id=user_id,  # Giả sử user_id là 1
-                            booking_data=data  # Lưu dữ liệu JSON vào trường booking_data
-            )
-            return JsonResponse({"message": "Booking created successfully!"}) # sẽ thay thành chuyển đến trang thanh toán
+            #booking = Booking.objects.create(
+            #                booking_time=timezone.now(),  # Cập nhật thời gian hiện tại
+            #                checkin_date=checkin_date,
+            #                checkout_date=checkout_date,
+            #                status="Chưa thanh toán",  # Ví dụ, trạng thái là 'Pending'
+            #                homestay_id=1,  # Giả sử homestay_id đã được chọn từ dữ liệu của bạn
+            #                user_id=user_id, 
+            #                bill_info=data  # Lưu dữ liệu JSON vào trường booking_data
+            #)
+            print(data)
+            return render(request, 'hoadon.html', {'data': data})
         else:
             #yêu cầu đăng nhập
             return redirect ("/login")
             #hoặc vẫn sẽ cho thanh toán nhưng không lưu bills
-            
