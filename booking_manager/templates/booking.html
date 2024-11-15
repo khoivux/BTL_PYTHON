@@ -105,7 +105,7 @@
         }
     </script>
 
-    <form  id = "Details" action = {% url 'booking_manager:pay' %} method = "POST">  <!--nhập thông tin--> 
+    <form  id = "Details" action = {% url 'booking_manager:pay' %} method = "POST">  <!--nhập thông tin-->
         {% csrf_token %}
         <div class="container mt-4">
             <!-- Header -->
@@ -113,11 +113,10 @@
                 <h3>{{ homestay.name }}</h3>
                 <p>{{ homestay.address }}, {{ homestay.province.name }}</p>
             </div>
-            <input type="hidden" id="homestay_id" name="homestay.id">
+            <input type="hidden" name="homestay_id" value="{{ homestay.id }}">
             <input type="hidden" name="homestay_name" value="{{ homestay.name }}">
             <input type="hidden" name="homestay_address" value="{{ homestay.address }}">
             <input type="hidden" name="homestay_province" value="{{ homestay.province.name }}">
-            
             <div class="row">
                 <!-- Booking Details -->
                 <div class="col-md-4">
@@ -164,7 +163,7 @@
                 <!-- User Information Form -->
                 <div class="col-md-8">
                     <div class="info-box">
-                        <div class="book-cus info-box" >
+                        <div class="book-cus info-box">
                             <h5>Thông tin người đặt phòng</h5>
                             <div class="mb-3">
                                 <label for="lastName" class="form-label">Họ</label>
@@ -176,14 +175,14 @@
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" required name = "email" id="email" placeholder="email@example.com">
+                                <input type="email" class="form-control"  required name = "email" id="email" placeholder="email@example.com">
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Số điện thoại</label>
                                 <input type="text" class="form-control" required name = "phone" id="phone" placeholder="+84">
                             </div>
                         </div>
-                        <div class="check-in-cus info-box" required>
+                        <div class="check-in-cus info-box">
                             <h5>Thông tin người nhận phòng</h5>
                             <div class="mb-3">
                                 <label for="lastName" class="form-label">Họ</label>
@@ -240,8 +239,6 @@
     </form> 
   
 <script>
-
-
     document.addEventListener("DOMContentLoaded", function () {
         const modal = document.getElementById("modal");
         const openModalBtn = document.getElementById("openModalBtn");

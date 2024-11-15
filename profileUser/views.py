@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm
 from .models import Profile
+from django.contrib.auth.models import User
+from booking_manager.models import Booking
+import json
+
 @login_required
 def getProfile(request):
     profile = request.user.profile  # Lấy thông tin profile của người dùng
@@ -28,3 +32,33 @@ def edit(request):
         'profile': profile  # Truyền dữ liệu profile vào context
     }
     return render(request, 'profile.html', context)
+
+def user_invoices(request):
+    user_id = request.session.get("userId")
+    user = User.objects.get(id=user_id)
+    
+    invoices = Booking.objects.filter(user=user)
+    invoices_data = []
+    for invoice in invoices:
+        print(invoice.bill_info)
+        invoice_data = {
+            'id': invoice.id,
+            'checkinDate': invoice.checkin_date.strftime('%Y-%m-%d'),  # Chuyển đổi thành chuỗi
+            'checkoutDate': invoice.checkout_date.strftime('%Y-%m-%d'),
+            'amount': invoice.bill_info['total'],
+            'status': invoice.status,
+            'bill_info': invoice.bill_info,
+            'homestayName' : invoice.bill_info['homestay_name'],
+        }
+        invoices_data.append(invoice_data)
+    data = {
+        'userInfo': {
+            'id': user.id,
+            'name': user.first_name + user.last_name,
+            'email': user.email,
+        },
+        
+        
+        'invoices': invoices_data
+    }
+    return render(request, 'test.html', {'data': json.dumps(data)})

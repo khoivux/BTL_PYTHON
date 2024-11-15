@@ -106,35 +106,43 @@
         <div class="invoice-header">
             <h1>Thông Tin Đặt Phòng</h1>
             <h3 class="mb-0">
-                <p class="mb-2" id="HomestayName">Homestaybac</p>
+                <p class="mb-2" id="HomestayName">{{ data.homestay_name }}</p>
             </h3>
-            <p class="mb-2" id="HomestayAddress">18/42 Đường Đồng Lợi, Sa Pa, Việt Nam/p>
+            <p class="mb-2" id="HomestayAddress">{{ data.homestay_address }}, {{ data.homestay_province }}</p>
             
         </div>
 
         <div class="invoice-section" id="customer-info">
             <h4>Thông tin người đặt phòng</h4>
-            <p><strong>Họ và tên:</strong> <span id="full-name"></span></p>
-            <p><strong>Email:</strong> <span id="email"></span></p>
-            <p><strong>Số điện thoại:</strong> <span id="phone"></span></p>
+            <p><strong>Họ và tên:</strong> <span id="full-name">{{ data.firstName }} {{ data.lastName }}</span></p>
+            <p><strong>Email:</strong> <span id="email"></span>{{ data.email }}</p>
+            <p><strong>Số điện thoại:</strong> <span id="phone">{{ data.phone }}</span></p>
         </div>
 
         <div class="invoice-section" id="booking-info">
             <h4>Chi tiết đặt phòng</h4>
-            <p><strong>Nhận phòng:</strong> <span id="check-in"></span></p>
-            <p><strong>Trả phòng:</strong> <span id="check-out"></span></p>
-            <p><strong>Tổng thời gian lưu trú:</strong> <span id="stay-duration"></span></p>
-            <p><strong>Giá thuê:</strong> <span id="price"></span></p>
+            <p><strong>Nhận phòng:</strong> <span id="check-in">{{ data.checkin_date }}</span></p>
+            <p><strong>Trả phòng:</strong> <span id="check-out"></span>{{ data.checkout_date }}</p>
+            <p><strong>Tổng thời gian lưu trú:</strong> <span id="stay-duration">{{ data.stay_duration }} ngày</span></p>
+            <p><strong>Giá thuê:</strong> <span id="price"></span>{{ data.rent_price }} VND</p>
         </div>
 
         <div class="invoice-section" id="services">
             <h4>Dịch vụ bổ sung</h4>
-            <ul id="service-list"></ul>
+            <ul id="service-list"></ul> <!-- Thêm phần tử ul để chứa danh sách dịch vụ -->
         </div>
 
 
         <div class="total-amount">
-            <p>Tổng tiền: <span id="total"></span></p>
+            <div class="rent-price">
+                <p>Giá thuê phòng: <span id="rent-price"></span></p>
+            </div>
+            <div class="service-cost">
+                <p>Chi phí dịch vụ: <span id="service-cost"></span></p>
+            </div>
+            <div class="total">
+                <p>Tổng tiền: <span id="total"></span></p>
+            </div>
         </div>
 
         <div class="text-end">
@@ -150,7 +158,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="qr">
-                        <img src="static/img/thanhtoan.jpg.png" alt="QR Code">
+                        <img src="/img/thanhtoan.png" alt="QR Code">
                         <h4>Phạm Ngọc Long</h4>
                         <h6>QRD000103035625901</h6>
                         <h6>PGD Khu công nghiệp Phố Nối A</h6>
@@ -164,48 +172,82 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Thanh toán</button>
+                    <button type="button" id ="payButton" class="btn btn-primary">Thanh toán</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 </div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        // Lắng nghe sự kiện click vào nút thanh toán
+                        const payButton = document.getElementById("payButton");
+                    
+                        payButton.addEventListener("click", function() {
+                            // Kiểm tra xem checkbox đã được đánh dấu hay chưa
+                            const isRegulationsChecked = document.querySelector('input[name="regulations"]').checked;
+                    
+                            // Nếu người dùng không đồng ý nhận email marketing
+                            if (!isRegulationsChecked) {
+                                alert("Vui lòng đồng ý nhận email marketing để tiếp tục thanh toán.");
+                                return; // Ngừng quá trình thanh toán
+                            }
+                    
+                            // Thực hiện thanh toán (giả lập hành động thanh toán)
+                            alert("Đang xử lý thanh toán...");
+                    
+                            
+                            setTimeout(() => {
+                                // Ẩn modal sau khi thanh toán thành công
+                                const qrCodeModal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+                                qrCodeModal.hide();
+                    
+                                
+                                alert("Thanh toán thành công!");
+                                window.location.href = "/";
+                            }, 2000);
+                        });
+                    });
+                </script>
             </div>
         </div>
     </div>
-
+    
     <script>
+
+        
+        
+
         document.addEventListener("DOMContentLoaded", function() {
-            // Lấy dữ liệu từ API
-            fetch("/api/invoice-data/")
-                .then(response => response.json())
-                .then(data => {
-                    // Thông tin homestay
-                    document.getElementById("HomestayName").textContent = data.booking.homestay_name;
-                    document.getElementById("HomestayAddress").textContent = data.booking.homestay_address;
-
-                    // Cập nhật thông tin người đặt phòng
-                    document.getElementById("full-name").textContent = data.booking.full_name;
-                    document.getElementById("email").textContent = data.booking.email;
-                    document.getElementById("phone").textContent = data.booking.phone;
-
-                    // Cập nhật thông tin đặt phòng
-                    document.getElementById("check-in").textContent = data.booking.check_in;
-                    document.getElementById("check-out").textContent = data.booking.check_out;
-                    document.getElementById("stay-duration").textContent = data.booking.stay_duration;
-                    document.getElementById("price").textContent = data.booking.price;
-
-                    // Dịch vụ bổ sung
-                    const serviceList = document.getElementById("service-list");
-                    data.services.forEach(service => {
-                        const li = document.createElement("li");
-                        li.textContent = service;
-                        serviceList.appendChild(li);
-                    });
-
-
-                    // Tổng tiền
-                    document.getElementById("total").textContent = data.total;
-                })
-                .catch(error => console.error("Error fetching invoice data:", error));
+            
+            const services = {{ data.services|safe }};
+        
+            // Lấy phần tử ul để thêm các dịch vụ vào
+            const serviceList = document.getElementById("service-list");
+            const rentPrice = parseInt("{{ data.rent_price }}", 10);
+            const stayDuration = parseInt("{{ data.stay_duration }}", 10);
+            const servicePrices = {
+                'Cầu hôn': 2000000,
+                'Thể thao': 700000,
+                'Ăn uống': 300000, // Giá tính theo ngày, tính tổng bên dưới
+                'Đi lại': 100000   // Giá tính theo ngày, tính tổng bên dưới
+            };
+            let serviceCost = 0;
+            // Thêm các dịch vụ vào danh sách
+            services.forEach(service => {
+                const li = document.createElement("li");
+                const price = servicePrices[service] || 0; // Lấy giá tiền hoặc mặc định 0
+                const totalServicePrice = ['Ăn uống', 'Đi lại'].includes(service)
+                    ? price * stayDuration // Nhân giá theo ngày với số ngày
+                    : price; // Giá cố định
+                li.textContent = `${service}: ${totalServicePrice.toLocaleString()} VND`;
+                serviceList.appendChild(li);
+                serviceCost += totalServicePrice;
+            });
+            const totalCost = rentPrice + serviceCost;
+            document.getElementById("rent-price").textContent = `${rentPrice.toLocaleString()} VND`;
+            document.getElementById("service-cost").textContent = `${serviceCost.toLocaleString()} VND`;
+            document.getElementById("total").textContent = `${totalCost.toLocaleString()} VND`;
+            
         });
+        
 
         // Gọi modal khi bấm nút "Thanh toán"
         document.querySelector(".btn-export").addEventListener("click", function() {

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử Giao dịch</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css"
+        integrity="sha512-UTNP5BXLIptsaj5WdKFrkFov94lDx+eBvbKyoe1YAfjeRPC+gT5kyZ10kOHCfNZqEui1sxmqvodNUx3KbuYI/A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
+        integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href=""><img src="/img/logo.jpeg"></a> <!--back về home-->
+        </div>
+
+        <div class="navlinks">
+            <ul id="menulist">
+                <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
+                <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
+                <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
+                <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
+                <li id="user-action"></li>
+            </ul>
+            <span id="listbars" class="fa fa-bars" onclick="menutoggle()"></span>
+        </div>
+    </header>
+    <script>
+        let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
+
+        function updateUserAction() {
+            const userActionDiv = document.getElementById("user-action");
+            console.log(userActionDiv);
+            if (isLoggedIn) {
+                userActionDiv.innerHTML =
+                `
+                <div show-info onclick="showInfo()" class="navlinks">
+                    <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
+                    <ul show-ul class="d-none" id="userlist">
+                        <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
+                    </ul>
+                </div>
+                `;
+            } else {
+                userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
+            }
+        }
+
+        function login() {
+            isLoggedIn = true; // Cập nhật trạng thái đăng nhập
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        function logout() {
+            isLoggedIn = false; // Cập nhật trạng thái đăng xuất
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        // Gọi hàm để cập nhật giao diện khi trang được tải
+        document.addEventListener("DOMContentLoaded", updateUserAction);
+    </script>
+    <script>
+        var Menulist = document.getElementsByClassName("navlinks");
+        // menulist.style.maxHeight = "0px";
+        function menutoggle() {
+            if (menulist.style.maxHeight == "0px") {
+                menulist.style.maxHeight = "60vh";
+            } else {
+                menulist.style.maxHeight = "0px";
+            }
+        }
+        
+        let shown = false;
+        const showInfor = document.querySelector('[show-info]');
+        console.log(showInfor);
+        const showUl = showInfor.querySelector(`[show-ul]`);
+        console.log(showUl);
+        function showInfo() {
+           
+            if(shown){
+                showUl.classList.remove('d-block');
+                showUl.classList.add("d-none");
+                // const userName = showInfor.querySelector(`.user`);
+                shown = false;
+            }
+            else{
+                showUl.classList.remove('d-none');
+                showUl.classList.add("d-block");
+                const userName = showInfor.querySelector(`.user`);
+                // console.log(userName);
+                // userName.classList.add("d-none");
+                shown = true;
+            }
+            
+        }
+        function usertoggle() {
+            const userlist = document.getElementById("userlist");
+            userlist.classList.toggle("d-none");
+            userlist.classList.toggle("d-block");
+        }
+    </script>
+    <div class="container mt-5">
+        <!-- Thông tin khách hàng -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="card-title text-primary">Thông tin khách hàng</h3>
+                <p><strong>Họ tên:</strong><span id="user-name"></span></p>
+                <p><strong>Email:</strong><span id="user-email"></span></p>
+                
+            </div>
+        </div>
+        <!-- Bảng lịch sử giao dịch -->
+        <div class="table-responsive">
+            <h4 class="mb-3 text-primary">Lịch sử giao dịch</h4>
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th style="width: 5%;">ID</th>
+                        <th style="width: 15%;">Checkin date</th>
+                        <th style="width: 15%;">Checkout date</th>
+                        <th style="width: 25%;">Tên Homestay</th>
+                        <th style="width: 15%;">Số tiền (VNĐ)</th>
+                        <th style="width: 10%;">Trạng thái</th>
+                        <th style="width: 15%;">Thao tác</th> <!-- Thêm cột Thao tác -->
+                    </tr>
+                </thead>
+                <tbody id="transaction-table-body">
+                    <!-- Dữ liệu giao dịch sẽ được thêm vào đây bằng JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function fetchTransactions() {
+            const tableBody = document.getElementById("transaction-table-body");
+        
+            try {
+                // Truyền dữ liệu vào JavaScript thông qua Django template
+                const data = JSON.parse('{{ data|escapejs }}');  // Dữ liệu được chuyển đổi thành chuỗi JSON hợp lệ
+                const transactions = data.invoices;
+                const user = data.userInfo;
+        
+                // Cập nhật thông tin người dùng trong các phần tử HTML
+                document.getElementById('user-name').textContent = user.name;  // Hoặc thuộc tính đúng của user
+                document.getElementById('user-email').textContent = user.email;  // Hoặc thuộc tính đúng của user
+                tableBody.innerHTML = ""; // Xóa nội dung bảng trước khi cập nhật
+        
+                // Duyệt qua danh sách giao dịch và thêm vào bảng
+                transactions.forEach(transaction => {
+                    const row = document.createElement("tr");
+        
+                    // Tạo các ô dữ liệu cho mỗi giao dịch
+                    const idCell = `<td class="text-center">${transaction.id}</td>`;
+                    const checkinDateCell = `<td class="text-center">${transaction.checkinDate}</td>`;
+                    const checkoutDateCell = `<td class="text-center">${transaction.checkoutDate}</td>`;
+                    const homestayNameCell = `<td class="text-center">${transaction.homestayName}</td>`;
+                    const amountCell = `<td class="text-end">${transaction.amount.toLocaleString()}</td>`;
+        
+                    // Trạng thái với màu sắc
+                    let statusBadge = '';
+                    if (transaction.status === "success") {
+                        statusBadge = '<span class="badge bg-success">Thành công</span>';
+                    } else if (transaction.status === "pending") {
+                        statusBadge = '<span class="badge bg-warning">Đang xử lý</span>';
+                    } else if (transaction.status === "Chưa thanh toán") {
+                        statusBadge = '<span class="badge bg-warning">Chưa thanh toán</span>';
+                    }
+                    else {
+                        statusBadge = '<span class="badge bg-danger">Thất bại</span>';
+                    }
+                    const statusCell = `<td class="text-center">${statusBadge}</td>`;
+        
+                    // Thêm cột Thao tác với nút Chỉnh sửa và Xóa
+                    const actionCell = `
+                        <td class="text-center">
+                            <button class="btn btn-primary btn-sm me-2" onclick="editTransaction('${transaction.id}')">Chỉnh sửa</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteTransaction('${transaction.id}')">Xóa</button>
+                        </td>
+                    `;
+        
+                    // Thêm các ô vào hàng
+                    row.innerHTML = idCell + checkinDateCell + checkoutDateCell + homestayNameCell + amountCell + statusCell + actionCell;
+        
+                    // Thêm hàng vào bảng
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu giao dịch:", error);
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Không có dữ liệu giao dịch</td></tr>`;
+            }
+        }
+        
+        // Gọi hàm fetchTransactions khi trang tải xong
+        document.addEventListener("DOMContentLoaded", fetchTransactions);
+        
+        // Hàm xử lý Chỉnh sửa giao dịch
+        function editTransaction(id) {
+            alert(`Bạn đang chỉnh sửa giao dịch ID: ${id}`);
+            // Thực hiện các hành động chỉnh sửa tại đây
+        }
+        
+        // Hàm xử lý Xóa giao dịch
+        function deleteTransaction(id) {
+            if (confirm(`Bạn có chắc chắn muốn xóa giao dịch ID: ${id}?`)) {
+                // Thực hiện xóa bằng cách gọi API hoặc cập nhật dữ liệu
+                alert(`Giao dịch ID: ${id} đã được xóa!`);
+                // Sau khi xóa, gọi lại fetchTransactions() để cập nhật bảng
+                fetchTransactions();
+            }
+        }
+    </script>
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col box">
+                    <img src="/img/background2.jpg" alt="">
+                    <div class="icon">
+                        <i class="fa fa-facebook-f"></i>
+                        <i class="fa fa-instagram"></i>
+                        <i class="fa fa-twitter"></i>
+                        <i class="fa fa-youtube"></i>
+                    </div>
+                </div>
+                <div class="col box">
+                    <h2>GIỚI THIỆU</h2>
+                    <a href="#">Trang chủ</a><br>
+                    <a href="#">Dịch vụ</a><br>
+                    <a href="#">Tin tức</a><br>
+                    <a href="#">Liên hệ</a><br>
+                </div>
+                <div class="col box">
+                    <h2>LIÊN KẾT</h2>
+                    <a href="#">Điều khoản sử dụng</a><br>
+                    <a href="#">Chính sách bảo mật</a><br>
+                    <a href="#">Chính sách hoàn tiền</a><br>
+                    <a href="#">FAQs</a>
+                </div>
+                <div class="col-md-2 box">
+                    <h2>LIÊN HỆ</h2>
+                    <div class = "flex">
+                        <i class="fa fa-location-dot"></i>
+                        <p>30 Tran Phu, Ha Dong, Ha Noi, Viet Nam</p>
+                    </div>
+                    <div class = "flex">
+                        <i class="fa fa-phone"></i>
+                        <p>0987352163</p>
+                    </div>
+                    <div class = "flex">
+                        <i class="fa fa-envelope"></i>
+                        <p>nhan54v@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+</body>
+</html>

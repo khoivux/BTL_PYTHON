@@ -16,9 +16,9 @@ def create_booking(request):
     checkout_date_str = request.GET.get('checkout_date')
     checkin_date_str = request.GET.get('checkin_date')
     facilities = homestay.facilities.all() 
-    checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date()
+    checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date() 
     checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
-    
+
     homestaytmp = Homestay.objects.filter(id=id).filter(
                 Q(booking__checkin_date__gt=checkout_date) |  
                 Q(booking__checkout_date__lt=checkin_date) |   
@@ -68,7 +68,7 @@ def payment(request):
         checkout_date = request.POST.get('checkout_date')
         stay_duration = request.POST.get('stay_duration')
         rent_price = request.POST.get('rent_price')
-        services = request.POST.get('services')
+        services = request.POST.getlist('services')
         facilities = request.POST.get('facilities')
         lastName = request.POST.get('lastName') #lấy thông tin người đặt
         firstName = request.POST.get('firstName')
@@ -79,7 +79,16 @@ def payment(request):
         emailR =request.POST.get('emailR')
         phoneR = request.POST.get('phoneR')
         onTime = request.POST.get('onTime')
-        
+        total =rent_price
+        for service in services:
+            if(service == "Cầu hôn"):
+                total += 2000000
+            elif ( service == "Ăn uống"):
+                total += 300000*int(stay_duration)
+            elif ( service == "Thể thao"):
+                total += 700000
+            elif (service == "Đi lại"):
+                total += 100000*int(stay_duration)
         data = {
                         "homestay_id" : homestay_id,
                         "homestay_name": homestay_name,
@@ -99,7 +108,8 @@ def payment(request):
                         "firstNameR": firstNameR,
                         "emailR": emailR,
                         "phoneR": phoneR,
-                        "onTime": onTime
+                        "onTime": onTime,
+                        "total" : total,
                     }
 
         

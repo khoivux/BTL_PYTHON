@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Profile • HomesTayBac</title>
-        <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+        <link rel="stylesheet" href="{% static 'myapp/test.css' %}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css"
             integrity="sha512-UTNP5BXLIptsaj5WdKFrkFov94lDx+eBvbKyoe1YAfjeRPC+gT5kyZ10kOHCfNZqEui1sxmqvodNUx3KbuYI/A=="
             crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -51,7 +51,7 @@
                 <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                 <ul show-ul class="d-none" id="userlist">
                     <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                    <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                    <li><a href="/login/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                     <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                 </ul>
             </div>
