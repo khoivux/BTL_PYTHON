@@ -5,6 +5,8 @@ from .models import Profile
 from django.contrib.auth.models import User
 from booking_manager.models import Booking
 import json
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 
 @login_required
 def getProfile(request):
@@ -62,3 +64,21 @@ def user_invoices(request):
         'invoices': invoices_data
     }
     return render(request, 'test.html', {'data': json.dumps(data)})
+def delete(request):
+    if request.method == 'POST':
+        # Lấy ID từ request.POST thay vì từ request.body
+        booking_id = request.POST.get('id')
+
+        if booking_id:
+            try:
+                # Tìm và xóa giao dịch với ID này
+                booking = get_object_or_404(Booking, id=booking_id)
+                booking.delete()
+                messages.success(request, f"Giao dịch ID: {booking_id} đã được xóa thành công!")
+                return redirect('/profile/invoices/')  # Redirect về trang profile sau khi xóa thành công
+            except Booking.DoesNotExist:
+                messages.error(request, "Giao dịch không tồn tại.")
+        else:
+            messages.error(request, "Không có ID giao dịch.")
+        
+    return redirect('/profile/invoices/')

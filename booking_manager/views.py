@@ -79,7 +79,7 @@ def payment(request):
         emailR =request.POST.get('emailR')
         phoneR = request.POST.get('phoneR')
         onTime = request.POST.get('onTime')
-        total =rent_price
+        total =int(rent_price)
         for service in services:
             if(service == "Cầu hôn"):
                 total += 2000000
@@ -116,18 +116,19 @@ def payment(request):
         
         if user_id:
             # Tạo một instance mới của Booking và lưu dữ liệu JSON vào trường booking_data
-            #booking = Booking.objects.create(
-            #                booking_time=timezone.now(),  # Cập nhật thời gian hiện tại
-            #                checkin_date=checkin_date,
-            #                checkout_date=checkout_date,
-            #                status="Chưa thanh toán",  # Ví dụ, trạng thái là 'Pending'
-            #                homestay_id=1,  # Giả sử homestay_id đã được chọn từ dữ liệu của bạn
-            #                user_id=user_id, 
-            #                bill_info=data  # Lưu dữ liệu JSON vào trường booking_data
-            #)
+            booking = Booking.objects.create(
+                            booking_time=timezone.now(),  # Cập nhật thời gian hiện tại
+                            checkin_date=checkin_date,
+                            checkout_date=checkout_date,
+                            status="Chưa thanh toán",  # Ví dụ, trạng thái là 'Pending'
+                            homestay_id=1,  # Giả sử homestay_id đã được chọn từ dữ liệu của bạn
+                            user_id=user_id, 
+                            bill_info=data  # Lưu dữ liệu JSON vào trường booking_data
+            )
             print(data)
             return render(request, 'hoadon.html', {'data': data})
         else:
             #yêu cầu đăng nhập
             return redirect ("/login")
             #hoặc vẫn sẽ cho thanh toán nhưng không lưu bills
+    

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,12 +21,12 @@
 <body>
     <header>
         <div class="logo">
-            <a href=""><img src="/img/logo.jpeg"></a> <!--back về home-->
+            <a href = {% url 'home' %}><img src={% static 'myapp/img/logo.jpeg' %}</a> <!--back về home-->
         </div>
 
         <div class="navlinks">
             <ul id="menulist">
-                <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
+                <li><a href={% url 'home' %} class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
                 <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
                 <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
                 <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
@@ -111,6 +112,15 @@
             userlist.classList.toggle("d-none");
             userlist.classList.toggle("d-block");
         }
+        {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
     </script>
     <div class="container mt-5">
         <!-- Thông tin khách hàng -->
@@ -155,7 +165,7 @@
                 const data = JSON.parse('{{ data|escapejs }}');  // Dữ liệu được chuyển đổi thành chuỗi JSON hợp lệ
                 const transactions = data.invoices;
                 const user = data.userInfo;
-        
+                    
                 // Cập nhật thông tin người dùng trong các phần tử HTML
                 document.getElementById('user-name').textContent = user.name;  // Hoặc thuộc tính đúng của user
                 document.getElementById('user-email').textContent = user.email;  // Hoặc thuộc tính đúng của user
@@ -189,8 +199,12 @@
                     // Thêm cột Thao tác với nút Chỉnh sửa và Xóa
                     const actionCell = `
                         <td class="text-center">
-                            <button class="btn btn-primary btn-sm me-2" onclick="editTransaction('${transaction.id}')">Chỉnh sửa</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteTransaction('${transaction.id}')">Xóa</button>
+                            
+                            <form action="/profile/xoa-hoa-don/" method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="${transaction.id}">
+                                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                            </form>
                         </td>
                     `;
         
@@ -210,20 +224,10 @@
         document.addEventListener("DOMContentLoaded", fetchTransactions);
         
         // Hàm xử lý Chỉnh sửa giao dịch
-        function editTransaction(id) {
-            alert(`Bạn đang chỉnh sửa giao dịch ID: ${id}`);
-            // Thực hiện các hành động chỉnh sửa tại đây
-        }
+        
         
         // Hàm xử lý Xóa giao dịch
-        function deleteTransaction(id) {
-            if (confirm(`Bạn có chắc chắn muốn xóa giao dịch ID: ${id}?`)) {
-                // Thực hiện xóa bằng cách gọi API hoặc cập nhật dữ liệu
-                alert(`Giao dịch ID: ${id} đã được xóa!`);
-                // Sau khi xóa, gọi lại fetchTransactions() để cập nhật bảng
-                fetchTransactions();
-            }
-        }
+        
     </script>
     <footer>
         <div class="container">
