@@ -1,9 +1,15 @@
-from datetime import datetime, timezone
-from django.http import JsonResponse
-from django.shortcuts import redirect, render
+
+from datetime import datetime
+from django.contrib import messages
+from django.shortcuts import render,redirect
+
 from django.db.models import Q
 from booking_manager.models import Booking
 from homestay_manager.models import Homestay, HomestayFacilities
+from django.http import JsonResponse
+from .models import Booking
+from django.utils import timezone
+from datetime import datetime
 
 # Create your views here.
 
@@ -33,24 +39,26 @@ def create_booking(request):
                 Q(booking__isnull=True)                         
             ).distinct()
     
-    context['checkin_date'] = checkin_date
-    context['checkout_date'] = checkout_date
-
+    
     if not homestaytmp.exists():
         context['checkin_date'] = checkin_date
         context['checkout_date'] = checkout_date
         context['error_message'] = 'Homestay không sẵn có trong thời gian này!'
         return render(request, 'product.html', context)
     elif checkin_date >= checkout_date:
-        context['checkin_date'] = checkin_date
-        context['checkout_date'] = checkout_date
+        context['checkin_date'] = checkin_date_str_correct
+        context['checkout_date'] = checkout_date_str_correct
         context['error_message'] = 'Ngày nhận và trả phòng không phù hợp!'
         return render(request, 'product.html', context)
     else:
         # Thỏa mãn thì đến trang booking
         stay_duration = (checkout_date - checkin_date).days
         rent_price = stay_duration * homestay.price
-        
+        checkin_date_str_correct = checkin_date.strftime('%Y-%m-%d')
+        checkout_date_str_correct = checkout_date.strftime('%Y-%m-%d')
+        context['checkin_date'] = checkin_date_str_correct
+        context['checkout_date'] = checkout_date_str_correct
+
         context['stay_duration'] = stay_duration
         context['rent_price'] = rent_price
         context['province'] = homestay.province
@@ -60,7 +68,10 @@ def create_booking(request):
 def payment(request):
     if request.method == "POST":
         
-        user_id = request.session.get('user_id', None)
+        
+        user_id = request.session.get('userId', None)
+        print(user_id)
+        homestay_id = request.POST.get('homestay_id')
         homestay_name = request.POST.get('homestay_name')
         homestay_address = request.POST.get('homestay_address')
         homestay_province = request.POST.get('homestay_province')
@@ -68,7 +79,7 @@ def payment(request):
         checkout_date = request.POST.get('checkout_date')
         stay_duration = request.POST.get('stay_duration')
         rent_price = request.POST.get('rent_price')
-        services = request.POST.get('services')
+        services = request.POST.getlist('services')
         facilities = request.POST.get('facilities')
         lastName = request.POST.get('lastName') #lấy thông tin người đặt
         firstName = request.POST.get('firstName')
@@ -79,8 +90,18 @@ def payment(request):
         emailR =request.POST.get('emailR')
         phoneR = request.POST.get('phoneR')
         onTime = request.POST.get('onTime')
-        
+        total =int(rent_price)
+        for service in services:
+            if(service == "Cầu hôn"):
+                total += 2000000
+            elif ( service == "Ăn uống"):
+                total += 300000*int(stay_duration)
+            elif ( service == "Thể thao"):
+                total += 700000
+            elif (service == "Đi lại"):
+                total += 100000*int(stay_duration)
         data = {
+                        "homestay_id" : homestay_id,
                         "homestay_name": homestay_name,
                         "homestay_address": homestay_address,
                         "homestay_province": homestay_province,
@@ -98,7 +119,8 @@ def payment(request):
                         "firstNameR": firstNameR,
                         "emailR": emailR,
                         "phoneR": phoneR,
-                        "onTime": onTime
+                        "onTime": onTime,
+                        "total" : total,
                     }
 
     
@@ -110,12 +132,12 @@ def payment(request):
                             checkout_date=checkout_date,
                             status="Chưa thanh toán",  # Ví dụ, trạng thái là 'Pending'
                             homestay_id=1,  # Giả sử homestay_id đã được chọn từ dữ liệu của bạn
-                            user_id=user_id,  # Giả sử user_id là 1
-                            booking_data=data  # Lưu dữ liệu JSON vào trường booking_data
+                            user_id=user_id, 
+                            bill_info=data  # Lưu dữ liệu JSON vào trường booking_data
             )
-            return JsonResponse({"message": "Booking created successfully!"}) # sẽ thay thành chuyển đến trang thanh toán
+            print(data)
+            return render(request, 'hoadon.html', {'data': data})
         else:
             #yêu cầu đăng nhập
             return redirect ("/login")
             #hoặc vẫn sẽ cho thanh toán nhưng không lưu bills
-
