@@ -49,11 +49,14 @@ def search_view(request):
     if capacity:
         homestays = homestays.filter(capacity__gte=capacity)
     if selected_facilities:
-        homestays = homestays.filter(facilities__id__in=selected_facilities)
+        for facility_id in selected_facilities:
+            homestays = homestays.filter(facilities__id=facility_id)
     if selected_services:
-        homestays = homestays.filter(services__id__in=selected_services)
+        for service_id in selected_services:
+            homestays = homestays.filter(services__id=service_id)
     if selected_rooms:
-        homestays = homestays.filter(rooms__id__in=selected_rooms).distinct()
+        for room_id in selected_rooms:
+            homestays = homestays.filter(rooms__id=room_id)
 
     context = {
         'services': services,
