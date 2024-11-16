@@ -1,7 +1,10 @@
+
 from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render,redirect
+
 from django.db.models import Q
+from booking_manager.models import Booking
 from homestay_manager.models import Homestay, HomestayFacilities
 from django.http import JsonResponse
 from .models import Booking
@@ -16,6 +19,17 @@ def create_booking(request):
     checkout_date_str = request.GET.get('checkout_date')
     checkin_date_str = request.GET.get('checkin_date')
     facilities = homestay.facilities.all() 
+    rooms = homestay.rooms.all()
+    context = {
+        'homestay': homestay,
+        'facilities': facilities, 
+        'rooms': rooms,
+        }
+    
+    if not checkin_date_str or not checkout_date_str:
+        context['error_message'] = 'Ngày nhận và trả phòng không được trống!'
+        return render(request, 'product.html', context)
+
     checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date() 
     checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
 
@@ -24,35 +38,32 @@ def create_booking(request):
                 Q(booking__checkout_date__lt=checkin_date) |   
                 Q(booking__isnull=True)                         
             ).distinct()
-
-    # Kiểm tra ngày tại trang product
-    if not homestaytmp.exists() or checkout_date <= checkin_date:
-       # Không thỏa mãn thì ở lại product
-        context1 = {
-        'homestay': homestay,
-        'facilities': facilities,
-        'checkout_date': checkout_date,
-        'checkin_date': checkin_date, 
-        }
-        print(0)
-        return render(request, 'product.html', context1)
+    
+    
+    if not homestaytmp.exists():
+        context['checkin_date'] = checkin_date
+        context['checkout_date'] = checkout_date
+        context['error_message'] = 'Homestay không sẵn có trong thời gian này!'
+        return render(request, 'product.html', context)
+    elif checkin_date >= checkout_date:
+        context['checkin_date'] = checkin_date_str_correct
+        context['checkout_date'] = checkout_date_str_correct
+        context['error_message'] = 'Ngày nhận và trả phòng không phù hợp!'
+        return render(request, 'product.html', context)
     else:
-        print(1)
         # Thỏa mãn thì đến trang booking
         stay_duration = (checkout_date - checkin_date).days
         rent_price = stay_duration * homestay.price
         checkin_date_str_correct = checkin_date.strftime('%Y-%m-%d')
         checkout_date_str_correct = checkout_date.strftime('%Y-%m-%d')
-        context2 = {
-            'homestay': homestay,
-            'checkout_date': checkout_date_str_correct,
-            'checkin_date': checkin_date_str_correct,
-            'province': homestay.province,
-            'stay_duration': stay_duration,
-            'rent_price': rent_price,
-            'facilities': facilities,
-        }
-        return render(request, 'booking.html', context2)
+        context['checkin_date'] = checkin_date_str_correct
+        context['checkout_date'] = checkout_date_str_correct
+
+        context['stay_duration'] = stay_duration
+        context['rent_price'] = rent_price
+        context['province'] = homestay.province
+
+        return render(request, 'booking.html', context)
     
 def payment(request):
     if request.method == "POST":
@@ -112,8 +123,7 @@ def payment(request):
                         "total" : total,
                     }
 
-        
-        
+    
         if user_id:
             # Tạo một instance mới của Booking và lưu dữ liệu JSON vào trường booking_data
             booking = Booking.objects.create(
@@ -131,4 +141,3 @@ def payment(request):
             #yêu cầu đăng nhập
             return redirect ("/login")
             #hoặc vẫn sẽ cho thanh toán nhưng không lưu bills
-    
