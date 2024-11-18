@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,7 +60,7 @@ ROOT_URLCONF = 'app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,7 +87,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'btlpython',
         'USER': 'root',
-        'PASSWORD': 'khoi21102004',
+        'PASSWORD': 'nam2110do',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -143,3 +144,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'  # Đường dẫn đăng nhập
 LOGIN_REDIRECT_URL = '/profile/'  # Nơi chuyển hướng sau khi đăng nhập thành công
+SESSION_COOKIE_SECURE = True  # Đảm bảo cookie được gửi qua HTTPS
+CSRF_COOKIE_SECURE = True  # Đảm bảo cookie CSRF được gửi qua HTTPS
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
