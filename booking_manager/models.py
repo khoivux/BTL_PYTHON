@@ -12,6 +12,16 @@ class Booking(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bills',null=True, blank=True)
     #lưu thông tin bills
     bill_info = models.JSONField(default=dict)
+    
+    def get_amount(self):
+        """
+        Tính tổng doanh thu cho một booking từ các dịch vụ liên quan.
+        """
+        total_amount = sum([booking_service.service.price for booking_service in self.bookingservice_set.all()])
+        return total_amount
+
+    def __str__(self):
+        return f"Booking {self.id} - {self.status} for {self.homestay.name}"
 class BookingService(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
