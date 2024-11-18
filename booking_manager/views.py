@@ -32,7 +32,6 @@ def create_booking(request):
 
     checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date() 
     checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
-
     homestaytmp = Homestay.objects.filter(id=id).filter(
                 Q(booking__checkin_date__gt=checkout_date) |  
                 Q(booking__checkout_date__lt=checkin_date) |   
@@ -46,8 +45,8 @@ def create_booking(request):
         context['error_message'] = 'Homestay không sẵn có trong thời gian này!'
         return render(request, 'product.html', context)
     elif checkin_date >= checkout_date:
-        context['checkin_date'] = checkin_date_str_correct
-        context['checkout_date'] = checkout_date_str_correct
+        context['checkin_date'] = checkin_date
+        context['checkout_date'] = checkout_date
         context['error_message'] = 'Ngày nhận và trả phòng không phù hợp!'
         return render(request, 'product.html', context)
     else:
