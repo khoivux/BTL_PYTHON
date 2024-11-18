@@ -2,8 +2,8 @@
 from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render,redirect
+from django.db.models import Q, Count, Case, When, IntegerField
 
-from django.db.models import Q
 from booking_manager.models import Booking
 from homestay_manager.models import Homestay, HomestayFacilities
 from django.http import JsonResponse
@@ -34,11 +34,22 @@ def create_booking(request):
     checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
     print('create_booking')
     print(checkin_date)
-    homestaytmp = Homestay.objects.filter(id=id).exclude(
-        booking__checkin_date__lt=checkout_date,
-        booking__checkout_date__gt=checkin_date
-    ).distinct()
-    
+    homestaytmp = Homestay.objects.filter(id=id).annotate(
+        invalid_bookings=Count(
+            Case(
+                When(
+                    ~(
+                        Q(booking__checkin_date__gt=checkout_date) |  
+                        Q(booking__checkout_date__lt=checkin_date) |   
+                        Q(booking__isnull=True)
+                    ),
+                    then=1
+                ),
+                output_field=IntegerField()
+            )
+        )
+    ).filter(invalid_bookings=0)
+        
     
     if not homestaytmp.exists():
         context['checkin_date'] = checkin_date
