@@ -84,7 +84,7 @@ def search_view(request):
         checkin_date = datetime.strptime(checkin_date_str, "%Y-%m-%d").date()
         checkout_date = datetime.strptime(checkout_date_str, "%Y-%m-%d").date()
 
-        if checkin_date >= checkout_date:
+        if checkin_date >= checkout_date or checkin_date < datetime.today().date():
             context['error_message'] = 'Ngày nhận và trả phòng không hợp lệ!'
             return render(request, 'search.html', context)
         
@@ -111,6 +111,10 @@ def product_detail(request, id):
     rooms = homestay.rooms.all()
     checkout_date = request.GET.get('checkout_date')
     checkin_date = request.GET.get('checkin_date')
+    #checkin_date = datetime.strptime(checkin_date, "%Y-%m-%d").date()
+    #checkout_date = datetime.strptime(checkout_date, "%Y-%m-%d").date()
+    print('detail:')
+    print(checkin_date)
     context = {
         'homestay': homestay,
         'facilities': facilities,

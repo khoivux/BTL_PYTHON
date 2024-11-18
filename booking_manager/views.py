@@ -32,11 +32,12 @@ def create_booking(request):
 
     checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date() 
     checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
-    homestaytmp = Homestay.objects.filter(id=id).filter(
-                Q(booking__checkin_date__gt=checkout_date) |  
-                Q(booking__checkout_date__lt=checkin_date) |   
-                Q(booking__isnull=True)                         
-            ).distinct()
+    print('create_booking')
+    print(checkin_date)
+    homestaytmp = Homestay.objects.filter(id=id).exclude(
+        booking__checkin_date__lt=checkout_date,
+        booking__checkout_date__gt=checkin_date
+    ).distinct()
     
     
     if not homestaytmp.exists():
@@ -53,10 +54,9 @@ def create_booking(request):
         # Thỏa mãn thì đến trang booking
         stay_duration = (checkout_date - checkin_date).days
         rent_price = stay_duration * homestay.price
-        checkin_date_str_correct = checkin_date.strftime('%Y-%m-%d')
-        checkout_date_str_correct = checkout_date.strftime('%Y-%m-%d')
-        context['checkin_date'] = checkin_date_str_correct
-        context['checkout_date'] = checkout_date_str_correct
+
+        context['checkin_date'] = checkin_date
+        context['checkout_date'] = checkout_date
 
         context['stay_duration'] = stay_duration
         context['rent_price'] = rent_price
@@ -77,7 +77,7 @@ def payment(request):
         checkin_date = request.POST.get('checkin_date')
         checkout_date = request.POST.get('checkout_date')
         stay_duration = request.POST.get('stay_duration')
-        rent_price = request.POST.get('rent_price')
+        rent_price = request.POST.get('rent_price') + "000"
         services = request.POST.getlist('services')
         facilities = request.POST.get('facilities')
         lastName = request.POST.get('lastName') #lấy thông tin người đặt
@@ -90,6 +90,8 @@ def payment(request):
         phoneR = request.POST.get('phoneR')
         onTime = request.POST.get('onTime')
         total =int(rent_price)
+        checkin_date_time = str(datetime.strptime(checkin_date, '%b. %d, %Y').date())
+        checkout_date_time = str(datetime.strptime(checkout_date, '%b. %d, %Y').date())
         for service in services:
             if(service == "Cầu hôn"):
                 total += 2000000
@@ -104,8 +106,8 @@ def payment(request):
                         "homestay_name": homestay_name,
                         "homestay_address": homestay_address,
                         "homestay_province": homestay_province,
-                        "checkin_date": checkin_date,
-                        "checkout_date": checkout_date,
+                        "checkin_date": checkin_date_time,
+                        "checkout_date": checkout_date_time,
                         "stay_duration": stay_duration,
                         "rent_price": rent_price,
                         "services": services,
@@ -124,15 +126,17 @@ def payment(request):
 
     
         if user_id:
-            # Tạo một instance mới của Booking và lưu dữ liệu JSON vào trường booking_data
+            
+            print("userID")
+            print(checkin_date_time)
             booking = Booking.objects.create(
                             booking_time=timezone.now(),  # Cập nhật thời gian hiện tại
-                            checkin_date=checkin_date,
-                            checkout_date=checkout_date,
-                            status="Chưa thanh toán",  # Ví dụ, trạng thái là 'Pending'
-                            homestay_id=1,  # Giả sử homestay_id đã được chọn từ dữ liệu của bạn
-                            user_id=user_id, 
-                            bill_info=data  # Lưu dữ liệu JSON vào trường booking_data
+                            checkin_date=checkin_date_time,
+                            checkout_date=checkout_date_time,
+                            status="Chưa thanh toán",  
+                            homestay_id=1,
+                            user_id=user_id,
+                            bill_info=data
             )
             print(data)
             return render(request, 'hoadon.html', {'data': data})

@@ -255,16 +255,6 @@
                 <span> - </span>
                 <input type="number" class="price-input" name="priceto" placeholder=".000 VND ĐẾN" value="{{ priceto|default_if_none:'' }}">
             </div>
-            
-            <!-- Đánh giá -->
-            <div class="filter-group">
-                <h3>Đánh giá</h3>
-                <label><input type="checkbox" name="ratings" value="5" {% if '5' in selected_ratings %}checked{% endif %}> 5 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="4" {% if '4' in selected_ratings %}checked{% endif %}> 4 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="3" {% if '3' in selected_ratings %}checked{% endif %}> 3 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="2" {% if '2' in selected_ratings %}checked{% endif %}> 2 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="1" {% if '1' in selected_ratings %}checked{% endif %}> 1 sao</label>
-            </div>
             <!-- Giá tiền -->
             
             <!-- Tiện nghi -->
