@@ -13,8 +13,9 @@ from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
+SESSION_COOKIE_DOMAIN = None
+MEDIA_URL = '/media/'  # URL truy cập ảnh
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -128,10 +129,6 @@ AUTH_USER_MODEL = 'auth.User'
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-
-MEDIA_URL = '/media/'  # URL truy cập ảnh
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Thư mục trên hệ thống để lưu ảnh
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [

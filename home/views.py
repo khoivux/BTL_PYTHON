@@ -49,11 +49,14 @@ def search_view(request):
     if capacity:
         homestays = homestays.filter(capacity__gte=capacity)
     if selected_facilities:
-        homestays = homestays.filter(facilities__id__in=selected_facilities)
+        for facility_id in selected_facilities:
+            homestays = homestays.filter(facilities__id=facility_id)
     if selected_services:
-        homestays = homestays.filter(services__id__in=selected_services)
+        for service_id in selected_services:
+            homestays = homestays.filter(services__id=service_id)
     if selected_rooms:
-        homestays = homestays.filter(rooms__id__in=selected_rooms).distinct()
+        for room_id in selected_rooms:
+            homestays = homestays.filter(rooms__id=room_id)
 
     context = {
         'services': services,
@@ -81,7 +84,7 @@ def search_view(request):
         checkin_date = datetime.strptime(checkin_date_str, "%Y-%m-%d").date()
         checkout_date = datetime.strptime(checkout_date_str, "%Y-%m-%d").date()
 
-        if checkin_date >= checkout_date:
+        if checkin_date >= checkout_date or checkin_date < datetime.min.time():
             context['error_message'] = 'Ngày nhận và trả phòng không hợp lệ!'
             return render(request, 'search.html', context)
         

@@ -37,6 +37,7 @@ def loginv(request):
             request.session['isLoggedIn'] = True  # Thêm trạng thái đăng nhập vào session
             request.session['first_name'] = user.first_name # Lưu tên người dùng
             request.session['userId'] = user.id #lưu id
+            print(request.session.get('userId'))
             return redirect('home')  # Chuyển hướng đến trang home
         else:
             errors['credentials'] = 'Tên đăng nhập hoặc mật khẩu không đúng'
