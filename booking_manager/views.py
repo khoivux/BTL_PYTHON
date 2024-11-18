@@ -26,10 +26,16 @@ def create_booking(request):
         'rooms': rooms,
         }
     
-    if not checkin_date_str or not checkout_date_str:
+    if not checkin_date_str or not checkout_date_str :
         context['error_message'] = 'Ngày nhận và trả phòng không được trống!'
         return render(request, 'product.html', context)
-
+    checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date() 
+    checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
+    if checkin_date >= checkout_date or checkin_date < datetime.today().date():
+        context['checkin_date'] = checkin_date
+        context['checkout_date'] = checkout_date
+        context['error_message'] = 'Ngày nhận và trả phòng không phù hợp!'
+        return render(request, 'product.html', context)
     checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date() 
     checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
     print('create_booking')
