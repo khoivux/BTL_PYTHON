@@ -84,7 +84,7 @@ def search_view(request):
         checkin_date = datetime.strptime(checkin_date_str, "%Y-%m-%d").date()
         checkout_date = datetime.strptime(checkout_date_str, "%Y-%m-%d").date()
 
-        if checkin_date >= checkout_date or checkin_date < datetime.now():
+        if checkin_date >= checkout_date or checkin_date < datetime.today().date():
             context['error_message'] = 'Ngày nhận và trả phòng không hợp lệ!'
             return render(request, 'search.html', context)
         

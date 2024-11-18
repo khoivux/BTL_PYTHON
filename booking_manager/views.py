@@ -45,9 +45,9 @@ def create_booking(request):
         context['checkout_date'] = checkout_date
         context['error_message'] = 'Homestay không sẵn có trong thời gian này!'
         return render(request, 'product.html', context)
-    elif checkin_date >= checkout_date or checkin_date < datetime.now():
-        context['checkin_date'] = checkin_date_str_correct
-        context['checkout_date'] = checkout_date_str_correct
+    elif checkin_date >= checkout_date or checkin_date < datetime.today().date():
+        context['checkin_date'] = checkin_date
+        context['checkout_date'] = checkout_date
         context['error_message'] = 'Ngày nhận và trả phòng không phù hợp!'
         return render(request, 'product.html', context)
     else:

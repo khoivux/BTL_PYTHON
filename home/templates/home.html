@@ -198,16 +198,13 @@
     <div>
         <form action="{% url 'search' %}" method="GET">
             <div class="container-flex text-white bg-warning py-1 px-1 book">
-                <div class="row justify-content-center">
-                    <div class="col">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Bạn muốn đi đâu?" name="address" aria-label="Bạn muốn đi đâu?">
-                            <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" name="checkin-date" aria-label="Check-in Date">
-                            <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" name="checkout-date" aria-label="Check-out Date">
-                            <input type="number" class="form-control" placeholder="Số người" aria-label="Số lượng người" name="capacity" min="1">
-
-                            <button class="custom-btn" type="submit">Tìm kiếm</button>
-                        </div>
+                <div class="col">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Bạn muốn đi đâu?" name="address" aria-label="Bạn muốn đi đâu?">
+                        <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" name="checkin-date" aria-label="Check-in Date">
+                        <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" name="checkout-date" aria-label="Check-out Date">
+                        <input type="number" class="form-control" placeholder="Số người" aria-label="Số lượng người" name="capacity" min="1">
+                        <button class="custom-btn" type="submit">Tìm kiếm</button>
                     </div>
                 </div>
             </div>
