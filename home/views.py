@@ -89,12 +89,22 @@ def search_view(request):
             return render(request, 'search.html', context)
         
         
-        homestays = homestays.filter(
-            Q(booking__checkin_date__gt=checkout_date) |   # Ngày in > ngày checkout của Booking
-            Q(booking__checkout_date__lt=checkin_date) |   # Ngày out < ngày checkin của Booking
-            Q(booking__isnull=True)                 
-        ).distinct()
-        print(checkin_date)
+         homestays = homestays.annotate(
+            invalid_bookings=Count(
+                Case(
+                    When(
+                        ~(
+                            Q(booking__checkin_date__gt=checkout_date) |  
+                            Q(booking__checkout_date__lt=checkin_date) |   
+                            Q(booking__isnull=True)
+                        ),
+                        then=1
+                    ),
+                    output_field=IntegerField()
+                )
+            )
+        ).filter(invalid_bookings=0)
+
 
     if sort_option == 'asc':
         homestays = homestays.order_by('price')
