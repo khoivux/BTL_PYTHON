@@ -7,4 +7,6 @@ urlpatterns = [
     path('edit/',views.edit, name = 'edit-profile'),
     path('invoices/',views.user_invoices, name = 'invoices'),
     path('xoa-hoa-don/',views.delete, name = "delete"),
+    path('changePassword/',views.changePassword, name = "changePassword"),
+    path('change-password/', views.changePass, name = "changePass"),
 ]

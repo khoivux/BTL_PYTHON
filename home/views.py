@@ -105,7 +105,6 @@ def search_view(request):
             )
         ).filter(invalid_bookings=0)
 
-
     if sort_option == 'asc':
         homestays = homestays.order_by('price')
     elif sort_option == 'desc':
@@ -121,6 +120,10 @@ def product_detail(request, id):
     rooms = homestay.rooms.all()
     checkout_date = request.GET.get('checkout_date')
     checkin_date = request.GET.get('checkin_date')
+    #checkin_date = datetime.strptime(checkin_date, "%Y-%m-%d").date()
+    #checkout_date = datetime.strptime(checkout_date, "%Y-%m-%d").date()
+    print('detail:')
+    print(checkin_date)
     context = {
         'homestay': homestay,
         'facilities': facilities,

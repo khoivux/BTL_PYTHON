@@ -7,6 +7,7 @@ from booking_manager.models import Booking
 import json
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
+from django.http import JsonResponse
 
 @login_required
 def getProfile(request):
@@ -82,3 +83,34 @@ def delete(request):
             messages.error(request, "Không có ID giao dịch.")
         
     return redirect('/profile/invoices/')
+
+def changePassword(request):
+    return render(request, "changePassword.html")
+
+def changePass(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        current_password = request.POST.get('currentPassword')
+        new_password = request.POST.get('newPassword')
+        confirm_password = request.POST.get('confirmPassword')
+        print(current_password)
+        if not user_id or not current_password or not new_password or not confirm_password:
+            return JsonResponse({'success': False, 'message': 'Dữ liệu không hợp lệ.'})
+
+        if new_password != confirm_password:
+            return JsonResponse({'success': False, 'message': 'Mật khẩu mới không khớp.'})
+
+        try:
+            user = User.objects.get(id=user_id)
+
+            if not user.check_password(current_password):
+                return JsonResponse({'success': False, 'message': 'Mật khẩu hiện tại không đúng.'})
+
+            user.set_password(new_password)
+            user.save()
+            return JsonResponse({'success': True, 'message': 'Mật khẩu đã được cập nhật thành công.'})
+
+        except User.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Người dùng không tồn tại.'})
+
+    return JsonResponse({'success': False, 'message': 'Yêu cầu không hợp lệ.'})
