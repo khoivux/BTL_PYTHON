@@ -228,7 +228,8 @@
                         {% for service in services %}
                             <label>
                                 <input type="checkbox" name="services" value="{{ service.name }}">
-                                {{ service.name }} </label><br>
+                                {{ service.name }} - Giá: {{ service.price }} VND
+                            </label><br>
                         {% endfor %}
                     </div>
                     <div class="facilities info-box">                

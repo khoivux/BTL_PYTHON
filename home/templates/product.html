@@ -80,7 +80,7 @@
         }
 
         .container {
-            max-width: 1300px; /* Chiều rộng tối đa của nội dung */
+            max-width: 1200px; /* Chiều rộng tối đa của nội dung */
             margin: 0 auto; /* Căn giữa nội dung theo chiều ngang */
             padding: 20px; /* Thêm khoảng cách bên trong */
 /*            background-color: #f9f9f9; *//* Tùy chọn màu nền */
@@ -319,7 +319,7 @@
                             <img src="{{ homestay_room.image.url|default:'/static/myapp/img/default_room.jpg' }}" 
                                  class="img-thumbnail" 
                                  alt="Room: {{ homestay_room.room.name }}" 
-                                 style="width: 300px; height: 300px;" 
+                                 style="width: 200px; height: 200px;" 
                                  onclick="openModal(this.src)">
                         </td>
                         <!-- Cột 2: Tên phòng (Loại phòng) -->
@@ -327,7 +327,7 @@
                         <!-- Cột 3: Số lượng -->
                         <td>{{ homestay_room.quantity }}</td>
                         <!-- Cột 4: Miêu tả phòng -->
-                        {% comment %} <td>{{ homestay_room.room.description }}</td> {% endcomment %}
+                        <td>{{ homestay_room.descriptions }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
