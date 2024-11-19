@@ -218,25 +218,18 @@
                         <a href="/search" class="text-primary">Đổi lựa chọn của bạn</a>
 
 
-                        <input type="date"  name="checkin_date" value="{{ checkin_date }}" >
-                        <input type="date"  name="checkout_date" value="{{ checkout_date }}" >
+                        <input type="hidden" name="checkin_date" value="{{ checkin_date }}">
+                        <input type="hidden" name="checkout_date" value="{{ checkout_date }}">
                         <input type="hidden" name="stay_duration" value="{{ stay_duration }}">
                         <input type="hidden" name="rent_price" value="{{ rent_price }}">
                     </div>
                     <div class="services info-box">
                         <h5>Dịch vụ</h5>
-                        <div>
-                            <input type="checkbox" name="services" value="Cầu hôn"> Cầu hôn
-                        </div>
-                        <div>
-                            <input type="checkbox" name="services" value="Thể thao"> Thể thao
-                        </div>
-                        <div>
-                            <input type="checkbox" name="services" value="Ăn uống"> Ăn uống
-                        </div>
-                        <div>
-                            <input type="checkbox" name="services" value="Đi lại"> Đi lại
-                        </div>
+                        {% for service in services %}
+                            <label>
+                                <input type="checkbox" name="services" value="{{ service.name }}">
+                                {{ service.name }} </label><br>
+                        {% endfor %}
                     </div>
                     <div class="facilities info-box">                
                         <h5 class="mt-4">Tiện nghi:</h5>

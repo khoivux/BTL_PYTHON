@@ -2,7 +2,7 @@ from asyncio.windows_events import NULL
 from gc import get_objects
 from django.shortcuts import render
 from homestay_manager.models import Homestay, HomestayFacilities, Service, Room, HomestayRoom
-from django.db.models import Q
+from django.db.models import Q, Count, Case, When, IntegerField
 from datetime import datetime
 def get_home(request):
     homestays = Homestay.objects.all()
@@ -89,7 +89,7 @@ def search_view(request):
             return render(request, 'search.html', context)
         
         
-         homestays = homestays.annotate(
+        homestays = homestays.annotate(
             invalid_bookings=Count(
                 Case(
                     When(
