@@ -20,6 +20,7 @@ def create_booking(request):
     checkin_date_str = request.GET.get('checkin_date')
     facilities = homestay.facilities.all() 
     rooms = homestay.rooms.all()
+    services = homestay.services.all()
     context = {
         'homestay': homestay,
         'facilities': facilities, 
@@ -100,7 +101,7 @@ def create_booking(request):
         context['stay_duration'] = stay_duration
         context['rent_price'] = rent_price
         context['province'] = homestay.province
-
+        context['services'] = services
         return render(request, 'booking.html', context)
     
 def payment(request):

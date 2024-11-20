@@ -278,6 +278,16 @@
                     </label><br>
                 {% endfor %}
             </div> 
+            <div class="filter-group">
+                <h3>Loại phòng</h3>
+                {% for room in rooms %}
+                    <label>
+                        <input type="checkbox" name="rooms" value="{{ room.id }}" 
+                        {% if room.id|stringformat:"s" in selected_rooms %}checked{% endif %}>
+                        {{ room.name }}
+                    </label><br>
+                {% endfor %}
+            </div> 
 
  
             <!-- Nút áp dụng bộ lọc -->

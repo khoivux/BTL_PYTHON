@@ -53,7 +53,7 @@ class HomestayRoom(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     image = models.ImageField(upload_to='room_images/', blank=True, null=True)
-
+    descriptions = models.CharField(max_length=255)
     def __str__(self):
         return f"{self.homestay.name} - {self.room.name} ({self.quantity})"
 
