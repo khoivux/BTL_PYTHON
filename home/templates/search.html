@@ -129,7 +129,7 @@
         <div class="navlinks">
             <ul id="menulist">
                 <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
-                <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                
                 <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
                 <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
                 <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
@@ -153,7 +153,7 @@
                     <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                     <ul show-ul class="d-none" id="userlist">
                         <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                        <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="/profile/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                     </ul>
                 </div>
@@ -311,7 +311,7 @@
                 {% for homestay in homestays %} <!--Duyệt list-->
                     <div class="item">
                         <div class="img">
-                            <img src="{% static 'myapp/img/homestay1.jpg' %}" alt="Homestay 1">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="Homestay 1">
                         </div>
                         <div class="info">
                             <h2 class="card-title">{{ homestay.name }}</h2>

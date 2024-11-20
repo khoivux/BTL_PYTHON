@@ -20,8 +20,8 @@ def custom_logout(request):
 def loginv(request):
     if request.method == "POST":
         # Lấy dữ liệu từ form
-        username = request.POST.get('username')  # Lấy giá trị của input name="username"
-        password = request.POST.get('password')  # Lấy giá trị của input name="password"
+        username = request.POST.get('username')
+        password = request.POST.get('password')
         print(username)
         print(password)
         errors ={}
@@ -34,11 +34,11 @@ def loginv(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            request.session['isLoggedIn'] = True  # Thêm trạng thái đăng nhập vào session
-            request.session['first_name'] = user.first_name # Lưu tên người dùng
-            request.session['userId'] = user.id #lưu id
+            request.session['isLoggedIn'] = True  
+            request.session['first_name'] = user.first_name 
+            request.session['userId'] = user.id 
             print(request.session.get('userId'))
-            return redirect('home')  # Chuyển hướng đến trang home
+            return redirect('home')
         else:
             errors['credentials'] = 'Tên đăng nhập hoặc mật khẩu không đúng'
             return render(request, 'login.html', {'errors': errors})
@@ -47,9 +47,9 @@ def register(request):
     return render(request,'register.html')
 def inf(request):
     if request.method == "POST":
-        username = request.POST.get('username')  # Lấy giá trị của input name="username"
-        password = request.POST.get('password')  # Lấy giá trị của input name="password"
-        email = request.POST.get('email')  # Lấy giá trị của input name="email"
+        username = request.POST.get('username')  
+        password = request.POST.get('password')  
+        email = request.POST.get('email') 
         errors = {}
         if not username:
             errors['username'] = 'Vui lòng nhập tên đăng nhập'
@@ -63,13 +63,13 @@ def inf(request):
         try:
             # Tạo người dùng mới
             user = User.objects.create_user(username=username, password=password, email=email)
-            user.save()  # Lưu người dùng vào cơ sở dữ liệu
+            user.save()  
             
             print(username)
             print(password)
             print(email)
 
-            # Chuyển hướng người dùng tới trang đăng nhập
+            
             return redirect('login')
         
         except Exception as e:

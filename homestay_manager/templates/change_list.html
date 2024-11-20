@@ -1,0 +1,13 @@
+{% extends "admin/change_list.html" %}
+{% block content %}
+    {{ block.super }}
+    <h2>Thống kê</h2>
+    <div>
+        <h3>Doanh thu theo tháng</h3>
+        {{ chart1|safe }}
+    </div>
+    <div>
+        <h3>Số lượng đặt phòng theo giờ</h3>
+        {{ chart2|safe }}
+    </div>
+{% endblock %}

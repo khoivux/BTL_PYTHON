@@ -13,8 +13,7 @@ class BookingAdmin(admin.ModelAdmin):
     actions = ['view_booking_and_revenue_charts', 'export_booking_data_to_excel']
 
     def view_booking_and_revenue_charts(self, request, queryset):
-        # Biểu đồ số lượng đặt phòng theo giờ trong ngày
-        booking_count_data = {f"{hour}:00": 0 for hour in range(24)}  # Khởi tạo các khóa từ "0:00" đến "23:00"
+        booking_count_data = {f"{hour}:00": 0 for hour in range(24)}  
         bookings = Booking.objects.all()
 
         for booking in bookings:
@@ -22,8 +21,8 @@ class BookingAdmin(admin.ModelAdmin):
             booking_hour = adjusted_booking_time.hour
             booking_count_data[f"{booking_hour}:00"] += 1
 
-        # Tạo biểu đồ số lượng đặt phòng theo giờ
-        fig1, ax1 = plt.subplots(figsize=(10, 6))  # Biểu đồ số lượng đặt phòng
+        
+        fig1, ax1 = plt.subplots(figsize=(10, 6)) 
         hours = ['0:00-1:00', '1:00-2:00', '2:00-3:00', '3:00-4:00', '4:00-5:00', '5:00-6:00', 
  '6:00-7:00', '7:00-8:00', '8:00-9:00', '9:00-10:00', '10:00-11:00', '11:00-12:00', 
  '12:00-13:00', '13:00-14:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', 
@@ -31,7 +30,7 @@ class BookingAdmin(admin.ModelAdmin):
 
         counts = list(booking_count_data.values())
 
-        # Biểu đồ 1: Số lượng đặt phòng theo giờ
+        
         ax1.bar(hours, counts, color='skyblue')
         ax1.set_title('Số lượng đặt phòng theo giờ tạo (booking_time)')
         ax1.set_xlabel('Giờ')
@@ -85,20 +84,20 @@ class BookingAdmin(admin.ModelAdmin):
         return HttpResponse(html)
 
     def export_booking_data_to_excel(self, request, queryset):
-        # Xuất dữ liệu từ bookings
+        
         bookings = Booking.objects.all()
         
-        # Tạo workbook và worksheet
+        
         wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = "Booking Data"
 
-        # Tiêu đề cột
+        
         ws.append(['ID', 'Checkin Date', 'Checkout Date', 'Amount', 'Status', 'Homestay', 'User'])
 
-        # Thêm dữ liệu vào Excel
+        
         for booking in bookings:
-            # Sử dụng username của user thay vì đối tượng user
+            
             user_value = booking.user.username if booking.user else 'N/A'
 
             ws.append([
@@ -111,12 +110,12 @@ class BookingAdmin(admin.ModelAdmin):
                 user_value,  
             ])
 
-        # Lưu Excel vào buffer
+        
         excel_output = BytesIO()
         wb.save(excel_output)
         excel_output.seek(0)
 
-        # Tạo response trả về tệp Excel
+        
         response = HttpResponse(excel_output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename="booking_data.xlsx"'
 

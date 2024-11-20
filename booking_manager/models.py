@@ -9,8 +9,7 @@ class Booking(models.Model):
     checkout_date = models.DateField()
     status = models.CharField(max_length=255)
     homestay = models.ForeignKey(Homestay, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bills',null=True, blank=True)
-    #lưu thông tin bills
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bills', null=True, blank=True)
     bill_info = models.JSONField(default=dict)
     
     def get_amount(self):
@@ -25,3 +24,6 @@ class Booking(models.Model):
 class BookingService(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Booking {self.booking.id} - Service: {self.service.name}"

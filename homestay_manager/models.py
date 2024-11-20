@@ -1,12 +1,13 @@
-from django.db import models
-# Create your models here.
 
+from django.db import models
+from datetime import datetime
 
 class Room(models.Model):
     name = models.CharField(max_length=100)
+
     def __str__(self):
         return self.name
-    
+
 class Province(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -14,15 +15,13 @@ class Province(models.Model):
     def __str__(self):
         return self.name
 
-
 class HomestayFacilities(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
-    
-    
+
 class Service(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -54,7 +53,7 @@ class HomestayRoom(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     image = models.ImageField(upload_to='room_images/', blank=True, null=True)
+
     def __str__(self):
         return f"{self.homestay.name} - {self.room.name} ({self.quantity})"
-
 

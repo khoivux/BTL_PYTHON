@@ -67,6 +67,28 @@ def create_booking(request):
         context['checkout_date'] = checkout_date
         context['error_message'] = 'Ngày nhận và trả phòng không phù hợp!'
         return render(request, 'product.html', context)
+    
+    homestaytmp = Homestay.objects.filter(id=id).annotate(
+        invalid_bookings=Count(
+            Case(
+                When(
+                    ~(
+                        Q(booking__checkin_date__gt=checkout_date) |  
+                        Q(booking__checkout_date__lt=checkin_date) |   
+                        Q(booking__isnull=True)
+                    ),
+                    then=1
+                ),
+                output_field=IntegerField()
+            )
+        )
+    ).filter(invalid_bookings=0)
+
+    if not homestaytmp.exists():
+        context['checkin_date'] = checkin_date_str
+        context['checkout_date'] = checkout_date_str
+        context['error_message'] = 'Homestay không sẵn có trong thời gian này!'
+        return render(request, 'product.html', context)
     else:
         # Thỏa mãn thì đến trang booking
         stay_duration = (checkout_date - checkin_date).days
@@ -83,8 +105,6 @@ def create_booking(request):
     
 def payment(request):
     if request.method == "POST":
-        
-        
         user_id = request.session.get('userId', None)
         print(user_id)
         homestay_id = request.POST.get('homestay_id')
@@ -93,6 +113,10 @@ def payment(request):
         homestay_province = request.POST.get('homestay_province')
         checkin_date = request.POST.get('checkin_date')
         checkout_date = request.POST.get('checkout_date')
+
+        print(checkout_date + "fjoihfiuoweehfw")
+
+
         stay_duration = request.POST.get('stay_duration')
         rent_price = request.POST.get('rent_price') + "000"
         services = request.POST.getlist('services')
@@ -151,7 +175,7 @@ def payment(request):
                             checkin_date=checkin_date_time,
                             checkout_date=checkout_date_time,
                             status="Chưa thanh toán",  
-                            homestay_id=1,
+                            homestay_id=homestay_id,
                             user_id=user_id,
                             bill_info=data
             )
