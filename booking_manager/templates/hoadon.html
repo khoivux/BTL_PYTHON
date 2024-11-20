@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Đặt Phòng Homestay</title>
+    <link rel="stylesheet" href="/static/css/hoadon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="/"><img src="{% static 'myapp/img/logo.jpeg' %}"></a> <!--back về home-->
+        </div>
+
+        <div class="navlinks">
+            <ul id="menulist">
+                <li><a href="/" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
+                
+                <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
+                <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
+                <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
+                <li id="user-action"></li>
+            </ul>
+            <span id="listbars" class="fa fa-bars" onclick="menutoggle()"></span>
+        </div>
+    </header>
+    <script>
+        let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
+
+        function updateUserAction() {
+            const userActionDiv = document.getElementById("user-action");
+            console.log(userActionDiv);
+            if (isLoggedIn) {
+                userActionDiv.innerHTML =
+                `
+                <div show-info onclick="showInfo()" class="navlinks">
+                    <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
+                    <ul show-ul class="d-none" id="userlist">
+                        <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="/profile/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
+                    </ul>
+                </div>
+                `;
+            } else {
+                userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
+            }
+        }
+
+        function login() {
+            isLoggedIn = true; // Cập nhật trạng thái đăng nhập
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        function logout() {
+            isLoggedIn = false; // Cập nhật trạng thái đăng xuất
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        // Gọi hàm để cập nhật giao diện khi trang được tải
+        document.addEventListener("DOMContentLoaded", updateUserAction);
+    </script>
+    <script>
+        var Menulist = document.getElementsByClassName("navlinks");
+        // menulist.style.maxHeight = "0px";
+        function menutoggle() {
+            if (menulist.style.maxHeight == "0px") {
+                menulist.style.maxHeight = "60vh";
+            } else {
+                menulist.style.maxHeight = "0px";
+            }
+        }
+        
+        let shown = false;
+        const showInfor = document.querySelector('[show-info]');
+        console.log(showInfor);
+        const showUl = showInfor.querySelector(`[show-ul]`);
+        console.log(showUl);
+        function showInfo() {
+           
+            if(shown){
+                showUl.classList.remove('d-block');
+                showUl.classList.add("d-none");
+                // const userName = showInfor.querySelector(`.user`);
+                shown = false;
+            }
+            else{
+                showUl.classList.remove('d-none');
+                showUl.classList.add("d-block");
+                const userName = showInfor.querySelector(`.user`);
+                // console.log(userName);
+                // userName.classList.add("d-none");
+                shown = true;
+            }
+            
+        }
+        function usertoggle() {
+            const userlist = document.getElementById("userlist");
+            userlist.classList.toggle("d-none");
+            userlist.classList.toggle("d-block");
+        }
+    </script>
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <h1>Thông Tin Đặt Phòng</h1>
+            <h3 class="mb-0">
+                <p class="mb-2" id="HomestayName">{{ data.homestay_name }}</p>
+            </h3>
+            <p class="mb-2" id="HomestayAddress">{{ data.homestay_address }}, {{ data.homestay_province }}</p>
+            
+        </div>
+
+        <div class="invoice-section" id="customer-info">
+            <h4>Thông tin người đặt phòng</h4>
+            <p><strong>Họ và tên:</strong> <span id="full-name">{{ data.firstName }} {{ data.lastName }}</span></p>
+            <p><strong>Email:</strong> <span id="email"></span>{{ data.email }}</p>
+            <p><strong>Số điện thoại:</strong> <span id="phone">{{ data.phone }}</span></p>
+        </div>
+
+        <div class="invoice-section" id="booking-info">
+            <h4>Chi tiết đặt phòng</h4>
+            <p><strong>Nhận phòng:</strong> <span id="check-in">{{ data.checkin_date }}</span></p>
+            <p><strong>Trả phòng:</strong> <span id="check-out"></span>{{ data.checkout_date }}</p>
+            <p><strong>Tổng thời gian lưu trú:</strong> <span id="stay-duration">{{ data.stay_duration }} ngày</span></p>
+            <p><strong>Giá thuê:</strong> <span id="price"></span>{{ data.rent_price }} VND</p>
+        </div>
+
+        <div class="invoice-section" id="services">
+            <h4>Dịch vụ bổ sung</h4>
+            <ul id="service-list"></ul> <!-- Thêm phần tử ul để chứa danh sách dịch vụ -->
+        </div>
+
+
+        <div class="total-amount">
+            <div class="rent-price">
+                <p>Giá thuê phòng: <span id="rent-price"></span></p>
+            </div>
+            <div class="service-cost">
+                <p>Chi phí dịch vụ: <span id="service-cost"></span></p>
+            </div>
+            <div class="total">
+                <p>Tổng tiền: <span id="total"></span></p>
+            </div>
+        </div>
+
+        <div class="text-end">
+            <button class="btn-export">Thanh toán</button>
+        </div>
+    </div>
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="qrCodeModalLabel">Quét mã QR để thanh toán</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="qr">
+                        <img src={%static '/img/thanhtoan.png'%} alt="QR Code">
+                        <h4>Phạm Ngọc Long</h4>
+                        <h6>QRD000103035625901</h6>
+                        <h6>PGD Khu công nghiệp Phố Nối A</h6>
+                    </div>
+                    <div class="services">
+                        <h5>Điều khoản</h5>
+                        <div>
+                            <input type="checkbox" name="regulations" value="">
+                            Tôi đồng ý nhận email marketing từ HomesTayBac.com, bao gồm khuyến mãi, đề xuất được cá nhân hóa, tặng thưởng, trải nghiệm du lịch và cập nhật về các sản phẩm và dịch vụ của HomesTayBac.com.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id ="payButton" class="btn btn-primary">Thanh toán</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        // Lắng nghe sự kiện click vào nút thanh toán
+                        const payButton = document.getElementById("payButton");
+                    
+                        payButton.addEventListener("click", function() {
+                            // Kiểm tra xem checkbox đã được đánh dấu hay chưa
+                            const isRegulationsChecked = document.querySelector('input[name="regulations"]').checked;
+                    
+                            // Nếu người dùng không đồng ý nhận email marketing
+                            if (!isRegulationsChecked) {
+                                alert("Vui lòng đồng ý nhận email marketing để tiếp tục thanh toán.");
+                                return; // Ngừng quá trình thanh toán
+                            }
+                    
+                            // Thực hiện thanh toán (giả lập hành động thanh toán)
+                            alert("Đang xử lý thanh toán...");
+                    
+                            
+                            setTimeout(() => {
+                                // Ẩn modal sau khi thanh toán thành công
+                                const qrCodeModal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+                                qrCodeModal.hide();
+                    
+                                
+                                alert("Thanh toán thành công!");
+                                window.location.href = "/";
+                            }, 2000);
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+
+        
+        
+
+        document.addEventListener("DOMContentLoaded", function() {
+            
+            const services = {{ data.services|safe }};
+        
+            // Lấy phần tử ul để thêm các dịch vụ vào
+            const serviceList = document.getElementById("service-list");
+            const rentPrice = parseInt("{{ data.rent_price }}", 10);
+            const stayDuration = parseInt("{{ data.stay_duration }}", 10);
+            const servicePrices = {
+                'Cầu hôn': 2000000,
+                'Thể thao': 700000,
+                'Ăn uống': 300000, // Giá tính theo ngày, tính tổng bên dưới
+                'Đi lại': 100000   // Giá tính theo ngày, tính tổng bên dưới
+            };
+            let serviceCost = 0;
+            // Thêm các dịch vụ vào danh sách
+            services.forEach(service => {
+                const li = document.createElement("li");
+                const price = servicePrices[service] || 0; // Lấy giá tiền hoặc mặc định 0
+                const totalServicePrice = ['Ăn uống', 'Đi lại'].includes(service)
+                    ? price * stayDuration // Nhân giá theo ngày với số ngày
+                    : price; // Giá cố định
+                li.textContent = `${service}: ${totalServicePrice.toLocaleString()} VND`;
+                serviceList.appendChild(li);
+                serviceCost += totalServicePrice;
+            });
+            const totalCost = rentPrice + serviceCost;
+            document.getElementById("rent-price").textContent = `${rentPrice.toLocaleString()} VND`;
+            document.getElementById("service-cost").textContent = `${serviceCost.toLocaleString()} VND`;
+            document.getElementById("total").textContent = `${totalCost.toLocaleString()} VND`;
+            
+        });
+        
+
+        // Gọi modal khi bấm nút "Thanh toán"
+        document.querySelector(".btn-export").addEventListener("click", function() {
+            var qrCodeModal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+            qrCodeModal.show();
+        });
+
+    </script>
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col box">
+                    <img src="/img/background2.jpg" alt="">
+                    <div class="icon">
+                        <i class="fa fa-facebook-f"></i>
+                        <i class="fa fa-instagram"></i>
+                        <i class="fa fa-twitter"></i>
+                        <i class="fa fa-youtube"></i>
+                    </div>
+                </div>
+                <div class="col box">
+                    <h2>GIỚI THIỆU</h2>
+                    <a href="">Trang chủ</a><br>
+                    <a href="#">Dịch vụ</a><br>
+                    <a href="#">Tin tức</a><br>
+                    <a href="#">Liên hệ</a><br>
+                </div>
+                <div class="col box">
+                    <h2>LIÊN KẾT</h2>
+                    <a href="#">Điều khoản sử dụng</a><br>
+                    <a href="#">Chính sách bảo mật</a><br>
+                    <a href="#">Chính sách hoàn tiền</a><br>
+                    <a href="#">FAQs</a>
+                </div>
+                <div class="col-md-2 box">
+                    <h2>LIÊN HỆ</h2>
+                    <div class = "flex">
+                        <i class="fa fa-location-dot"></i>
+                        <p>30 Tran Phu, Ha Dong, Ha Noi, Viet Nam</p>
+                    </div>
+                    <div class = "flex">
+                        <i class="fa fa-phone"></i>
+                        <p>0987352163</p>
+                    </div>
+                    <div class = "flex">
+                        <i class="fa fa-envelope"></i>
+                        <p>nhan54v@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -13,8 +13,9 @@ from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
+SESSION_COOKIE_DOMAIN = None
+MEDIA_URL = '/media/'  # URL truy cập ảnh
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -28,6 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home',
     'login',
+    'homestay_manager',
+    'booking_manager',
+    "profileUser",
 ]
 
 MIDDLEWARE = [
@@ -56,7 +61,7 @@ ROOT_URLCONF = 'app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,14 +82,15 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'django.db.backends.sqlite3',
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'homestaybac',
-        # 'USER': 'root',
-        # 'PASSWORD': '',
-        # 'HOST': 'localhost',
-        # 'PORT': '3307',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'django.db.backends.sqlite3',
+
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'btl',
+        'USER': 'root1',
+        'PASSWORD': '25012004',
+        'HOST': 'localhost',
+        'PORT': '2501',
     }
 }
 
@@ -118,8 +124,9 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
-
+AUTH_USER_MODEL = 'auth.User'
+# Sử dụng session trong bộ nhớ (chỉ tồn tại trong một phiên làm việc, mất khi server restart)
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
@@ -132,3 +139,9 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_URL = '/login/'  # Đường dẫn đăng nhập
+LOGIN_REDIRECT_URL = '/profile/'  # Nơi chuyển hướng sau khi đăng nhập thành công
+SESSION_COOKIE_SECURE = True  # Đảm bảo cookie được gửi qua HTTPS
+CSRF_COOKIE_SECURE = True  # Đảm bảo cookie CSRF được gửi qua HTTPS
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True

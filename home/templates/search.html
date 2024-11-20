@@ -1,4 +1,5 @@
 {% load static %}
+{% load price_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,8 +12,114 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <title>Tìm kiếm • HomesTayBac</title>
+    <style>   
+        .toast {
+            position: fixed;
+            top: 20px; /* Hiển thị ở trên cùng */
+            left: 50%;
+            transform: translateX(-50%); /* Đẩy sang giữa */
+            padding: 10px;
+            background-color: #ffffff; /* Màu nền trắng cho thông báo */
+            color: #333; /* Màu chữ */
+            border-radius: 5px;
+            opacity: 0; /* Ban đầu ẩn */
+            visibility: hidden; /* Không hiển thị */
+            transition: opacity 0.5s, visibility 0.5s, transform 0.3s ease-in-out; /* Hiệu ứng mờ dần và mở rộng */
+            z-index: 1050; /* Đảm bảo nó ở trên các phần tử khác */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng nhẹ cho toast */
+            border: 1px solid #28a745; /* Viền màu xanh lá cây */
+            transform: translateX(-50%) scale(0.9); /* Bắt đầu nhỏ hơn và sẽ phóng to */
+        }
+        
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1); /* Phóng to */
+        }
+        
+        /* Tiêu đề Toast */
+        .toast-title {
+            background-color: #7FC142; /* Nền xanh lá cây cho tiêu đề */
+            color: white; /* Chữ màu trắng */
+            padding: 5px 5px;
+        /*            border-radius: 5px 5px 0 0; *//* Cạnh trên tròn */
+            font-weight: bold;
+        }
+        
+        .toast-body {
+            padding: 10px;
+        }
+        
+        /* CSS cho nút đóng Toast */
+        .toast-close {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: #696969;
+            background: transparent;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .toast-close:hover {
+            color: #dc3545; /* Màu đỏ khi hover */
+        }
+        body {
+            margin: 0; /* Xóa khoảng trắng mặc định */
+            padding: 0;
+            font-family: Arial, sans-serif; /* Tùy chọn font */
+        }
+
+        .container {
+            max-width: 1300px; /* Chiều rộng tối đa của nội dung */
+            margin: 0 auto; /* Căn giữa nội dung theo chiều ngang */
+            padding: 20px; /* Thêm khoảng cách bên trong */
+/*            background-color: #f9f9f9; *//* Tùy chọn màu nền */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
+        }
+        .small-text {
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
+    <div id="toast" class="toast">
+        <div class="toast-title">Thông Báo</div>
+        <div class="toast-body">
+            <p id="toast-message"></p>
+            <button class="toast-close" onclick="closeToast()">×</button>
+        </div>
+    </div>
+    
+    <script>
+        // JavaScript để hiển thị Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+    
+            // Thêm lớp 'show' để hiển thị Toast
+            toast.classList.add('show');
+    
+            // Ẩn Toast sau 5 giây
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 5000); // 5000ms = 5 giây
+        }
+    
+        // Đóng Toast khi click vào nút "×"
+        function closeToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('show');
+        }
+    
+        // Kiểm tra và hiển thị thông báo khi trang tải
+        {% if error_message %}
+            showToast("{{ error_message }}");
+        {% endif %}
+    </script>
+
+
     <header>
 
         <div class="logo">
@@ -22,7 +129,7 @@
         <div class="navlinks">
             <ul id="menulist">
                 <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
-                <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                
                 <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
                 <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
                 <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
@@ -33,71 +140,81 @@
     
 </header>
 <script>
-    let isLoggedIn = false; // thêm phương thức kiểm tra trạng thái đăng nhập
-    const userName = "Nguyễn Văn A";
+    let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
 
-    function updateUserAction() {
-        const userActionDiv = document.getElementById("user-action");
-        console.log(userActionDiv);
-        if (isLoggedIn) {
-            userActionDiv.innerHTML =
-            `
-            <div show-info onclick="showInfo()" class="navlinks">
-                <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
-                <ul show-ul class="d-none" id="userlist">
-                    <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                    <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
-                    <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
-                </ul>
-            </div>
-            `;                                                      //url trang profile
-                                                                    // url trang history
-                                                                    // thoát trạng thái đăng nhập
-        } else {
-            userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
+        function updateUserAction() {
+            const userActionDiv = document.getElementById("user-action");
+            console.log(userActionDiv);
+            if (isLoggedIn) {
+                userActionDiv.innerHTML =
+                `
+                <div show-info onclick="showInfo()" class="navlinks">
+                    <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
+                    <ul show-ul class="d-none" id="userlist">
+                        <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="/profile/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
+                    </ul>
+                </div>
+                `;
+            } else {
+                userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
+            }
         }
-    }
 
-    function logout() {
-        isLoggedIn = false;
-        updateUserAction(); 
-    }
-    updateUserAction();
+        function login() {
+            isLoggedIn = true; // Cập nhật trạng thái đăng nhập
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        function logout() {
+            isLoggedIn = false; // Cập nhật trạng thái đăng xuất
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        // Gọi hàm để cập nhật giao diện khi trang được tải
+        document.addEventListener("DOMContentLoaded", updateUserAction);
 </script>
 <script>
     var Menulist = document.getElementsByClassName("navlinks");
-    // menulist.style.maxHeight = "0px";
-    function menutoggle() {
-        if (menulist.style.maxHeight == "0px") {
-            menulist.style.maxHeight = "60vh";
-        } else {
-            menulist.style.maxHeight = "0px";
-        }
-    }
-    
-    let shown = false;
-    const showInfor = document.querySelector('[show-info]');
-    console.log(showInfor);
-    const showUl = showInfor.querySelector(`[show-ul]`);
-    console.log(showUl);
-    function showInfo() {
-       
-        if(shown){
-            showUl.classList.remove('d-block');
-            showUl.classList.add("d-none");
-            // const userName = showInfor.querySelector(`.user`);
-            shown = false;
-        }
-        else{
-            showUl.classList.remove('d-none');
-            showUl.classList.add("d-block");
-            const userName = showInfor.querySelector(`.user`);
-            // console.log(userName);
-            // userName.classList.add("d-none");
-            shown = true;
+        // menulist.style.maxHeight = "0px";
+        function menutoggle() {
+            if (menulist.style.maxHeight == "0px") {
+                menulist.style.maxHeight = "60vh";
+            } else {
+                menulist.style.maxHeight = "0px";
+            }
         }
         
-    }
+        let shown = false;
+        const showInfor = document.querySelector('[show-info]');
+        console.log(showInfor);
+        const showUl = showInfor.querySelector(`[show-ul]`);
+        console.log(showUl);
+        function showInfo() {
+           
+            if(shown){
+                showUl.classList.remove('d-block');
+                showUl.classList.add("d-none");
+                // const userName = showInfor.querySelector(`.user`);
+                shown = false;
+            }
+            else{
+                showUl.classList.remove('d-none');
+                showUl.classList.add("d-block");
+                const userName = showInfor.querySelector(`.user`);
+                // console.log(userName);
+                // userName.classList.add("d-none");
+                shown = true;
+            }
+            
+        }
+        function usertoggle() {
+            const userlist = document.getElementById("userlist");
+            userlist.classList.toggle("d-none");
+            userlist.classList.toggle("d-block");
+        }
 </script>
 <div class="container">
     <!-- Bộ lọc -->
@@ -107,59 +224,72 @@
         <div class="filters">
             <div class="search-box">
                 <h2>Tìm</h2>
-                <label for="destination">Tên chỗ nghỉ / điểm đến:</label>
+                <label for="address">Tên chỗ nghỉ / điểm đến:</label>
                 <div class="search-input">
-                    <input type="text" id="destination" placeholder="Địa điểm">
+                    <input type="text" name="address" placeholder="Địa điểm" value="{{ address|default_if_none:'' }}">
                     <i class="fa fa-search"></i>
                 </div>
                 <label for="checkin-date">Ngày nhận phòng</label>
                 <div class="date-picker">
-                    <input type="date" id="checkin-date">
+                    <input type="date" id="checkin-date" name="checkin-date" value="{{ checkin_date|default:'' }}">
                     <i class="fa fa-calendar"></i>
                 </div>
                 <label for="checkout-date">Ngày trả phòng</label>
                 <div class="date-picker">
-                    <input type="date" id="checkout-date">
+                    <input type="date" id="checkout-date" name="checkout-date" value="{{ checkout_date|default:'' }}">
                     <i class="fa fa-calendar"></i>
                 </div>
-                <label for="guest-info">Nghỉ 1 đêm</label>
-                <select id="guest-info">
-                    <option>1 người lớn · 0 trẻ em · 1 phòng</option>
-                    <option>2 người lớn · 0 trẻ em · 1 phòng</option>
-                    <!-- Thêm các tuỳ chọn khác nếu cần -->
-                </select>
+                <label for="capacity">Số lượng người</label>
+                <div class="search-input">
+                    <input type="text" name="capacity" placeholder="Số lượng người" value="{{ capacity|default_if_none:'' }}">
+                    <i class="fa fa-search"></i>
+                </div>
                 <button type="submit" class="search-button">Tìm</button>
             </div>
             
             <h2>Bộ lọc theo:</h2>
-            
-            <!-- Đánh giá -->
-            <div class="filter-group">
-                <h3>Đánh giá</h3>
-                <label><input type="checkbox" name="ratings" value="5" {% if '5' in selected_ratings %}checked{% endif %}> 5 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="4" {% if '4' in selected_ratings %}checked{% endif %}> 4 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="3" {% if '3' in selected_ratings %}checked{% endif %}> 3 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="2" {% if '2' in selected_ratings %}checked{% endif %}> 2 sao</label><br>
-                <label><input type="checkbox" name="ratings" value="1" {% if '1' in selected_ratings %}checked{% endif %}> 1 sao</label>
+
+            <div class="price-range-container">
+                <h3>Khoảng Giá</h3>
+                <input type="number" class="price-input" name="pricefrom" placeholder=".000 VND" value="{{ pricefrom|default_if_none:'' }}">
+                <span> - </span>
+                <input type="number" class="price-input" name="priceto" placeholder=".000 VND ĐẾN" value="{{ priceto|default_if_none:'' }}">
             </div>
             <!-- Giá tiền -->
-            <div class="filter-group">
-                <h3>Giá tiền</h3>
-                <label><input type="checkbox" name="prices" value="200" {% if '200' in selected_prices %}checked{% endif %}> 200k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="300" {% if '300' in selected_prices %}checked{% endif %}> 300k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="400" {% if '400' in selected_prices %}checked{% endif %}> 400k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="500" {% if '500' in selected_prices %}checked{% endif %}> 500k/1 đêm</label><br>
-                <label><input type="checkbox" name="prices" value="600" {% if '600' in selected_prices %}checked{% endif %}> 600k/1 đêm</label>
+            
+            <!-- Tiện nghi -->
+            <div class="filter-group1">
+                <h3>Tiện nghi</h3>
+                {% for facility in facilities %}
+                    <label>
+                        <input type="checkbox" name="facilities" value="{{ facility.id }}" 
+                        {% if facility.id|stringformat:"s" in selected_facilities %}checked{% endif %}> 
+                        {{ facility.name }} </label><br>
+                {% endfor %}
             </div>
-            <!-- Hoạt động giải trí -->
+            
             <div class="filter-group">
-                <h3>Địa điểm</h3>
-                <label><input type="checkbox" name="locations" value="1" {% if '1' in selected_locations %}checked{% endif %}> Lào Cai</label><br>
-                <label><input type="checkbox" name="locations" value="2" {% if '2' in selected_locations %}checked{% endif %}> Sơn La</label><br>
-                <label><input type="checkbox" name="locations" value="3" {% if '3' in selected_locations %}checked{% endif %}> Lai Châu</label><br>
-                <label><input type="checkbox" name="locations" value="4" {% if '4' in selected_locations %}checked{% endif %}> Điện Biên Phủ</label><br>
-                <label><input type="checkbox" name="locations" value="5" {% if '5' in selected_locations %}checked{% endif %}> Hòa Bình</label>
-            </div>
+                <h3>Dịch vụ</h3>
+                {% for service in services %}
+                    <label>
+                        <input type="checkbox" name="services" value="{{ service.id }}" 
+                        {% if service.id|stringformat:"s" in selected_services %}checked{% endif %}>
+                        {{ service.name }}
+                    </label><br>
+                {% endfor %}
+            </div> 
+            <div class="filter-group">
+                <h3>Loại phòng</h3>
+                {% for room in rooms %}
+                    <label>
+                        <input type="checkbox" name="rooms" value="{{ room.id }}" 
+                        {% if room.id|stringformat:"s" in selected_rooms %}checked{% endif %}>
+                        {{ room.name }}
+                    </label><br>
+                {% endfor %}
+            </div> 
+
+ 
             <!-- Nút áp dụng bộ lọc -->
             <button type="submit" class="filter-button">Áp dụng bộ lọc</button>
         </div>
@@ -184,59 +314,33 @@
             </select>
         </div>
         
-        <script>
-            function sortHomestays() {
-                let sortOption = document.getElementById("price-sort").value;
-                let currentUrl = window.location.href.split('?')[0];
-                window.location.href = currentUrl + "?sort=" + sortOption;
-            }
-        </script>
-        
-        {% comment %} <div class="search-price">
-            <h3>Sắp xếp:</h3>
-            <select id="price-sort">
-            <option value="asc">Giá tăng dần</option>
-            <option value="desc">Giá giảm dần</option>
-            </select>
-        </div> {% endcomment %}
-        {% comment %} <script>
-            document.querySelector(".filter-button").addEventListener("click", function() {
-                let sortOption = document.getElementById("price-sort").value;
-        
-                if (sortOption === "asc") {
-                    // Sắp xếp giá tăng dần
-                    homestays.sort((a, b) => a.price - b.price);
-                    console.log("Sắp xếp giá tăng dần", homestays);
-                } else if (sortOption === "desc") {
-                    // Sắp xếp giá giảm dần
-                    homestays.sort((a, b) => b.price - a.price);
-                    console.log("Sắp xếp giá giảm dần", homestays);
-                }
-        
-                // Sau khi sắp xếp, bạn có thể cập nhật giao diện hiển thị homestay ở đây
-                updateHomestayDisplay(homestays);
-            });            
-        </script> {% endcomment %}
+      
         <div id="results">
         {% if homestays %}
             <div class="row">
                 {% for homestay in homestays %} <!--Duyệt list-->
                     <div class="item">
                         <div class="img">
-                            <img src="{% static 'myapp/img/homestay1.jpg' %}" alt="Homestay 1">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="Homestay 1">
                         </div>
                         <div class="info">
                             <h2 class="card-title">{{ homestay.name }}</h2>
-                            <div class="star-rating"> 
-                                {% comment %} {% for i in homestay.rate %}
-                                    <span class="star">★</span>
-                                {% endfor %} {% endcomment %}
-                            </div>
-                            <h3>Giá: {{ homestay.price }}k</h3>
-                            <p>Nằm cách Trạm cáp treo Fansipan 4.5 km, Homestay 1 cung cấp chỗ nghỉ có khu vườn, sân hiên và dịch vụ phòng. Homestay có WiFi và chỗ đậu xe riêng miễn phí.</p>
+                            <p>Địa chỉ: {{ homestay.address }}</p>
+                            <h3>Giá: {{ homestay.price|format_price }}</h3>
+                            {% for homestay_room in homestay.homestayroom_set.all %}
+                                <span class="small-text">{{ homestay_room.quantity }} {{ homestay_room.room.name }}</span>
+                                {% if not forloop.last %} ● {% endif %}
+                            {% endfor %}
+                            <p class="small-text">Nằm cách Trạm cáp treo Fansipan 4.5 km, Homestay 1 cung cấp chỗ nghỉ có khu vườn, sân hiên và dịch vụ phòng. Homestay có WiFi và chỗ đậu xe riêng miễn phí.</p>
                         </div>
-                        <form action="{% url 'product' homestay.id %}" method="GET">
-                            <button class="book-button">Đặt phòng</button>
+                        
+                        <form id="booking-form" action="{% url 'product' homestay.id %}" method="GET">
+                            {% csrf_token %}
+                            <div>
+                                <input type="date" style="display:none;" name="checkin_date"value="{{ checkin_date|default:'' }}" >
+                                <input type="date" style="display:none;" name="checkout_date"value="{{ checkout_date|default:'' }}" >
+                            </div>
+                            <button type="submit" class="book-button" >Đặt phòng</button>
                         </form>
                     </div>
                 {% endfor %}
@@ -244,24 +348,16 @@
         {% else %}
             <p class="alert alert-warning">Không tìm thấy kết quả phù hợp</p>
         {% endif %}
-<<<<<<< HEAD
     </div> 
 
-<<<<<<< HEAD
-=======
+
     </div> 
 </div> 
->>>>>>> develop
-=======
+
         </div>
     </div> 
 </div>
-<!--<<<<<<< HEAD
-=======
-    </div> 
-</div> 
->>>>>>> develop -->
->>>>>>> develop
+
 
 <script>
     function performSearch() {
@@ -272,6 +368,41 @@
 
 
 
+<script>
+    function sortHomestays() {
+        let sortOption = document.getElementById("price-sort").value;
+        let currentUrl = window.location.href.split('?')[0]; // Lấy phần URL trước dấu hỏi chấm (không bao gồm các tham số)
+        // Lấy tất cả tham số trong URL hiện tại
+        let params = new URLSearchParams(window.location.search);
+        // Cập nhật hoặc thêm tham số 'sort'
+        params.set('sort', sortOption);
+        // Tạo lại URL với các tham số đã cập nhật
+        let newUrl = currentUrl + '?' + params.toString();
+        // Chuyển hướng tới URL mới
+        window.location.href = newUrl;
+    }
+</script>
+
+
+<script>
+    function validateDates() {
+        var checkinDate = document.getElementById('checkin-date').value;
+        var checkoutDate = document.getElementById('checkout-date').value;
+
+        // Kiểm tra điều kiện: cả hai ô phải tồn tại cùng lúc hoặc cả hai ô đều null
+        if ((checkinDate && !checkoutDate) || (!checkinDate && checkoutDate)) {
+            alert('Cả hai ngày nhận phòng và trả phòng phải cùng tồn tại hoặc cùng không có giá trị.');
+            // Reset lại cả hai ô nếu chỉ có một ô có giá trị
+            document.getElementById('checkin-date').value = '';
+            document.getElementById('checkout-date').value = '';
+        }
+        // Kiểm tra nếu checkoutDate <= checkinDate
+        else if (checkinDate && checkoutDate && checkoutDate <= checkinDate) {
+            alert('Ngày trả phòng phải lớn hơn ngày nhận phòng.');
+            document.getElementById('checkout-date').value = ''; // reset lại checkout-date nếu không hợp lệ
+        }
+    }
+</script>
 <footer>
     <div class="container grid">
         <div class="box">

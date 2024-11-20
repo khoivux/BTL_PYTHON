@@ -1,0 +1,397 @@
+{% load static %}
+{% load price_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Đặt Phòng Homestay</title>
+    <link rel="stylesheet" href="{% static 'css/booking.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>   
+        .toast {
+            position: fixed;
+            top: 20px; /* Hiển thị ở trên cùng */
+            left: 50%;
+            transform: translateX(-50%); /* Đẩy sang giữa */
+            padding: 10px;
+            background-color: #ffffff; /* Màu nền trắng cho thông báo */
+            color: #333; /* Màu chữ */
+            border-radius: 5px;
+            opacity: 0; /* Ban đầu ẩn */
+            visibility: hidden; /* Không hiển thị */
+            transition: opacity 0.5s, visibility 0.5s, transform 0.3s ease-in-out; /* Hiệu ứng mờ dần và mở rộng */
+            z-index: 1050; /* Đảm bảo nó ở trên các phần tử khác */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng nhẹ cho toast */
+            border: 1px solid #28a745; /* Viền màu xanh lá cây */
+            transform: translateX(-50%) scale(0.9); /* Bắt đầu nhỏ hơn và sẽ phóng to */
+        }
+        
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1); /* Phóng to */
+        }
+        
+        /* Tiêu đề Toast */
+        .toast-title {
+            background-color: #7FC142; /* Nền xanh lá cây cho tiêu đề */
+            color: white; /* Chữ màu trắng */
+            padding: 5px 5px;
+        /*            border-radius: 5px 5px 0 0; *//* Cạnh trên tròn */
+            font-weight: bold;
+        }
+        
+        .toast-body {
+            padding: 10px;
+        }
+        
+        /* CSS cho nút đóng Toast */
+        .toast-close {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: #696969;
+            background: transparent;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .toast-close:hover {
+            color: #dc3545; /* Màu đỏ khi hover */
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="toast" class="toast">
+        <div class="toast-title">Thông Báo</div>
+        <div class="toast-body">
+            <p id="toast-message"></p>
+            <button class="toast-close" onclick="closeToast()">×</button>
+        </div>
+    </div>
+    
+    <script>
+        // JavaScript để hiển thị Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+    
+            // Thêm lớp 'show' để hiển thị Toast
+            toast.classList.add('show');
+    
+            // Ẩn Toast sau 5 giây
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 5000); // 5000ms = 5 giây
+        }
+    
+        // Đóng Toast khi click vào nút "×"
+        function closeToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('show');
+        }
+    
+        // Kiểm tra và hiển thị thông báo khi trang tải
+        {% if error_message %}
+            showToast("{{ error_message }}");
+        {% endif %}
+    </script>
+    <header>
+        <div class="logo">
+            <a href="/"><img src="{% static 'img/logo.jpeg' %}" alt="Logo"></a> <!--back về home-->
+        </div>
+
+        <div class="navlinks">
+            <ul id="menulist">
+                <li><a href="/" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
+                <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
+                <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
+                <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
+                <li id="user-action"></li>
+            </ul>
+            <span id="listbars" class="fa fa-bars" onclick="menutoggle()"></span>
+        </div>
+    </header>
+    <script>
+        let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
+
+        function updateUserAction() {
+            const userActionDiv = document.getElementById("user-action");
+            console.log(userActionDiv);
+            if (isLoggedIn) {
+                userActionDiv.innerHTML =
+                `
+                <div show-info onclick="showInfo()" class="navlinks">
+                    <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
+                    <ul show-ul class="d-none" id="userlist">
+                        <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="/profile/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
+                    </ul>
+                </div>
+                `;
+            } else {
+                userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
+            }
+        }
+
+        function login() {
+            isLoggedIn = true; // Cập nhật trạng thái đăng nhập
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        function logout() {
+            isLoggedIn = false; // Cập nhật trạng thái đăng xuất
+            updateUserAction(); // Cập nhật lại giao diện
+        }
+
+        // Gọi hàm để cập nhật giao diện khi trang được tải
+        document.addEventListener("DOMContentLoaded", updateUserAction);
+    </script>
+    <script>
+        var Menulist = document.getElementsByClassName("navlinks");
+        // menulist.style.maxHeight = "0px";
+        function menutoggle() {
+            if (menulist.style.maxHeight == "0px") {
+                menulist.style.maxHeight = "60vh";
+            } else {
+                menulist.style.maxHeight = "0px";
+            }
+        }
+        
+        let shown = false;
+        const showInfor = document.querySelector('[show-info]');
+        console.log(showInfor);
+        const showUl = showInfor.querySelector(`[show-ul]`);
+        console.log(showUl);
+        function showInfo() {
+           
+            if(shown){
+                showUl.classList.remove('d-block');
+                showUl.classList.add("d-none");
+                // const userName = showInfor.querySelector(`.user`);
+                shown = false;
+            }
+            else{
+                showUl.classList.remove('d-none');
+                showUl.classList.add("d-block");
+                const userName = showInfor.querySelector(`.user`);
+                // console.log(userName);
+                // userName.classList.add("d-none");
+                shown = true;
+            }
+            
+        }
+        function usertoggle() {
+            const userlist = document.getElementById("userlist");
+            userlist.classList.toggle("d-none");
+            userlist.classList.toggle("d-block");
+        }
+    </script>
+
+    <form  id = "Details" action = {% url 'booking_manager:pay' %} method = "POST">  <!--nhập thông tin-->
+        {% csrf_token %}
+        <div class="container mt-4">
+            <!-- Header -->
+            <div class="general-info text-center">
+                <h3>{{ homestay.name }}</h3>
+                <p>{{ homestay.address }}, {{ homestay.province.name }}</p>
+            </div>
+            <input type="hidden" name="homestay_id" value="{{ homestay.id }}">
+            <input type="hidden" name="homestay_name" value="{{ homestay.name }}">
+            <input type="hidden" name="homestay_address" value="{{ homestay.address }}">
+            <input type="hidden" name="homestay_province" value="{{ homestay.province.name }}">
+            <div class="row">
+                <!-- Booking Details -->
+                <div class="col-md-4">
+                    <div class="details info-box">
+                        <h3>Chi tiết đặt homestay của bạn</h3>
+                        <p>Nhận phòng: {{ checkin_date }}</p>
+                        <p>Trả phòng: {{ checkout_date }}</p>
+                        <p>Tổng thời gian lưu trú: {{ stay_duration }} ngày</p>
+                        <h5>Giá thuê: {{ rent_price|format_price }}</h5>
+                        <a href="/search" class="text-primary">Đổi lựa chọn của bạn</a>
+
+
+                        <input type="hidden"  name="checkin_date" value="{{ checkin_date }}" >
+                        <input type="hidden"  name="checkout_date" value="{{ checkout_date }}" >
+                        <input type="hidden" name="stay_duration" value="{{ stay_duration }}">
+                        <input type="hidden" name="rent_price" value="{{ rent_price }}">
+                    </div>
+                    <div class="services info-box">
+                        <h5>Dịch vụ</h5>
+                        {% for service in services %}
+                            <label>
+                                <input type="checkbox" name="services" value="{{ service.name }}">
+                                {{ service.name }} - Giá: {{ service.price }} VND
+                            </label><br>
+                        {% endfor %}
+                    </div>
+                    <div class="facilities info-box">                
+                        <h5 class="mt-4">Tiện nghi:</h5>
+                        <ul class="list-unstyled">
+                            {% for facility in facilities %}
+                                <li><i class="fas fa-check-circle"></i>• {{ facility.name }}</li>
+                                <input type="hidden" name="facilities" value="{{ facility.name }}">
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- User Information Form -->
+                <div class="col-md-8">
+                    <div class="info-box">
+                        <div class="book-cus info-box">
+                            <h5>Thông tin người đặt phòng</h5>
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Họ</label>
+                                <input type="text" class="form-control" name = "lastName"id="lastName" placeholder="Ví dụ: Nguyễn">
+                            </div>
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">Tên</label>
+                                <input type="text" class="form-control" name = "firstName" id="firstName" placeholder="Ví dụ: Tuấn">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control"  required name = "email" id="email" placeholder="email@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="text" class="form-control" required name = "phone" id="phone" placeholder="+84">
+                            </div>
+                        </div>
+                        <div class="check-in-cus info-box">
+                            <h5>Thông tin người nhận phòng</h5>
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Họ</label>
+                                <input type="text" class="form-control" name = "lastNameR" id="lastName" placeholder="Ví dụ: Nguyễn">
+                            </div>
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">Tên</label>
+                                <input type="text" class="form-control" name = "firstNameR" id="firstName" placeholder="Ví dụ: Tuấn">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" required name = "emailR" id="email" placeholder="email@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="text" class="form-control" required name = "phoneR" id="phone" placeholder="+84">
+                            </div>
+                        </div>
+                        <div class="check-in-time">
+                            <h6>Thời gian nhận phòng</h6>
+                            <select class="form-select" name = "onTime" required>
+                                <option value="" disabled="" selected="">Vui lòng chọn</option>
+                                
+                                <option value="7">07:00 – 08:00 </option>
+                                <option value="8">08:00 – 09:00 </option>
+                                <option value="9">09:00 – 10:00 </option>
+                                <option value="10">10:00 – 11:00 </option>
+                                <option value="11">11:00 – 12:00 </option>
+                                <option value="12">12:00 – 13:00 </option>
+                                <option value="13">13:00 – 14:00 </option>
+                                <option value="14">14:00 – 15:00 </option>
+                                <option value="15">15:00 – 16:00 </option>
+                                <option value="16">16:00 – 17:00 </option>
+                                <option value="17">17:00 – 18:00 </option>
+                                <option value="18">18:00 – 19:00 </option>
+                                <option value="19">19:00 – 20:00 </option>
+                                
+                            </select>
+                        </div>
+                        <div class="regulations">
+                            <h5>Quy định chung</h5>
+                            <ul>
+                                <li>- Không hút thuốc</li>
+                                <li>- Thời gian yên lặng từ 22:00 đến 07:00</li>
+                                <li>- Không cho phép thú cưng</li>
+                            </ul>
+                        </div>
+                        <div class="d-flex justify-content-end mt-5">
+                            <button type="submit" class="btn btn-primary">Thanh toán</button></div>                             
+                        </div>
+                    </div>
+                </div>
+        </div>                 
+    </form> 
+  
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("modal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModal = document.querySelector(".close"); // Chọn phần tử close chính xác
+    
+        // Mở modal khi nhấn vào nút
+        openModalBtn.onclick = function () {
+            modal.style.display = "flex";
+        };
+    
+        // Đóng modal khi nhấn vào dấu 'X'
+        if (closeModal) {
+            closeModal.onclick = function () {
+                modal.style.display = "none";
+            };
+        }
+    
+        // Đóng modal khi nhấn ra ngoài modal
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+    });
+</script>
+    
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col box">
+                    <img src="/static/img/background2.jpg" alt="">
+                    <div class="icon">
+                        <i class="fa fa-facebook-f"></i>
+                        <i class="fa fa-instagram"></i>
+                        <i class="fa fa-twitter"></i>
+                        <i class="fa fa-youtube"></i>
+                    </div>
+                </div>
+                <div class="col box">
+                    <h2>GIỚI THIỆU</h2>
+                    <a href="#">Trang chủ</a><br>
+                    <a href="#">Dịch vụ</a><br>
+                    <a href="#">Tin tức</a><br>
+                    <a href="#">Liên hệ</a><br>
+                </div>
+                <div class="col box">
+                    <h2>LIÊN KẾT</h2>
+                    <a href="#">Điều khoản sử dụng</a><br>
+                    <a href="#">Chính sách bảo mật</a><br>
+                    <a href="#">Chính sách hoàn tiền</a><br>
+                    <a href="#">FAQs</a>
+                </div>
+                <div class="col-md-2 box">
+                    <h2>LIÊN HỆ</h2>
+                    <div class = "flex">
+                        <i class="fa fa-location-dot"></i>
+                        <p>30 Tran Phu, Ha Dong, Ha Noi, Viet Nam</p>
+                    </div>
+                    <div class = "flex">
+                        <i class="fa fa-phone"></i>
+                        <p>0987352163</p>
+                    </div>
+                    <div class = "flex">
+                        <i class="fa fa-envelope"></i>
+                        <p>nhan54v@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

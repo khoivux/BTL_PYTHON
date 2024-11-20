@@ -413,3 +413,18 @@ footer icon i{
     margin: 20px 20px 20px 0;
     color: #b6b7b9;
 }
+
+body {
+    margin: 0; /* Xóa khoảng trắng mặc định */
+    padding: 0;
+    font-family: Arial, sans-serif; /* Tùy chọn font */
+}
+
+.container {
+    max-width: 1300px; /* Chiều rộng tối đa của nội dung */
+    margin: 0 auto; /* Căn giữa nội dung theo chiều ngang */
+    padding: 20px; /* Thêm khoảng cách bên trong */
+/*            background-color: #f9f9f9; *//* Tùy chọn màu nền */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
+}
+/* CSS cho Toast */

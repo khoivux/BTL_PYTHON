@@ -26,14 +26,14 @@
             <div class="logo">
                 <a href=""><img src={% static 'myapp/img/logo.jpeg' %}></a> <!--back về home-->
             </div>
-
+            
             <div class="navlinks">
                 <ul id="menulist">
                     <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
-                    <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
-                    <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
-                    <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
-                    <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
+                    
+                    <li><a href="#homestay">Homestay</a></li> <!--url xuống danh sách homestay-->
+                    <li><a href='https://www.facebook.com/gnolp2513'>Liên hệ</a></li> <!--url xuống liên hệ-->
+                    <li><a href="#Feedback">Phản hồi</a></li>   <!--url đến trang phản hồi-->
                     <li id="user-action"></li>
                 </ul>
                 <span id="listbars" class="fa fa-bars" onclick="menutoggle()"></span>
@@ -41,8 +41,8 @@
         
     </header>
     <script>
-        let isLoggedIn = false; // thêm phương thức kiểm tra trạng thái đăng nhập
-        const userName = "Nguyễn Văn A";
+        let isLoggedIn = {{ request.session.isLoggedIn|yesno:"true,false" }}; // Lấy trạng thái đăng nhập từ session
+        const userName = "{{ request.session.first_name|default:'' }}"; // Lấy tên người dùng từ session
 
         function updateUserAction() {
             const userActionDiv = document.getElementById("user-action");
@@ -53,24 +53,40 @@
                 <div show-info onclick="showInfo()" class="navlinks">
                     <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                     <ul show-ul class="d-none" id="userlist">
-                        <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                        <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
+                        <li><a href="/profile/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                     </ul>
                 </div>
-                `;                                                      //url trang profile
-                                                                        // url trang history
-                                                                        // thoát trạng thái đăng nhập
+                `;
             } else {
                 userActionDiv.innerHTML = `<a href="{% url 'login' %}"><button class="primary-btn">Đăng nhập</button></a>`; // url đến trang đăng nhập
             }
         }
 
-        function logout() {
-            isLoggedIn = false;
-            updateUserAction(); 
+        function login() {
+            isLoggedIn = true; // Cập nhật trạng thái đăng nhập
+            updateUserAction(); // Cập nhật lại giao diện
         }
-        updateUserAction();
+
+        function logout() {
+            fetch('/login/logout/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    isLoggedIn = false;
+                    updateUserAction(); // Cập nhật lại giao diện
+                }
+            })
+            .catch(error => console.error('Lỗi:', error));
+        }
+
+        // Gọi hàm để cập nhật giao diện khi trang được tải
+        document.addEventListener("DOMContentLoaded", updateUserAction);
     </script>
     <script>
         var Menulist = document.getElementsByClassName("navlinks");
@@ -105,6 +121,11 @@
                 shown = true;
             }
             
+        }
+        function usertoggle() {
+            const userlist = document.getElementById("userlist");
+            userlist.classList.toggle("d-none");
+            userlist.classList.toggle("d-block");
         }
     </script>
     <section class="home">
@@ -177,37 +198,20 @@
     <div>
         <form action="{% url 'search' %}" method="GET">
             <div class="container-flex text-white bg-warning py-1 px-1 book">
-                <div class="row justify-content-center">
-                    <div class="col">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Bạn muốn đi đâu?" name="locations" aria-label="Bạn muốn đi đâu?">
-                            <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" aria-label="Check-in Date">
-                            <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" aria-label="Check-out Date">
-                            <input type="number" class="form-control" placeholder="Người lớn" aria-label="Adults" min="1">
-                            <input type="number" class="form-control" placeholder="Trẻ em" aria-label="Children" min="0">
-
-                            <button class="custom-btn" type="submit">Tìm kiếm</button>
-                        </div>
+                <div class="col">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Bạn muốn đi đâu?" name="address" aria-label="Bạn muốn đi đâu?">
+                        <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" name="checkin-date" aria-label="Check-in Date">
+                        <input type="date" class="form-control datepicker" placeholder="dd/mm/yyyy" name="checkout-date" aria-label="Check-out Date">
+                        <input type="number" class="form-control" placeholder="Số người" aria-label="Số lượng người" name="capacity" min="1">
+                        <button class="custom-btn" type="submit">Tìm kiếm</button>
                     </div>
                 </div>
             </div>
         </form>
     </div>
 
-    <!-- <section class="book">
-        <div class="container flex_space">
-            <div class="form">
-                <form class="grid" action = "{% url 'page'}" method = "POST">               
-                    <input class="search" type="text" placeholder="Bạn muốn đi đâu?">
-                    <input type="date" placeholder="Ngày nhận phòng">
-                    <input type="date" placeholder="Ngày trả phòng">
-                    <input type="number" placeholder="Người lớn">
-                    <input type="number" placeholder="Trẻ em">
-                    <button type="submit">Tìm kiếm</button>
-                </form>
-            </div>
-        </div>
-    </section> -->
+
     <section class="about top">
         <div class="container flex">
             <div class="left">
@@ -250,237 +254,61 @@
             </div>
         </div>
     </section>
+
     <section class="rooms">
-        <div class="container top",>
+        <div class="container top">
             <div class="heading" id='homestay'>
                 <h2>HOMESTAY CỦA CHÚNG TÔI</h2>
             </div>
             <div class="content mtop">
                 <div class="owl-carousel owl-carousel1 owl-theme">
-                    <!-- Homestay Row 1 -->
+                    {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay1.jpg'%} alt="Homestay 1">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
-                            <h2>Suporior Homestay 1</h2>
+                            <h2>{{ homestay.name }}</h2>
                             <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
+                               <h3>{{ homestay.rating }} ★</h3>
                             </div>
-                            <p>1800 bài đánh giá</p>
                             <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>800k/1 đêm</h3>
+                                <form action="{% url 'product' homestay.id %}" method="GET">
+                                    <button class="primary-btn">Đặt phòng</button>
+                                </form>
+                                <h3>{{ homestay.price }} k/1 đêm</h3>
                             </div>
                         </div>
                     </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay2.jpg'%} alt="Homestay 2">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 2</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1200 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>700k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 2 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={%static '/myapp/img/homestay3.jpg'%} alt="Homestay 3">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 3</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>950 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>900k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay4.jpg'%} alt="Homestay 4">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 4</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>2000 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>1000k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 3 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay5.jpg'%} alt="Homestay 5">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 5</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1300 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>850k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </section>
     
-    
     <section class="rooms">
         <div class="container top">
             <div class="content mtop">
                 <div class="owl-carousel owl-carousel1 owl-theme">
-                    <!-- Homestay Row 1 -->
+                    {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay6.jpg'%} alt="Homestay 1">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
-                            <h2>Suporior Homestay 6</h2>
+                            <h2>{{ homestay.name }}</h2>
                             <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
+                               <h3>{{ homestay.rating }} ★</h3>
                             </div>
-                            <p>1800 bài đánh giá</p>
                             <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>800k/1 đêm</h3>
+                                <form action="{% url 'product' homestay.id %}" method="GET">
+                                    <button class="primary-btn">Đặt phòng</button>
+                                </form>
+                                <h3>{{ homestay.price }} k/1 đêm</h3>
                             </div>
                         </div>
                     </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay7.jpg'%} alt="Homestay 2">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 7</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1200 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>700k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 2 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay8.jpg'%} alt="Homestay 3">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 8</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>950 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>900k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay9.jpg'%} alt="Homestay 4">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 9</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>2000 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>1000k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 3 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay10.jpg'%} alt="Homestay 5">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 10</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1300 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>850k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -488,119 +316,28 @@
 
 
     <section class="rooms">
-        <div class="container top",>
-            <div class="heading" id='homestay'>
-                <h2>HOMESTAY CỦA CHÚNG TÔI</h2>
-            </div>
+        <div class="container top">
             <div class="content mtop">
                 <div class="owl-carousel owl-carousel1 owl-theme">
-                    <!-- Homestay Row 1 -->
+                    {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay1.jpg'%} alt="Homestay 1">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
-                            <h2>Suporior Homestay 1</h2>
+                            <h2>{{ homestay.name }}</h2>
                             <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
+                               <h3>{{ homestay.rating }} ★</h3>
                             </div>
-                            <p>1800 bài đánh giá</p>
                             <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>800k/1 đêm</h3>
+                                <form action="{% url 'product' homestay.id %}" method="GET">
+                                    <button class="primary-btn">Đặt phòng</button>
+                                </form>
+                                <h3>{{ homestay.price }} k/1 đêm</h3>
                             </div>
                         </div>
                     </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay2.jpg'%} alt="Homestay 2">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 2</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1200 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>700k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 2 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={%static '/myapp/img/homestay3.jpg'%} alt="Homestay 3">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 3</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>950 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>900k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay4.jpg'%} alt="Homestay 4">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 4</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>2000 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>1000k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 3 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay5.jpg'%} alt="Homestay 5">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 5</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1300 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>850k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -611,113 +348,25 @@
         <div class="container top">
             <div class="content mtop">
                 <div class="owl-carousel owl-carousel1 owl-theme">
-                    <!-- Homestay Row 1 -->
+                    {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay6.jpg'%} alt="Homestay 1">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
-                            <h2>Suporior Homestay 6</h2>
+                            <h2>{{ homestay.name }}</h2>
                             <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
+                               <h3>{{ homestay.rating }} ★</h3>
                             </div>
-                            <p>1800 bài đánh giá</p>
                             <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>800k/1 đêm</h3>
+                                <form action="{% url 'product' homestay.id %}" method="GET">
+                                    <button class="primary-btn">Đặt phòng</button>
+                                </form>
+                                <h3>{{ homestay.price }} k/1 đêm</h3>
                             </div>
                         </div>
                     </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay7.jpg'%} alt="Homestay 2">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 7</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1200 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>700k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 2 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay8.jpg'%} alt="Homestay 3">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 8</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>950 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>900k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay9.jpg'%} alt="Homestay 4">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 9</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>2000 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>1000k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 3 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay10.jpg'%} alt="Homestay 5">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 10</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1300 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>850k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -728,113 +377,25 @@
         <div class="container top">
             <div class="content mtop">
                 <div class="owl-carousel owl-carousel1 owl-theme">
-                    <!-- Homestay Row 1 -->
+                    {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay11.jpg'%} alt="Homestay 1">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
-                            <h2>Suporior Homestay 11</h2>
+                            <h2>{{ homestay.name }}</h2>
                             <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
+                               <h3>{{ homestay.rating }} ★</h3>
                             </div>
-                            <p>1800 bài đánh giá</p>
                             <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>800k/1 đêm</h3>
+                                <form action="{% url 'product' homestay.id %}" method="GET">
+                                    <button class="primary-btn">Đặt phòng</button>
+                                </form>
+                                <h3>{{ homestay.price }} k/1 đêm</h3>
                             </div>
                         </div>
                     </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay12.jpg'%} alt="Homestay 2">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 12</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1200 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>700k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 2 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay13.jpg'%} alt="Homestay 3">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 13</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>950 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>900k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay14.jpg'%} alt="Homestay 4">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 14</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>2000 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>1000k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Homestay Row 3 -->
-                    <div class="items">
-                        <div class="image">
-                            <img src={% static 'myapp/img/homestay15.jpg'%} alt="Homestay 5">
-                        </div>
-                        <div class="text">
-                            <h2>Suporior Homestay 15</h2>
-                            <div class="star-rating">
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                                <span class="star">★</span>
-                            </div>
-                            <p>1300 bài đánh giá</p>
-                            <div class="button flex">
-                                <button class="primary-btn">ĐẶT NGAY</button>
-                                <h3>850k/1 đêm</h3>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -932,9 +493,9 @@
                 <div class="col box">
                     <h2>GIỚI THIỆU</h2>
                     <a href="#">Trang chủ</a><br>
-                    <a href="#">Dịch vụ</a><br>
+                    <a href="#dichvu">Dịch vụ</a><br>
                     <a href="#">Tin tức</a><br>
-                    <a href="#">Liên hệ</a><br>
+                    <a href="https://www.facebook.com/gnolp2513">Liên hệ</a><br>
                 </div>
                 <div class="col box">
                     <h2>LIÊN KẾT</h2>

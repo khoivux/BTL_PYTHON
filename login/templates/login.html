@@ -2,28 +2,35 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-    <title>Đăng nhập • HomesTayBac</title>
+    <title>login</title>
     <link rel="stylesheet" href="{% static 'login/css/login.css' %}">
 </head>
 <body>
   <div class="form">
-    <!-- Sử dụng thẻ <a> để tạo liên kết quay lại trang chính -->
     <a href="{% url 'home' %}">
       
         <button class="back" type="button">&#8592</button>
     </a>
     <br>
     <h2>Đăng nhập</h2>
-    
-    <!-- Thêm form đăng nhập nếu cần -->
     <form action="{% url 'login' %}" method="POST" autocomplete="off">
-            {% csrf_token %}  <!-- Thêm token bảo mật CSRF -->
+      {% csrf_token %}  <!-- Thêm token bảo mật CSRF -->
+      <input type="text" name="username" placeholder="Tên đăng nhập" autocomplete="off"
+        style="border-color: {% if errors.username %} red {% endif %};"/>
+        <span style="color: red;">{{ errors.username }}</span>
 
-            <input type="text" name="username" placeholder="Tên đăng nhập" autocomplete="off"/>
-            <input type="password" name="password" placeholder="Mật khẩu" autocomplete="new-password"/>
-            <button class = "submit" type = "submit">Đăng nhập</button>
-            <p class="message">Bạn chưa có tài khoản? <a href={%url "register"%}>Tạo tài khoản</a></p> <!--url đến trang đăng kí-->
-          </form>
+      <input type="password" name="password" placeholder="Mật khẩu" autocomplete="new-password"
+        style="border-color: {% if errors.password %} red {% endif %};"/>
+        <span style="color: red;">{{ errors.password }}</span>
+      
+      <button class = "submit" type = "submit">Đăng nhập</button>
+        {% if errors.credentials %}
+        <p style="color: red;">{{ errors.credentials }}</p>
+        {% endif %}
+
+      <p class="message">Bạn chưa có tài khoản? <a href={%url "register"%}>Tạo tài khoản</a></p> <!--url đến trang đăng kí-->
+      <p class = "message"> <a href = {% url "forget-password"%}>Quên mật khẩu?</a> </p>
+    </form>
         </div>
     </div>
 </body>
