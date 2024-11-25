@@ -30,7 +30,7 @@
             <div class="navlinks">
                 <ul id="menulist">
                     <li><a href="" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
-                    <li><a href="#dichvu">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                    
                     <li><a href="#homestay">Homestay</a></li> <!--url xuống danh sách homestay-->
                     <li><a href='https://www.facebook.com/gnolp2513'>Liên hệ</a></li> <!--url xuống liên hệ-->
                     <li><a href="#Feedback">Phản hồi</a></li>   <!--url đến trang phản hồi-->
@@ -265,7 +265,7 @@
                     {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay1.jpg'%} alt="{{ homestay.name }}">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
                             <h2>{{ homestay.name }}</h2>
@@ -293,7 +293,7 @@
                     {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay1.jpg'%} alt="{{ homestay.name }}">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
                             <h2>{{ homestay.name }}</h2>
@@ -322,7 +322,7 @@
                     {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay1.jpg'%} alt="{{ homestay.name }}">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
                             <h2>{{ homestay.name }}</h2>
@@ -351,7 +351,7 @@
                     {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay1.jpg'%} alt="{{ homestay.name }}">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
                             <h2>{{ homestay.name }}</h2>
@@ -380,7 +380,7 @@
                     {% for homestay in homestays %}
                     <div class="items">
                         <div class="image">
-                            <img src={% static 'myapp/img/homestay1.jpg'%} alt="{{ homestay.name }}">
+                            <img src="{{ homestay.image.url|default:'/static/myapp/img/background1.jpg' }}" alt="{{ homestay.name }}">
                         </div>
                         <div class="text">
                             <h2>{{ homestay.name }}</h2>

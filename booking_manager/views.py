@@ -2,8 +2,8 @@
 from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render,redirect
-
 from django.db.models import Q, Count, Case, When, IntegerField
+
 from booking_manager.models import Booking
 from homestay_manager.models import Homestay, HomestayFacilities
 from django.http import JsonResponse
@@ -20,21 +20,50 @@ def create_booking(request):
     checkin_date_str = request.GET.get('checkin_date')
     facilities = homestay.facilities.all() 
     rooms = homestay.rooms.all()
+    services = homestay.services.all()
     context = {
         'homestay': homestay,
         'facilities': facilities, 
         'rooms': rooms,
         }
     
-    if not checkin_date_str or not checkout_date_str:
+    if not checkin_date_str or not checkout_date_str :
         context['error_message'] = 'Ngày nhận và trả phòng không được trống!'
         return render(request, 'product.html', context)
-
     checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date() 
     checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
-
-    
     if checkin_date >= checkout_date or checkin_date < datetime.today().date():
+        context['checkin_date'] = checkin_date
+        context['checkout_date'] = checkout_date
+        context['error_message'] = 'Ngày nhận và trả phòng không phù hợp!'
+        return render(request, 'product.html', context)
+    checkin_date = datetime.strptime(checkin_date_str, '%Y-%m-%d').date() 
+    checkout_date = datetime.strptime(checkout_date_str, '%Y-%m-%d').date()
+    print('create_booking')
+    print(checkin_date)
+    homestaytmp = Homestay.objects.filter(id=id).annotate(
+        invalid_bookings=Count(
+            Case(
+                When(
+                    ~(
+                        Q(booking__checkin_date__gt=checkout_date) |  
+                        Q(booking__checkout_date__lt=checkin_date) |   
+                        Q(booking__isnull=True)
+                    ),
+                    then=1
+                ),
+                output_field=IntegerField()
+            )
+        )
+    ).filter(invalid_bookings=0)
+        
+    
+    if not homestaytmp.exists():
+        context['checkin_date'] = checkin_date
+        context['checkout_date'] = checkout_date
+        context['error_message'] = 'Homestay không sẵn có trong thời gian này!'
+        return render(request, 'product.html', context)
+    elif checkin_date >= checkout_date:
         context['checkin_date'] = checkin_date
         context['checkout_date'] = checkout_date
         context['error_message'] = 'Ngày nhận và trả phòng không phù hợp!'
@@ -66,14 +95,13 @@ def create_booking(request):
         stay_duration = (checkout_date - checkin_date).days
         rent_price = stay_duration * homestay.price
 
- 
-        context['checkin_date'] = checkin_date_str
-        context['checkout_date'] = checkout_date_str
+        context['checkin_date'] = checkin_date
+        context['checkout_date'] = checkout_date
 
         context['stay_duration'] = stay_duration
         context['rent_price'] = rent_price
         context['province'] = homestay.province
-
+        context['services'] = services
         return render(request, 'booking.html', context)
     
 def payment(request):
@@ -91,7 +119,7 @@ def payment(request):
 
 
         stay_duration = request.POST.get('stay_duration')
-        rent_price = request.POST.get('rent_price')
+        rent_price = request.POST.get('rent_price') + "000"
         services = request.POST.getlist('services')
         facilities = request.POST.get('facilities')
         lastName = request.POST.get('lastName') #lấy thông tin người đặt
@@ -120,8 +148,8 @@ def payment(request):
                         "homestay_name": homestay_name,
                         "homestay_address": homestay_address,
                         "homestay_province": homestay_province,
-                        "checkin_date": checkin_date,
-                        "checkout_date": checkout_date,
+                        "checkin_date": checkin_date_time,
+                        "checkout_date": checkout_date_time,
                         "stay_duration": stay_duration,
                         "rent_price": rent_price,
                         "services": services,
@@ -140,15 +168,17 @@ def payment(request):
 
     
         if user_id:
-            # Tạo một instance mới của Booking và lưu dữ liệu JSON vào trường booking_data
+            
+            print("userID")
+            print(checkin_date_time)
             booking = Booking.objects.create(
                             booking_time=timezone.now(),  # Cập nhật thời gian hiện tại
                             checkin_date=checkin_date_time,
                             checkout_date=checkout_date_time,
-                            status="Chưa thanh toán",  # Ví dụ, trạng thái là 'Pending'
-                            homestay_id=1,  # Giả sử homestay_id đã được chọn từ dữ liệu của bạn
-                            user_id=user_id, 
-                            bill_info=data  # Lưu dữ liệu JSON vào trường booking_data
+                            status="Chưa thanh toán",  
+                            homestay_id=homestay_id,
+                            user_id=user_id,
+                            bill_info=data
             )
             print(data)
             return render(request, 'hoadon.html', {'data': data})

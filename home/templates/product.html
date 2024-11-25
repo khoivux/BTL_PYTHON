@@ -80,7 +80,7 @@
         }
 
         .container {
-            max-width: 1300px; /* Chiều rộng tối đa của nội dung */
+            max-width: 1200px; /* Chiều rộng tối đa của nội dung */
             margin: 0 auto; /* Căn giữa nội dung theo chiều ngang */
             padding: 20px; /* Thêm khoảng cách bên trong */
 /*            background-color: #f9f9f9; *//* Tùy chọn màu nền */
@@ -133,7 +133,7 @@
         <div class="navlinks">
             <ul id="menulist">
                 <li><a href="/" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
-                <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                
                 <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
                 <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
                 <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
@@ -156,7 +156,7 @@
                     <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                     <ul show-ul class="d-none" id="userlist">
                         <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                        <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="/profile/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                     </ul>
                 </div>
@@ -319,7 +319,7 @@
                             <img src="{{ homestay_room.image.url|default:'/static/myapp/img/default_room.jpg' }}" 
                                  class="img-thumbnail" 
                                  alt="Room: {{ homestay_room.room.name }}" 
-                                 style="width: 300px; height: 300px;" 
+                                 style="width: 200px; height: 200px;" 
                                  onclick="openModal(this.src)">
                         </td>
                         <!-- Cột 2: Tên phòng (Loại phòng) -->
@@ -327,7 +327,7 @@
                         <!-- Cột 3: Số lượng -->
                         <td>{{ homestay_room.quantity }}</td>
                         <!-- Cột 4: Miêu tả phòng -->
-                        {% comment %} <td>{{ homestay_room.room.description }}</td> {% endcomment %}
+                        <td>{{ homestay_room.descriptions }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

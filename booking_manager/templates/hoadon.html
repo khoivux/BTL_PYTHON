@@ -11,13 +11,13 @@
 <body>
     <header>
         <div class="logo">
-            <a href="/"><img src="/img/logo.jpeg"></a> <!--back về home-->
+            <a href="/"><img src="{% static 'myapp/img/logo.jpeg' %}"></a> <!--back về home-->
         </div>
 
         <div class="navlinks">
             <ul id="menulist">
                 <li><a href="/" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
-                <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                
                 <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
                 <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
                 <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
@@ -40,7 +40,7 @@
                     <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                     <ul show-ul class="d-none" id="userlist">
                         <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                        <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="/profile/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                     </ul>
                 </div>
@@ -159,7 +159,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="qr">
-                        <img src="/img/thanhtoan.png" alt="QR Code">
+                        <img src={%static '/img/thanhtoan.png'%} alt="QR Code">
                         <h4>Phạm Ngọc Long</h4>
                         <h6>QRD000103035625901</h6>
                         <h6>PGD Khu công nghiệp Phố Nối A</h6>
@@ -261,7 +261,7 @@
         <div class="container">
             <div class="row">
                 <div class="col box">
-                    <img src="/static/img/background2.jpg" alt="">
+                    <img src="/img/background2.jpg" alt="">
                     <div class="icon">
                         <i class="fa fa-facebook-f"></i>
                         <i class="fa fa-instagram"></i>

@@ -107,7 +107,6 @@
         <div class="navlinks">
             <ul id="menulist">
                 <li><a href="/" class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
-                <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
                 <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
                 <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
                 <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
@@ -130,7 +129,7 @@
                     <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                     <ul show-ul class="d-none" id="userlist">
                         <li><a href="/profile">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                        <li><a href="#">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                        <li><a href="/profile/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                         <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                     </ul>
                 </div>
@@ -218,25 +217,19 @@
                         <a href="/search" class="text-primary">Đổi lựa chọn của bạn</a>
 
 
-                        <input type="date"  name="checkin_date" value="{{ checkin_date }}" >
-                        <input type="date"  name="checkout_date" value="{{ checkout_date }}" >
+                        <input type="hidden"  name="checkin_date" value="{{ checkin_date }}" >
+                        <input type="hidden"  name="checkout_date" value="{{ checkout_date }}" >
                         <input type="hidden" name="stay_duration" value="{{ stay_duration }}">
                         <input type="hidden" name="rent_price" value="{{ rent_price }}">
                     </div>
                     <div class="services info-box">
                         <h5>Dịch vụ</h5>
-                        <div>
-                            <input type="checkbox" name="services" value="Cầu hôn"> Cầu hôn
-                        </div>
-                        <div>
-                            <input type="checkbox" name="services" value="Thể thao"> Thể thao
-                        </div>
-                        <div>
-                            <input type="checkbox" name="services" value="Ăn uống"> Ăn uống
-                        </div>
-                        <div>
-                            <input type="checkbox" name="services" value="Đi lại"> Đi lại
-                        </div>
+                        {% for service in services %}
+                            <label>
+                                <input type="checkbox" name="services" value="{{ service.name }}">
+                                {{ service.name }} - Giá: {{ service.price }} VND
+                            </label><br>
+                        {% endfor %}
                     </div>
                     <div class="facilities info-box">                
                         <h5 class="mt-4">Tiện nghi:</h5>

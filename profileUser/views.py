@@ -7,31 +7,32 @@ from booking_manager.models import Booking
 import json
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
+from django.http import JsonResponse
 
 @login_required
 def getProfile(request):
-    profile = request.user.profile  # Lấy thông tin profile của người dùng
+    profile = request.user.profile  
     context = {
-        'profile': profile  # Truyền dữ liệu profile vào context
+        'profile': profile 
     }
     return render(request, 'profile.html', context)
 def edit(request):
-    profile = request.user.profile  # Lấy thông tin profile của người dùng
+    profile = request.user.profile  
     
     if request.method == 'POST':
         data = request.POST.copy()
         request.user.first_name = data.get('first_name', request.user.first_name)
-        request.user.save()  # Lưu thông tin user
-        form = ProfileForm(request.POST, instance=profile)  # Tạo form với dữ liệu từ request
-        if form.is_valid():  # Kiểm tra tính hợp lệ của form
-            form.save()  # Lưu thông tin vào database
-            return redirect('profile')  # Chuyển hướng đến trang profile sau khi lưu thành công
+        request.user.save()  
+        form = ProfileForm(request.POST, instance=profile)  
+        if form.is_valid():  
+            form.save()  
+            return redirect('profile')  
     else:
-        form = ProfileForm(instance=profile)  # Nếu không phải POST, khởi tạo form với dữ liệu hiện tại
+        form = ProfileForm(instance=profile) 
 
     context = {
-        'form': form,  # Truyền form vào context
-        'profile': profile  # Truyền dữ liệu profile vào context
+        'form': form,  
+        'profile': profile
     }
     return render(request, 'profile.html', context)
 
@@ -82,3 +83,34 @@ def delete(request):
             messages.error(request, "Không có ID giao dịch.")
         
     return redirect('/profile/invoices/')
+
+def changePassword(request):
+    return render(request, "changePassword.html")
+
+def changePass(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        current_password = request.POST.get('currentPassword')
+        new_password = request.POST.get('newPassword')
+        confirm_password = request.POST.get('confirmPassword')
+        print(current_password)
+        if not user_id or not current_password or not new_password or not confirm_password:
+            return JsonResponse({'success': False, 'message': 'Dữ liệu không hợp lệ.'})
+
+        if new_password != confirm_password:
+            return JsonResponse({'success': False, 'message': 'Mật khẩu mới không khớp.'})
+
+        try:
+            user = User.objects.get(id=user_id)
+
+            if not user.check_password(current_password):
+                return JsonResponse({'success': False, 'message': 'Mật khẩu hiện tại không đúng.'})
+
+            user.set_password(new_password)
+            user.save()
+            return JsonResponse({'success': True, 'message': 'Mật khẩu đã được cập nhật thành công.'})
+
+        except User.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Người dùng không tồn tại.'})
+
+    return JsonResponse({'success': False, 'message': 'Yêu cầu không hợp lệ.'})

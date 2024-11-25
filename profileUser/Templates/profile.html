@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Profile • HomesTayBac</title>
-        <link rel="stylesheet" href="{% static 'myapp/test.css' %}">
+        <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css"
             integrity="sha512-UTNP5BXLIptsaj5WdKFrkFov94lDx+eBvbKyoe1YAfjeRPC+gT5kyZ10kOHCfNZqEui1sxmqvodNUx3KbuYI/A=="
             crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -28,7 +28,7 @@
         <div class="navlinks">
             <ul id="menulist">
                 <li><a href={% url 'home' %} class="link-underline link-underline-opacity-0">Trang chủ</a></li> <!--url đến home-->
-                <li><a href="#Dịch Vụ" class="link-underline link-underline-opacity-0">Dịch vụ</a></li> <!--url xuống dịch vụ-->
+                
                 <li><a href="#homestay" class="link-underline link-underline-opacity-0">Homestay</a></li> <!--url xuống danh sách homestay-->
                 <li><a href="#Liên Hệ" class="link-underline link-underline-opacity-0">Liên hệ</a></li> <!--url xuống liên hệ-->
                 <li><a href="#Feedback" class="link-underline link-underline-opacity-0">Phản hồi</a></li> <!--url đến trang phản hồi-->
@@ -51,7 +51,7 @@
                 <span class="user" onclick="usertoggle()">Chào, ${userName}</span>
                 <ul show-ul class="d-none" id="userlist">
                     <li><a href="#">Thông tin tài khoản</a></li>    <!--url trang profile-->
-                    <li><a href="/login/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
+                    <li><a href="/profile/invoices">Lịch sử đặt phòng</a></li>      <!--url trang history-->
                     <li><a href="#" onclick="logout()">Đăng xuất</a></li> <!-- thoát trạng thái đăng nhập-->
                 </ul>
             </div>
@@ -112,10 +112,10 @@
                 <div class="profile-sidebar">
                     <nav class="nav flex-column">
                         <a class="nav-link active" href="#">Thông tin cá nhân</a>
-                        <a class="nav-link" href="#">Cài đặt bảo mật</a>
-                        <a class="nav-link" href="#">Lịch sử giao dịch</a>
-                        <a class="nav-link" href="#">Cài đặt quyền riêng tư</a>
-                        <a class="nav-link" href="#">Đăng xuất</a>
+                        <a class="nav-link" href={%url 'changePassword'%}>Đặt lại mật khẩu</a>
+                        <a class="nav-link" href="/profile/invoices">Lịch sử giao dịch</a>
+                        
+                        <a class="nav-link" href="#" onclick="logout()">Đăng xuất</a>
                     </nav>
                 </div>
             </div>
